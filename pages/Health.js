@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, View, Text } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
+import { Button, View, Text } from 'react-native';
 
-class TrackerPage extends Component {
+class HealthPage extends Component {
   render() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>TrackerPage</Text>
+      <Text>HealthPage</Text>
       <Button
           title="Go to List Status"
           onPress={() => this.props.navigation.navigate('ListStatus')}
@@ -15,4 +15,4 @@ class TrackerPage extends Component {
   )
 }}
 
-export default TrackerPage;
+export default HealthPage;

@@ -6,38 +6,13 @@ import HomeScreen from '../pages/Home';
 import SettingsScreen from '../pages/Setting'
 import CalendarScreen from '../pages/Calendar';
 import ListStatusScreen from '../pages/ListStatus';
-import { BackHandler, Text } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import HealthScreen from '../pages/Health';
 
 const Tab = createBottomTabNavigator();
 const backButton = () => (<Icon name="chevron-back" size={30} color='#FFF' />)
 const notification = () => (<Icon name="notifications-off-sharp" size={30} color='#F1EAE4'/>)
-const NavBar = () => {
-    
-// useFocusEffect(
-//     React.useCallback(() => {
-//         const onBackPress = () => {
-//             navigation.navigate('ThirdPage');
-//             // Return true to stop default back navigaton
-//             // Return false to keep default back navigaton
-//             return true;
-//         };
 
-//         // Add Event Listener for hardwareBackPress
-//         BackHandler.addEventListener(
-//             'hardwareBackPress',
-//             onBackPress
-//         );
-
-//         return () => {
-//             // Once the Screen gets blur Remove Event Listener
-//             BackHandler.removeEventListener(
-//                 'hardwareBackPress',
-//                 onBackPress
-//             );
-//         };
-//     }, []),
-// );
+function NavBar() {
     return (
         <Tab.Navigator
             screenOptions={{

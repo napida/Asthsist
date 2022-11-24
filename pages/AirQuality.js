@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import { Button, View, Text } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-class TrackerPage extends Component {
+class AirQualityPage extends Component {
   render() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>TrackerPage</Text>
+      <Text>AirQualityPage</Text>
       <Button
-          title="Go to List Status"
+          title="Go to ListStatus"
           onPress={() => this.props.navigation.navigate('ListStatus')}
       />
     </View>
   )
 }}
 
-export default TrackerPage;
+export default AirQualityPage;

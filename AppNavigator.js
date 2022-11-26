@@ -2,7 +2,7 @@ import * as React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons'
 import PeakFlowPage from './pages/PeakFlow';
 import InhalerPage from './pages/Inhaler';
-import CheckUpPage from './pages/CheckUp';
+import AsthmaControlTest from './pages/AsthmaControlTest';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomePage from './pages/Home';
 import HealthPage from './pages/Health';
@@ -38,7 +38,7 @@ export const HomeStackScreen = () => {
       />
       <HomeStack.Screen name="PeakFlow" component={PeakFlowPage} />
       <HomeStack.Screen name="Inhaler" component={InhalerPage} />
-      <HomeStack.Screen name="Asthma Control Test" component={CheckUpPage} />
+      <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
     </HomeStack.Navigator>
   );
 }
@@ -59,6 +59,7 @@ export const CalendarStackScreen = () => {
   return (
     <CalendarStack.Navigator screenOptions={headerStyle}>
       <CalendarStack.Screen name="Calendar" component={Calendar} />
+      <CalendarStack.Screen name="Tracker" component={TrackerPage} />
     </CalendarStack.Navigator>
   );
 }

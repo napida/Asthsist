@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, Dimensions, TouchableOpacity } from 'react-native';
-// import { createStackNavigator, createAppContainer } from 'react-navigation';
+
 
 const DATA = [
   {
@@ -11,7 +11,7 @@ const DATA = [
   {
     id: '2',
     source: require('../assets/category-air-quality.png'),
-    page: 'AirQuality'
+    page: 'Air Quality'
   },
   {
     id: '3',

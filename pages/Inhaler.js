@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Button, View, Text } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-class InhalerPage extends Component {
-  render() {
+function InhalerPage() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Inhaler Page</Text>
@@ -13,6 +12,6 @@ class InhalerPage extends Component {
       />
     </View>
   )
-}}
+}
 
 export default InhalerPage;

@@ -7,13 +7,9 @@ export default ({ items }) => {
     const imageHeight = imageWidth / 2;
     return (
         <Swiper
-            // height={imageHeight}
             style={styles.wrapper}
             showsButtons={true}
             showsPagination={false}
-            // paginationStyle={{
-            //      bottom: 10, height: 4 
-            // }}
             >
             {items.map((item, index) => (
                 <View
@@ -22,7 +18,8 @@ export default ({ items }) => {
                 
                 <TouchableOpacity
                     key={index}
-                    onPress={() => onItemPress(item)}>
+                    // onPress={() => navigation.navigate(item.title)}
+                    >
                     <Image
                         style = {{
                             height: imageHeight,

@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Button, View, Text } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-class CheckUpPage extends Component {
-  render() {
+function CheckUpPage() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>CheckUp Page</Text>
@@ -13,6 +12,6 @@ class CheckUpPage extends Component {
       />
     </View>
   )
-}}
+}
 
 export default CheckUpPage;

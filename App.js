@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet  } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react'
-import NavBar from './components/NavBar';
+import BottomNavBar from './components/BottomNavBar';
 import AppNavigator from './AppNavigator'
 
 const App = () => {
   return (
     <NavigationContainer>
-      {/* <NavBar /> */}
-      <AppNavigator />
+      <BottomNavBar />
+      {/* <AppNavigator /> */}
     </NavigationContainer>
   )
 }
@@ -57,7 +57,7 @@ export default App
 // function HomeStackScreen() {
 //   return (
 //     <HomeStack.Navigator>
-//       <HomeStack.Screen name="Home" component={HomeScreen} />
+//       <HomeStack.Screen name='Home' component={HomeScreen} />
 //       <HomeStack.Screen name="Details" component={DetailsScreen} />
 //     </HomeStack.Navigator>
 //   );
@@ -80,7 +80,7 @@ export default App
 //   return (
 //     <NavigationContainer>
 //       <Tab.Navigator screenOptions={{ headerShown: false }}>
-//         <Tab.Screen name="Home" component={HomeStackScreen} />
+//         <Tab.Screen name='Home' component={HomeStackScreen} />
 //         <Tab.Screen name="Settings" component={SettingsStackScreen} />
 //       </Tab.Navigator>
 //     </NavigationContainer>

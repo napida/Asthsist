@@ -1,29 +1,64 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import NavBar from './components/NavBar';
-import Health from './pages/Health';
-import AirQuality from './pages/AirQuality';
-import Tracker from './pages/Tracker';
+import Icon from 'react-native-vector-icons/Ionicons'
 import PeakFlowPage from './pages/PeakFlow';
 import InhalerPage from './pages/Inhaler';
 import CheckUpPage from './pages/CheckUp';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomePage from './pages/Home';
+import HealthPage from './pages/Health';
+import TrackerPage from './pages/Tracker';
+import AirQualityPage from './pages/AirQuality';
+import ListStatusPage from './pages/ListStatus';
+import Calendar from './pages/Calendar';
 
-const Stack = createNativeStackNavigator();
-
-function AppScreen() {
+const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
+const HomeStack = createStackNavigator();
+const headerStyle = {
+  headerStyle: { backgroundColor: '#517EB9' },
+  headerTintColor: '#FFF',
+  headerTitleStyle: { fontFamily: 'Prompt-Medium', fontSize: 25 },
+}
+export const HomeStackScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>      
-      <Stack.Screen name="NavBar" component={NavBar} />
-      <Stack.Screen name="Health" component={Health} />
-      <Stack.Screen name="AirQuality" component={AirQuality} />
-      <Stack.Screen name="Tracker" component={Tracker} />
-      <Stack.Screen name="PeakFlow" component={PeakFlowPage} />
-      <Stack.Screen name="Inhaler" component={InhalerPage} />
-      <Stack.Screen name="CheckUp" component={CheckUpPage} />
-    </Stack.Navigator>
+    <HomeStack.Navigator screenOptions={headerStyle}>
+      <HomeStack.Screen name='Asthsist' component={HomePage}
+        options={{
+          tabBarIcon: ({ color, size }) => (<Icon
+            name="home-outline"
+            size={size}
+            color={
+              'black'
+            }
+          />),
+          headerTitle: 'Asthsist',
+          headerTitleAlign: 'center',
+          headerRight: notification,
+          headerRightContainerStyle: { paddingHorizontal: 12 },
+        }}
+      />
+      <HomeStack.Screen name="PeakFlow" component={PeakFlowPage} />
+      <HomeStack.Screen name="Inhaler" component={InhalerPage} />
+      <HomeStack.Screen name="Asthma Control Test" component={CheckUpPage} />
+    </HomeStack.Navigator>
+  );
+}
+const ListStatusStack = createStackNavigator();
+export const ListStatusStackScreen = () => {
+  return (
+    <ListStatusStack.Navigator screenOptions={headerStyle}>
+      <ListStatusStack.Screen name="List Status" component={ListStatusPage} />
+      <ListStatusStack.Screen name="Health" component={HealthPage} />
+      <ListStatusStack.Screen name="Air Quality" component={AirQualityPage} />
+      <ListStatusStack.Screen name="Tracker" component={TrackerPage} />
+    </ListStatusStack.Navigator>
   );
 }
 
-export default AppScreen;
+const CalendarStack = createStackNavigator();
+export const CalendarStackScreen = () => {
+  return (
+    <CalendarStack.Navigator screenOptions={headerStyle}>
+      <CalendarStack.Screen name="Calendar" component={Calendar} />
+    </CalendarStack.Navigator>
+  );
+}

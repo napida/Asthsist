@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'rea
 import React, { Component } from 'react'
 import SwiperCard from '../components/SwiperCard'
 import Progress from '../components/Progress.js'
+import { createStackNavigator } from '@react-navigation/stack';
+import PeakFlowPage from './PeakFlow';
 const imageWidth = Dimensions.get('window').width;
 const items = [
     {
@@ -18,7 +20,7 @@ const items = [
     },
     {
         id: '3',
-        title: 'Asthma Attack',
+        title: 'Asthma ACtivity',
         source: require('../assets/inhaler-graph.png'),
         date: '3d ago'
     },
@@ -38,54 +40,51 @@ const menu = [
     },
     {
         id: '3',
-        title: 'Check-up',
+        title: 'Asthma control test',
         icon: require('../assets/check-up.png'),
-        page: 'CheckUp'
+        page: 'Asthma Control Test'
     },
 ];
 
-class HomePage extends Component {
-    render() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <View style={{ flex: 3 }}>
-                    <SwiperCard items={items} />
-                </View>
-
-                <View style={styles.menuContainer}>
-                    {menu.map((item, index) => (
-                        <View key={index} >
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate(item.page)}>
-                                <Image
-                                    style={{ height: 70, width: 70 }}
-                                    source={item.icon}
-                                    resizeMode="contain" />
-                            </TouchableOpacity>
-                            <Text
-                                style={[
-                                    styles.text,
-                                    { fontSize: 14, fontFamily: 'Prompt-egular', paddingTop: 4 }
-                                ]}>
-                                {item.title}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-                <TouchableOpacity style={styles.percentContainer}>
-                    <Progress style={styles.text} value={25} />
-                    <View>
-                        <Text style={[styles.text, { paddingBottom: 10 }]}>
-                            Asthma risk
-                        </Text>
-                        <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4' }]}>
-                            You did good today :)
+function HomePage({ navigation }) {
+    return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 3 }}>
+                <SwiperCard items={items} />
+            </View>
+            <View style={styles.menuContainer}>
+                {menu.map((item, index) => (
+                    <View key={index} >
+                        <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
+                            <Image
+                                style={{ height: 70, width: 70 }}
+                                source={item.icon}
+                                resizeMode="contain" />
+                        </TouchableOpacity>
+                        <Text numberOfLines={2} ellipsizeMode='tail'
+                            style={[
+                                styles.text,
+                                { fontSize: 14, fontFamily: 'Prompt-egular', paddingTop: 4 }
+                            ]}>
+                            {item.title}
                         </Text>
                     </View>
-
-                </TouchableOpacity>
+                ))}
             </View>
-        )
-    }
+            <TouchableOpacity style={styles.percentContainer}>
+                <Progress style={styles.text} value={92} />
+                <View>
+                    <Text style={[styles.text, { paddingBottom: 10 }]}>
+                        Your current risk
+                    </Text>
+                    <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4' }]}>
+                        You did good today :)
+                    </Text>
+                </View>
+
+            </TouchableOpacity>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({

@@ -21,10 +21,10 @@ const DATA = [
 ];
 
 const imageWidth = Dimensions.get('window').width;
-class ListStatus extends Component {
-  render() {
+
+function ListStatusPage({ navigation }) {
     renderItem = ({ item }) => (
-      <TouchableOpacity onPress={() => this.props.navigation.navigate(item.page)}>
+      <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
         <Image
           style={styles.item}
           source={item.source}
@@ -41,7 +41,6 @@ class ListStatus extends Component {
         />
       </SafeAreaView>
     );
-  }
 }
 
 const styles = StyleSheet.create({
@@ -70,4 +69,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListStatus;
+export default ListStatusPage;

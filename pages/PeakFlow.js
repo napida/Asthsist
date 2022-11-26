@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { Button, View, Text } from 'react-native';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 
-class PeakFlowPage extends Component {
-  render() {
+function PeakFlowPage() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>PeakFlow Page</Text>
@@ -13,6 +12,6 @@ class PeakFlowPage extends Component {
       />
     </View>
   )
-}}
+}
 
 export default PeakFlowPage;

@@ -12,7 +12,7 @@ export default ({ value, style }) => {
             shadowColor="#999"
             bgColor="#fff"
         >
-            <Text style={style}>{value}%</Text>
+            <Text style={style}>23/25</Text>
         </ProgressCircle>
     )
 }

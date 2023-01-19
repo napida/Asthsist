@@ -6,15 +6,22 @@ const DATA = [
     id: "1",
     title: "Heart rate",
     subtitle: '120 beats/min',
-    color:'#FF0000',
+    color: '#FF0000',
     source: require('../assets/heart-rate.png'),
   },
   {
     id: "2",
     title: "SpO2",
     subtitle: '95%',
-    color:'#00CD00',
+    color: '#00CD00',
     source: require('../assets/oximeter.png'),
+  },
+  {
+    id: "3",
+    title: "Peak flow",
+    subtitle: '80%',
+    color: '#00CD00',
+    source: require('../assets/peak-flow-meter.png'),
   }
 ];
 
@@ -27,7 +34,7 @@ const Item = ({ item }) => (
 
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      <Text style={[styles.title, {fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color}]}>{item.subtitle}</Text>
+      <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
     </View>
   </TouchableOpacity>
 );

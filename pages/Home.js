@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native'
-import React, { Component } from 'react'
+import React from 'react'
 import SwiperCard from '../components/SwiperCard'
 import Progress from '../components/Progress.js'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -88,7 +88,7 @@ function HomePage({ navigation }) {
                 <Progress style={styles.text} value={92} />
                 <View>
                     <Text style={[styles.text, { paddingBottom: 10 }]}>
-                        Your current risk
+                        How well you control asthma
                     </Text>
                     <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4' }]}>
                         You did good today :)
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'Prompt-Medium',
         color: '#012250',
-        fontSize: 25,
+        fontSize: 18,
         alignSelf: 'center'
     },
     titleText: {

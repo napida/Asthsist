@@ -5,25 +5,25 @@ const DATA = [
   {
     id: "1",
     title: "Inhaler",
-    color:'#FFC100',
+    color: '#FFC100',
     source: require('../assets/inhaler.png'),
   },
   {
     id: "2",
     title: "Peak flow",
-    color:'#00CD00',
+    color: '#00CD00',
     source: require('../assets/peak-flow-meter.png'),
   },
   {
     id: "3",
     title: "Asthma Activity",
-    color:'#00CD00',
+    color: '#00CD00',
     source: require('../assets/asthma-attack.png'),
   }
 ];
 
-const Item = ({ item }) => (
-  <TouchableOpacity style={styles.item}>
+const Item = ({ navigation, item }) => (
+  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('PeakFlow')}>
     <Image
       style={{ height: 70, width: 70, marginRight: 50 }}
       source={item.source}
@@ -40,6 +40,7 @@ const TrackerPage = ({ navigation }) => {
   const renderItem = ({ item }) => {
     return (
       <Item
+        navigation = {navigation}
         item={item}
       />
     );

@@ -17,6 +17,7 @@ function BottomNavBar() {
         <Tab.Navigator
             screenOptions={{
                 tabBarShowLabel: false,
+                tabBarHideOnKeyboard: true,
                 tabBarStyle: { backgroundColor: '#517EB9', height: 60 },
                 tabBarInactiveTintColor: '#FFF',
                 tabBarActiveTintColor: '#F5E1A4',

@@ -28,6 +28,9 @@ const DATA = [
 
 const Item = ({ item }) => (
   <TouchableOpacity style={styles.item}>
+    {item.title === "AQI" 
+    ? <AqiService source = {item.source} />
+    :
     <View style={{ flexDirection: 'row' }}>
       <Image
         style={{ height: 70, width: 70, marginRight: 50 }}
@@ -38,11 +41,7 @@ const Item = ({ item }) => (
         <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
       </View>
     </View>
-    <View style={{flexDirection:'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
-      {item.title === "AQI" && (
-        <AqiService />
-      )}
-    </View>
+    }
   </TouchableOpacity>
 );
 

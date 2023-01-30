@@ -1,43 +1,12 @@
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View } from "react-native";
+import { AqiService } from "../service/AqiService";
 
 const DATA = [
   {
     id: "1",
     title: "AQI",
     subtitle: '200',
-    subValue: [
-      {
-        id: "1",
-        name: "PM2.5",
-        value: '70',
-      },
-      {
-        id: "2",
-        name: "PM10",
-        value: '101',
-      },
-      {
-        id: "3",
-        name: "NO2",
-        value: '180',
-      },
-      {
-        id: "4",
-        name: "SO2",
-        value: '200',
-      },
-      {
-        id: "5",
-        name: "CO",
-        value: '3',
-      },
-      {
-        id: "6",
-        name: "O3",
-        value: '120',
-      },
-    ],
     color: '#FFC100',
     source: require('../assets/air-quality.png'),
   },
@@ -59,26 +28,19 @@ const DATA = [
 
 const Item = ({ item }) => (
   <TouchableOpacity style={styles.item}>
-    {console.log(!item.subValue)}
     <View style={{ flexDirection: 'row' }}>
       <Image
         style={{ height: 70, width: 70, marginRight: 50 }}
         source={item.source}
         resizeMode="contain" />
-
       <View>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
       </View>
     </View>
     <View style={{flexDirection:'row', flexWrap: 'wrap', justifyContent: 'space-between',}}>
-      {!!item.subValue && (
-        item.subValue.map((i, index) => (
-          <View key={index} style={{ flexDirection: 'row', paddingTop: 10 }}>
-            <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, paddingRight: 5 }]}>{i.name}:</Text>
-            <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: item.color, paddingRight: 10 }]}>{i.value}</Text>
-          </View>
-        ))
+      {item.title === "AQI" && (
+        <AqiService />
       )}
     </View>
   </TouchableOpacity>

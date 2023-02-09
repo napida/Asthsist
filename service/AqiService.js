@@ -108,17 +108,22 @@ export const AqiService = ({ source, isRefreshing }) => {
                 ))
                 }
               </View>
-              <View style={{ marginTop: 20, flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
-                <Icon
-                  name="location-pin"
-                  size={20}
-                  color="red"
-                  style={{ marginRight: 5 }}
-                />
-                <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#4D4D4D', paddingRight: 10 }]}>{data.city.name} |</Text>
-                <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#4D4D4D', paddingRight: 10 }]}>
-                  {timeSince(new Date() - (new Date(data.time.iso)))}
-                </Text>
+              <View style={{ marginTop: 20, marginRight: 20, flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
+                <View style={{flexDirection: 'row'}}>
+                  <Icon
+                    name="location-pin"
+                    size={20}
+                    color="red"
+                    style={{ marginRight: 5 }}
+                  />
+                  <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#4D4D4D', paddingRight: 10 }]}>{data.city.name}</Text>
+
+                </View>
+                <View>
+                  <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#4D4D4D', paddingRight: 10 }]}>
+                  | {timeSince(new Date() - (new Date(data.time.iso)))}
+                  </Text>
+                </View>
               </View>
             </View>
           ))}

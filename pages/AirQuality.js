@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View, RefreshControl } from "react-native";
 import { AqiService } from "../service/AqiService";
 
 const DATA = [
@@ -26,30 +26,39 @@ const DATA = [
   }
 ];
 
-const Item = ({ item }) => (
+const Item = ({ item, isRefresh }) => (
   <TouchableOpacity style={styles.item}>
-    {item.title === "AQI" 
-    ? <AqiService source = {item.source} />
-    :
-    <View style={{ flexDirection: 'row' }}>
-      <Image
-        style={{ height: 70, width: 70, marginRight: 50 }}
-        source={item.source}
-        resizeMode="contain" />
-      <View>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
+    {item.title === "AQI"
+      ? <AqiService source={item.source} isRefresh={isRefresh} />
+      :
+      <View style={{ flexDirection: 'row' }}>
+        <Image
+          style={{ height: 70, width: 70, marginRight: 50 }}
+          source={item.source}
+          resizeMode="contain" />
+        <View>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
+        </View>
       </View>
-    </View>
     }
   </TouchableOpacity>
 );
 
 const AirQualityPage = ({ navigation }) => {
+  const [refreshing, setRefreshing] = React.useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const renderItem = ({ item }) => {
     return (
       <Item
         item={item}
+        isRefresh={refreshing}
       />
     );
   };
@@ -60,6 +69,7 @@ const AirQualityPage = ({ navigation }) => {
         data={DATA}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </SafeAreaView>
   );

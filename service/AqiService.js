@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+  import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Button, Image, Text, TouchableOpacity, View } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useNavigation } from '@react-navigation/native';
@@ -75,7 +75,91 @@ export const AqiService = ({ source, isRefreshing }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  //define colour
+  const colourYellow = '#FFC100';
+  const colourRed = '#FF0000';
+  const colourGreen = '#00CD00';
 
+
+  function getAqifontColour(value){
+    if(value<=50){
+      return colourGreen;
+    }
+    if(value>=51 && value<=200){
+      return colourYellow;
+    }
+    if(value>=201){
+      return colourRed;
+    }
+  }
+  function getfontColour(value, v){
+    if(value=='co'){
+      if(v<=1.0){
+        return colourGreen;
+      }
+      if(v>=1.1 && v<=10){
+        return colourYellow;
+      }
+      if(v>=10.1){
+        return colourRed;
+      }
+    }
+    if(value=='no2'){
+      if(v<=40){
+        return colourGreen;
+      }
+      if(v>=41 && v<=180){
+        return colourYellow;
+      }
+      if(v>=181){
+        return colourRed;
+      }
+    }
+    if(value=='o3'){
+      if(v<=50){
+        return colourGreen;
+      }
+      if(v>=51 && v<=168){
+        return colourYellow;
+      }
+      if(v>=169){
+        return colourRed;
+      }
+    }
+    if(value=='pm10'){
+      if(v<=50){
+        return colourGreen;
+      }
+      if(v>=51 && v<=250){
+        return colourYellow;
+      }
+      if(v>=251){
+        return colourRed;
+      }
+    }
+    if(value=='pm25'){
+      if(v<=30){
+        return colourGreen;
+      }
+      if(v>=31 && v<=90){
+        return colourYellow;
+      }
+      if(v>=91){
+        return colourRed;
+      }
+    }
+    if(value=='so2'){
+      if(v<=40){
+        return colourGreen;
+      }
+      if(v>=41 && v<=380){
+        return colourYellow;
+      }
+      if(v>=381){
+        return colourRed;
+      }
+    }
+  }
   const pollutants = getIaqi(data);
   return (
     <View style={{ flex: 1, padding: 0 }}>
@@ -87,7 +171,7 @@ export const AqiService = ({ source, isRefreshing }) => {
             resizeMode="contain" />
           <View>
             <Text style={styles.title}>AQI</Text>
-            <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: '#FFC100' }]}>{data.aqi}</Text>
+            <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: getAqifontColour(data.aqi) }]}>{data.aqi}</Text>
             {/* No internet connection */}
             {/* {console.log(!netInfo.isConnected && 'No Internet')}
           {!netInfo.isConnected && navigation.navigate('No Internet')} */}
@@ -102,8 +186,8 @@ export const AqiService = ({ source, isRefreshing }) => {
                 {pollutants.map((item, index) => (
                   pollutantsArr.includes(item.value) &&
                   <View key={index} style={{ flexDirection: 'row', paddingTop: 10 }}>
-                    <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, paddingRight: 10 }]}>{item.value === 'pm25' ? 'PM2.5' : item.value.toUpperCase()}:</Text>
-                    <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#FFC100', paddingRight: 10 }]}>{item.v}</Text>
+                    <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, paddingRight: 15 }]}>{console.log(item.value)}{item.value === 'pm25' ? 'PM2.5' : item.value.toUpperCase()}:</Text>
+                    <Text style={[styles.title, { fontFamily: 'Prompt-Regular', fontSize: 15, color: getfontColour(item.value,item.v), paddingRight: 10 }]}>{item.v}</Text>
                   </View>
                 ))
                 }

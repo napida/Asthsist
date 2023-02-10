@@ -24,7 +24,7 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
     const colourRed = '#FF0000';
     const colourGreen = '#00CD00';
     const colourBlack = '#000000';
-    const colourGray = '#BFBFBF';
+    const colourGray = '#737171';
   
   
     function getfontColour(title, v,fingerStatus){
@@ -119,7 +119,7 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
                             title === 'Humidity' ? data.humidity.toFixed(2) + checkTitle : 
                             title === 'Temperature' ? data.temperature.toFixed(2) + checkTitle : 
                             title === 'Heart rate' ? 'undetected'  : 
-                            title === 'SpO2' ? 'undetected' : '30' + checkTitle
+                            title === 'SpO2' ? 'undetected' : '80%' + checkTitle
                             )
                     }
                     </Text>

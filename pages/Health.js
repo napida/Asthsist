@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View } from "react-native";
+import {ThingerService} from "../service/ThingerService";
 
 const DATA = [
   {
@@ -25,19 +26,41 @@ const DATA = [
   }
 ];
 
-const Item = ({ item }) => (
+const Item = ({ item, isRefresh }) => (
   <TouchableOpacity style={styles.item}>
-    <Image
-      style={{ height: 70, width: 70, marginRight: 50 }}
-      source={item.source}
-      resizeMode="contain" />
-
-    <View>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
-    </View>
+    {item.title === "AQI"
+      ? <AqiService source={item.source} isRefresh={isRefresh} />
+      :
+    //  item.title === "Temperature"
+    //   ? 
+      <ThingerService title={item.title} source={item.source} isRefresh={isRefresh} />
+      // :
+      // <View style={{ flexDirection: 'row' }}>
+      //   <Image
+      //     style={{ height: 70, width: 70, marginRight: 50 }}
+      //     source={item.source}
+      //     resizeMode="contain" />
+      //   <View>
+      //     <Text style={styles.title}>{item.title}</Text>
+      //     <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
+      //   </View>
+      // </View>
+    }
   </TouchableOpacity>
 );
+// const Item = ({ item }) => (
+//   <TouchableOpacity style={styles.item}>
+//     <Image
+//       style={{ height: 70, width: 70, marginRight: 50 }}
+//       source={item.source}
+//       resizeMode="contain" />
+
+//     <View>
+//       <Text style={styles.title}>{item.title}</Text>
+//       <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
+//     </View>
+//   </TouchableOpacity>
+// );
 
 const HealthPage = ({ navigation }) => {
   const renderItem = ({ item }) => {

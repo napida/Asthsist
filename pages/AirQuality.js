@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View, RefreshControl } from "react-native";
-import { AqiService } from "../service/AqiService";
+import {AqiService} from "../service/AqiService";
+import {ThingerService} from "../service/ThingerService";
 
 const DATA = [
   {
@@ -16,7 +17,7 @@ const DATA = [
     subtitle: '50%',
     color: '#00CD00',
     source: require('../assets/humidity.png'),
-  },
+  }, 
   {
     id: "3",
     title: "Temperature",
@@ -31,16 +32,20 @@ const Item = ({ item, isRefresh }) => (
     {item.title === "AQI"
       ? <AqiService source={item.source} isRefresh={isRefresh} />
       :
-      <View style={{ flexDirection: 'row' }}>
-        <Image
-          style={{ height: 70, width: 70, marginRight: 50 }}
-          source={item.source}
-          resizeMode="contain" />
-        <View>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
-        </View>
-      </View>
+    //  item.title === "Temperature"
+    //   ? 
+      <ThingerService title={item.title} source={item.source} isRefresh={isRefresh} />
+      // :
+      // <View style={{ flexDirection: 'row' }}>
+      //   <Image
+      //     style={{ height: 70, width: 70, marginRight: 50 }}
+      //     source={item.source}
+      //     resizeMode="contain" />
+      //   <View>
+      //     <Text style={styles.title}>{item.title}</Text>
+      //     <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
+      //   </View>
+      // </View>
     }
   </TouchableOpacity>
 );

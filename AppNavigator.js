@@ -10,6 +10,7 @@ import TrackerPage from './pages/Tracker';
 import AirQualityPage from './pages/AirQuality';
 import ListStatusPage from './pages/ListStatus';
 import Calendar from './pages/Calendar';
+import AsthmaActionPlan from './pages/AsthmaActionPlan';
 
 const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
 const HomeStack = createStackNavigator();
@@ -40,6 +41,7 @@ export const HomeStackScreen = () => {
       <HomeStack.Screen name="Inhaler" component={InhalerPage} />
       <HomeStack.Screen name="Calendar" component={Calendar} />
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
+      <HomeStack.Screen name="Asthma Action Plan" component={AsthmaActionPlan} />
     </HomeStack.Navigator>
   );
 }

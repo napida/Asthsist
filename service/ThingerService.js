@@ -103,7 +103,7 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
             <View>
                 <Text style={styles.title}>{title}</Text>
                 {isLoading ? (
-                    <ActivityIndicator />
+                    <ActivityIndicator  style ={{paddingTop:10, alignItems:'flex-start'}}/>
                 ) : (
                     <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: getfontColour(title,data,data.fingerStatus), paddingTop:5 }]}>
                         {

@@ -47,7 +47,7 @@ const menu = [
         id: '4',
         title: 'Asthma\naction plan',
         icon: require('../assets/asthma-action-plan-menu.png'),
-        page: 'Inhaler'
+        page: 'Asthma Action Plan'
     },
     {
         id: '5',

@@ -27,13 +27,13 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
     const colourGray = '#737171';
   
   
-    function getfontColour(title, v,fingerStatus){
+    function getfontColour(title, v, fingerStatus){
       if(title === 'Heart rate'){
-        if(data.fingerStatus){
-            if(v>100){
+        if(fingerStatus){
+            if(v.bpmAvg>100){
             return colourRed;
             }
-            else if(v>95){
+            else if(v.bpmAvg>95){
             return colourYellow;
             }
             else{
@@ -43,10 +43,10 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
         return colourGray;
       }
       if(title === 'Temperature'){
-        if(v>30 || v<10){
+        if(v.temperature>30 || v.temperature<10){
           return colourRed;
         }
-        else if(v>25 || v <15){
+        else if(v.temperature>25 || v.temperature <15){
           return colourYellow;
         }
         else{
@@ -54,10 +54,10 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
         }
       }
       if(title === 'Humidity'){
-        if(v>60 || v<25){
+        if(v.humidity>60 || v.humidity<25){
           return colourRed;
         }
-        else if(v>50 || v <30){
+        else if(v.humidity>50 || v.humidity <30){
           return colourYellow;
         }
         else{
@@ -65,11 +65,11 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
         }
       }
       if(title === 'SpO2'){
-        if(data.fingerStatus){
-            if(v<95){
+        if(fingerStatus){
+            if(v.spO2<95){
                 return colourRed;
               }
-              else if(v<97){
+              else if(v.spO2<97){
                 return colourYellow;
               }
               else{
@@ -112,7 +112,7 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
                             title === 'Humidity' ? data.humidity.toFixed(2) + checkTitle : 
                             title === 'Temperature' ? data.temperature.toFixed(2) + checkTitle : 
                             title === 'Heart rate' ? data.bpmAvg + checkTitle : 
-                            title === 'SpO2' ? data.spO2.toFixed(2) + checkTitle : '30' + checkTitle
+                            title === 'SpO2' ? data.spO2.toFixed(2) + checkTitle : '80%' + checkTitle
                             )
                             :
                             (

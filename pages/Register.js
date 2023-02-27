@@ -11,21 +11,27 @@ const Register = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const handleFullNameChange = (newFullName) => {
-    setFullName(newFullName);
+  const [errorMessages, setErrorMessages] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+  });
+  const handleInputChange = (field, value) => {
+    setErrorMessages(prevState => ({
+      ...prevState,
+      [field]: value.trim() === '' ? 'This field is required.' : ''
+    }));
   };
 
-  const handleEmailChange = (newEmail) => {
-    setEmail(newEmail);
-  };
-
-  const handlePasswordChange = (newPassword) => {
-    setPassword(newPassword);
-  };
   const navigation = useNavigation();
+
   const handleSignUp = async () => {
-    if (!fullName || !email || !password) {
-      console.log('Please enter all fields');
+    if (!email.trim() || !password.trim()) {
+      setErrorMessages({
+        email: email.trim() ? '' : 'This field is required.',
+        password: password.trim() ? '' : 'This field is required.',
+        fullName: fullName.trim() ? '' : 'This field is required.'
+      });
       return;
     }
     try {
@@ -40,6 +46,20 @@ const Register = () => {
     } catch (error) {
       // Signup failed, display an error message to the user
       console.log(error);
+      if (error.code === 'auth/email-already-in-use' || error.code === 'auth/invalid-email' ||
+        error.code === 'auth/weak-password') {
+        setErrorMessages({
+          email: error.code === 'auth/email-already-in-use' ?
+            'Email already in use'
+            : error.code === 'auth/invalid-email' ?
+              'Invalid email'
+              : '',
+          password: error.code === 'auth/weak-password' ? 'Password is too weak' : '',
+        });
+      } else {
+        // Other errors
+        console.log(error.message);
+      }
     }
   };
 
@@ -62,7 +82,11 @@ const Register = () => {
           }
           style={styles.textInput}
           placeholder="Full Name"
-          onChangeText={handleFullNameChange}
+          onChangeText={(value) => {
+            handleInputChange('fullName', value);
+            setFullName(value);
+          }}
+          errorMessage={errorMessages.fullName}
         />
         <Input
           leftIcon={
@@ -76,7 +100,11 @@ const Register = () => {
           containerStyle={{ margin: 0 }}
           style={styles.textInput}
           placeholder="Email"
-          onChangeText={handleEmailChange}
+          errorMessage={errorMessages.email}
+          onChangeText={(value) => {
+            handleInputChange('email', value);
+            setEmail(value);
+          }}
         />
         <Input
           leftIcon={
@@ -90,10 +118,14 @@ const Register = () => {
           style={styles.textInput}
           placeholder="Password"
           secureTextEntry={true}
-          onChangeText={handlePasswordChange}
+          errorMessage={errorMessages.password}
+          onChangeText={(value) => {
+            handleInputChange('password', value);
+            setPassword(value);
+          }}
         />
-        <View style={{flexDirection:'row', justifyContent: 'center'}}>
-        <Text>Already have an account? </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Text>Already have an account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={{ color: 'blue' }}>Login here</Text>
           </TouchableOpacity>

@@ -10,28 +10,25 @@ export default ({ items }) => {
             style={styles.wrapper}
             showsButtons={true}
             showsPagination={false}
-            >
+        >
             {items.map((item, index) => (
-                <View
-                style ={styles.graphContainer}>
-                
-                
-                <TouchableOpacity
-                    key={index}
+                <View 
+                key={item.id} style={styles.graphContainer}>
+                    <TouchableOpacity
                     // onPress={() => navigation.navigate(item.title)}
                     >
-                    <Image
-                        style = {{
-                            height: imageHeight,
-                            alignSelf: 'center',
-                            marginTop: 20
-                        }}
-                        source={item.source}
-                        resizeMode="contain"
-                    />
-                </TouchableOpacity>
-                <Text style={[styles.text, {paddingTop: 10}]}>{item.title}</Text>
-                <Text style={[styles.text, {fontFamily: 'Prompt-Light', fontSize: 15, letterSpacing: 1, color: 'gray', lineHeight: 20 }]}>{item.date}</Text>
+                        <Image
+                            style={{
+                                height: imageHeight,
+                                alignSelf: 'center',
+                                marginTop: 20
+                            }}
+                            source={item.source}
+                            resizeMode="contain"
+                        />
+                    </TouchableOpacity>
+                    <Text style={[styles.text, { paddingTop: 10 }]}>{item.title}</Text>
+                    <Text style={[styles.text, { fontFamily: 'Prompt-Light', fontSize: 15, letterSpacing: 1, color: 'gray', lineHeight: 20 }]}>{item.date}</Text>
                 </View>
             ))}
         </Swiper>

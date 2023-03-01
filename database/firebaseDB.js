@@ -9,7 +9,8 @@ const firebaseConfig = {
     storageBucket: "asthsist-510af.appspot.com",
     messagingSenderId: "357373367436",
     appId: "1:357373367436:web:f67520e6edbabc48a517a9",
-    measurementId: "G-JCFJY1VKS1"
+    measurementId: "G-JCFJY1VKS1",
+    databaseURL: "https://asthsist-510af-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);

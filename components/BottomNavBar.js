@@ -2,11 +2,8 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import {CalendarStackScreen, HomeStackScreen, ListStatusStackScreen} from '../AppNavigator';
-import SettingsScreen from '../pages/Setting'
-import CalendarScreen from '../pages/Calendar';
-import ListStatusScreen from '../pages/ListStatus';
-import HealthScreen from '../pages/Health';
+import {CalendarStackScreen, HomeStackScreen, ListStatusStackScreen, SettingStackScreen} from '../AppNavigator';
+// import SettingsScreen from '../pages/Setting'
 
 const Tab = createBottomTabNavigator();
 const backButton = () => (<Icon name="chevron-back" size={30} color='#FFF' />)
@@ -27,7 +24,7 @@ function BottomNavBar() {
                 headerShown: false,
             }}>
             <Tab.Screen
-                name='Home'
+                name='Home Tab'
                 component={HomeStackScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (<Icon
@@ -37,7 +34,7 @@ function BottomNavBar() {
                     />) 
                 }}/>
             <Tab.Screen
-                name='ListStatus'
+                name='List Status Tab'
                 component={ListStatusStackScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (<MaterialCommunityIcons
@@ -57,8 +54,8 @@ function BottomNavBar() {
                     />),
                 }} />
             <Tab.Screen
-                name='Settings'
-                component={SettingsScreen}
+                name='Settings Tab'
+                component={SettingStackScreen}
                 options={{
                     tabBarIcon: ({ color, size }) => (<Icon
                         name="settings-outline"

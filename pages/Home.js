@@ -3,6 +3,8 @@ import React from 'react'
 import SwiperCard from '../components/SwiperCard'
 import Progress from '../components/Progress.js'
 import { ScrollView } from 'react-native-gesture-handler';
+import { useRoute } from '@react-navigation/native';
+
 const imageWidth = Dimensions.get('window').width;
 const items = [
     {
@@ -58,6 +60,8 @@ const menu = [
 ];
 
 function HomePage({ navigation }) {
+const route = useRoute();
+const totalScore = route.params?.totalScore || 0;
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ flex: 3 }}>
@@ -65,8 +69,8 @@ function HomePage({ navigation }) {
             </View>
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.menuContainer}>
                 {/* <View style={styles.menuContainer}> */}
-                {menu.map((item, index) => (
-                    <View key={index} style={{marginHorizontal: 11}}>
+                {menu.map((item) => (
+                    <View key={item.id} style={{marginHorizontal: 11}}>
                         <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
                             <Image
                                 style={{ height: 70, width: 70 }}
@@ -85,7 +89,7 @@ function HomePage({ navigation }) {
                 {/* </View> */}
             </ScrollView>
             <TouchableOpacity style={styles.percentContainer}>
-                <Progress style={styles.text} value={92} />
+                <Progress style={styles.text} value={totalScore} />
                 <View>
                     <Text style={[styles.text, { paddingBottom: 10 }]}>
                         How well you control asthma

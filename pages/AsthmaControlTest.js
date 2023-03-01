@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View, Button, Alert } from "react-native";
-import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+import RadioForm from 'react-native-simple-radio-button';
 
 const question = [
   {
@@ -33,24 +33,37 @@ const options = [
 ];
 
 const AsthmaControlTest = ({ navigation }) => {
-  
-  const [chosenOption, setChosenOption] = useState(0);
 
-  const renderItem = ({ item }) => {
+  const [chosenOption, setChosenOption] = useState(new Array(question.length).fill(-1));
+  // number of elements and sets each element to -1
+  const [formKey, setFormKey] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
+
+  const SumScore = chosenOption && chosenOption.length > 0
+  ? chosenOption.reduce((sum, value) => {
+      if (value > 0) {
+        return sum + value;
+      }
+      return sum;
+    }, 0)
+  : 0;
+
+
+  const renderItem = ({ item, index }) => {
     return (
       <View style={{
         margin: 15,
         backgroundColor: '#F1EAE4',
-        padding: 20, 
+        padding: 20,
         borderRadius: 13,
         shadowOffset: { width: 4, height: 4 },
         shadowOpacity: 0.12,
         elevation: 2,
       }}>
-        {/* <Text>{chosenOption}+{prevCountRef.current}</Text> */}
         <Text style={styles.title}>{item.id}. {item.title}</Text>
         <View style={{ marginLeft: 20 }}>
           <RadioForm
+            key={formKey}
             style={{ marginTop: 21 }}
             radioStyle={{ marginBottom: 22 }}
             labelStyle={{ fontFamily: 'Prompt-Regular', fontSize: 15 }}
@@ -62,14 +75,21 @@ const AsthmaControlTest = ({ navigation }) => {
             radio_props={options}
             initial={-1} //initial value of this group
             onPress={(value) => {
-              setChosenOption(value);
+              const newSelectedOptions = [...chosenOption];
+              newSelectedOptions[index] = value;
+              setChosenOption(newSelectedOptions);
+              setTotalScore(SumScore)
             }}
           />
         </View>
       </View>
     );
   };
-
+  const clear = () => {
+    setFormKey(Math.random())
+    setTotalScore(-1)
+  }
+  // const answeredAllQuestions = selected.every((value) => value > 0);
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -77,16 +97,41 @@ const AsthmaControlTest = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         ListFooterComponent={
-          <View style={{alignItems:'center', paddingBottom:20}}>
-          <Button
+          <View style={{ alignItems: 'center', paddingBottom: 20 }}>
+            <Button
               title="Submit"
-              onPress={() => Alert.alert(
-                "Your Score is 23",
-                "WELL-CONTROLLED ASTHMA",
-                [
-                  { text: "OK", onPress: () => navigation.navigate('Home') }
-                ]
-              )}
+              onPress={() => {
+                if (chosenOption.includes(-1)) {
+                  Alert.alert("Please answer all the questions");
+                } else {
+                  Alert.alert(
+                    totalScore >= 0 && totalScore <= 25
+                      ? `Your Score is ${totalScore}`
+                      : "Please answer the question",
+                    totalScore >= 0 && totalScore <= 15
+                      ? "VERY POORLY CONTROLLED ASTHMA"
+                      : totalScore > 15 && totalScore <= 20
+                        ? "POORLY CONTROLLED ASTHMA"
+                        : totalScore > 20 && totalScore <= 25
+                          ? "WELL-CONTROLLED ASTHMA"
+                          : '',
+                    [
+                      {
+                        text: "OK", onPress: () => {
+                          navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Home', params: { totalScore: totalScore } }],
+                          }); clear();
+                        }
+                      },
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                    ]
+                  )
+                }
+              }}
             />
           </View>}
       />

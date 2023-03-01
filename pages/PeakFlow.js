@@ -2,23 +2,38 @@ import React, { useState } from 'react'
 import { Button, Text, View, StyleSheet, Dimensions, TouchableOpacity, TextInput, Alert } from 'react-native'
 import Icon from 'react-native-vector-icons/Ionicons'
 import DatePicker from 'react-native-date-picker'
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import firebaseConfig from '../database/firebaseDB';
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
+
 const PeakFlowPage = ({navigation}) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
   const getCurrentDate = () => {
-
-    var date = new Date().getDate();
-    var month = new Date().getMonth() + 1;
-    var year = new Date().getFullYear();
-
-    //Alert.alert(date + '-' + month + '-' + year);
-    // You can turn it in to your desired format
-    return month + '/' + date + '/' + year;//format: d-m-y;
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var year = date.getFullYear();
+    return month + '/' + day + '/' + year;//format: m/d/y;
   }
   const [value, onChangeText] = useState(null);
   const [note, onChangeNoteText] = useState(null);
+  
+  const savePeakFlowData = (uid) => {
+    db.ref(`/PeakFlowData/${uid}`).push({
+      time: date.toString(),
+      peakflow: value,
+      note: note
+    });
+  }
+  
   return (
     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
       <View style={styles.dateContainer}>
@@ -72,18 +87,20 @@ const PeakFlowPage = ({navigation}) => {
       <View style={{width: imageWidth/2, margin: 20}}>
       <Button
         title="Add to Calendar"
-        onPress={() => Alert.alert(
-          "Do you want to add to calendar?",
-          '',
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "OK", onPress: () => navigation.navigate('Calendar') }
-          ]
-        )}
+        onPress={() => {
+          savePeakFlowData(firebase.auth().currentUser.uid);          Alert.alert(
+            "Do you want to add to calendar?",
+            '',
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => navigation.navigate('Calendar') }
+            ]
+          );
+        }}
       />
       </View>
     </View>
@@ -93,7 +110,8 @@ const PeakFlowPage = ({navigation}) => {
 const styles = StyleSheet.create({
   textTime: {
     fontFamily: 'Prompt-Medium',
-    color: '#012250',
+    color:
+ '#012250',
     fontSize: 18,
     alignSelf: 'center',
   },

@@ -21,13 +21,13 @@ const AsthmaActivityPage = ({ navigation }) => {
     console.log(date.toDateString())
     const formatDate = (date) => {
         const options = {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
         };
         return date.toLocaleDateString('en-US', options);
-      };
+    };
     const [note, onChangeNoteText] = useState(null);
     const [activityLevel, setActivityLevel] = useState(0); // define activityLevel state variable here
 
@@ -54,6 +54,13 @@ const AsthmaActivityPage = ({ navigation }) => {
                     mode="date"
                     open={openDate}
                     date={date}
+                    onConfirm={(date) => {
+                        setOpenDate(false)
+                        setDate(date)
+                    }}
+                    onCancel={() => {
+                        setOpenDate(false)
+                    }}
                 />
                 <View style={styles.timeContainer}>
                     <Text style={styles.textTime}>TIMES</Text>
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         minWidth: 150,
         borderRadius: 5,
-        marginTop:20
+        marginTop: 20
     },
     activityLevel: {
         fontFamily: 'Prompt-Regular',

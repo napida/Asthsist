@@ -71,7 +71,7 @@ const AsthmaActivityPage = ({ navigation }) => {
                         <DatePicker mode="time" date={date} onDateChange={setDate} />
                     </View>
                 </View>
-                <Divider width={10} />
+                <Divider width={20} />
                 <View style={styles.numberOfTimes}>
                     <View style={{flex: 2}}>
                         <Text style={[styles.textTime, {textAlign: 'center'}]} >Number of Times</Text>
@@ -95,7 +95,7 @@ const AsthmaActivityPage = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{ width: imageWidth - 50, marginVertical: 20, }}>
+                <View style={{ width: imageWidth - 50, marginVertical: 20, marginTop: 30 }}>
                     <Text>Note</Text>
                     <TextInput
                         multiline
@@ -108,7 +108,7 @@ const AsthmaActivityPage = ({ navigation }) => {
                         style={styles.inputNote}
                     />
                 </View>
-                <View style={{ width: imageWidth / 2, margin: 20 }}>
+                <View style={{ width: imageWidth / 2}}>
                     <Button
                         title="Add to Calendar"
                         onPress={() => {
@@ -148,12 +148,7 @@ const styles = StyleSheet.create({
     },
     datetime: {
         backgroundColor: '#fff',
-        marginTop: 35,        
-        shadowOffset: { width: 4, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 5,
-        elevation: 4,
-        borderRadius: 8,
+        marginTop: 35,
     },
     dateContainer: {
         flexDirection: 'row',
@@ -161,16 +156,12 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingHorizontal: 30,
         width: imageWidth - 50,
+        backgroundColor: '#F5E1A4'
     },
     timeContainer: {
         width: imageWidth - 50,
         padding: 20,
-        backgroundColor: '#FFF',        
-        shadowOffset: { width: 4, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 5,
-        elevation: 4,
-        borderRadius: 8,
+        backgroundColor: '#FFF',
     },
     inputNote: {
         paddingHorizontal: 20,
@@ -186,12 +177,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row', 
         justifyContent: 'center', 
         alignItems:'center', 
-        backgroundColor: '#fff',        
-        shadowOffset: { width: 4, height: 4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 5,
-        elevation: 4,
-        borderRadius: 8, 
+        backgroundColor: '#f4f8f7',
+        borderRadius: 20,
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 4, 
     },
     activityContainer: {
         flex: 1,

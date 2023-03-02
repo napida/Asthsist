@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Button, Text, View, StyleSheet, Dimensions, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import Icon from 'react-native-vector-icons/AntDesign'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { Divider } from 'react-native-elements';
 import DatePicker from 'react-native-date-picker'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
@@ -18,7 +19,6 @@ const imageWidth = Dimensions.get('window').width;
 const AsthmaActivityPage = ({ navigation }) => {
     const [date, setDate] = useState(new Date())
     const [openDate, setOpenDate] = useState(false)
-    console.log(date.toDateString())
     const formatDate = (date) => {
         const options = {
             weekday: 'long',
@@ -43,59 +43,70 @@ const AsthmaActivityPage = ({ navigation }) => {
     return (
         <ScrollView>
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.dateContainer}>
-                    <Text style={styles.text}>{formatDate(date)}</Text>
-                    <TouchableOpacity onPress={() => setOpenDate(true)}>
-                        <Ionicons name="calendar-sharp" size={30} />
-                    </TouchableOpacity>
+                <View style={styles.datetime}>
+                    <View style={styles.dateContainer}>
+                        <Text style={styles.text}>{formatDate(date)}</Text>
+                        <TouchableOpacity onPress={() => setOpenDate(true)}>
+                            <Ionicons name="calendar-sharp" size={30} />
+                        </TouchableOpacity>
+                    </View>
+                    <DatePicker
+                        modal
+                        mode="date"
+                        open={openDate}
+                        date={date}
+                        onConfirm={(date) => {
+                            setOpenDate(false)
+                            setDate(date)
+                        }}
+                        onCancel={() => {
+                            setOpenDate(false)
+                        }}
+                    />
                 </View>
-                <DatePicker
-                    modal
-                    mode="date"
-                    open={openDate}
-                    date={date}
-                    onConfirm={(date) => {
-                        setOpenDate(false)
-                        setDate(date)
-                    }}
-                    onCancel={() => {
-                        setOpenDate(false)
-                    }}
-                />
+                <Divider width={5} />
                 <View style={styles.timeContainer}>
                     <Text style={styles.textTime}>TIMES</Text>
                     <View style={{ alignSelf: 'center', borderTopWidth: 4, borderTopColor: '#F5E1A4' }}>
                         <DatePicker mode="time" date={date} onDateChange={setDate} />
                     </View>
                 </View>
-
-                <View>
+                <Divider width={10} />
+                <View style={styles.numberOfTimes}>
+                    <View style={{flex: 2}}>
+                        <Text style={[styles.textTime, {textAlign: 'center'}]} >Number of Times</Text>
+                    </View>
+                    <View style={styles.activityContainer}>
+                        <TouchableOpacity
+                            disabled={activityLevel > 0 ? false : true}
+                            style={[styles.buttonContainer, { opacity: activityLevel <= 0 && 0.5 }]}
+                            onPress={() => {
+                                if (activityLevel > 0) {
+                                    setActivityLevel(activityLevel - 1);
+                                }
+                            }}>
+                            <Icon name="minuscircle" size={30} color='#72BFB9'/>
+                        </TouchableOpacity>
+                        <Text style={[styles.activityLevel, { width: 30, textAlign: 'center' }]}>{activityLevel}</Text>
+                        <TouchableOpacity
+                            style={[styles.buttonContainer, {paddingRight: 0}]}
+                            onPress={() => setActivityLevel(activityLevel + 1)}>
+                            <Icon name="pluscircle" size={30} color='#72BFB9'/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={{ width: imageWidth - 50, marginVertical: 20, }}>
+                    <Text>Note</Text>
                     <TextInput
                         multiline
                         numberOfLines={3}
                         editable
                         maxLength={40}
                         onChangeText={(text) => onChangeNoteText(text)}
-                        placeholder="note..."
+                        placeholder="E.g. because of exercise"
                         value={note}
                         style={styles.inputNote}
                     />
-                </View>
-                <View style={styles.activityContainer}>
-                    <TouchableOpacity
-                        disabled={activityLevel > 0 ? false : true}
-                        style={{ opacity: activityLevel <= 0 && 0.5 }}
-                        onPress={() => {
-                            if (activityLevel > 0) {
-                                setActivityLevel(activityLevel - 1);
-                            }
-                        }}>
-                        <Icon name="remove-circle-outline" size={30} />
-                    </TouchableOpacity>
-                    <Text style={styles.activityLevel}>{activityLevel}</Text>
-                    <TouchableOpacity onPress={() => setActivityLevel(activityLevel + 1)}>
-                        <Icon name="add-circle-outline" size={30} />
-                    </TouchableOpacity>
                 </View>
                 <View style={{ width: imageWidth / 2, margin: 20 }}>
                     <Button
@@ -135,68 +146,70 @@ const styles = StyleSheet.create({
         fontSize: 16,
         alignSelf: 'center'
     },
-    dateContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#F1EAE4',
+    datetime: {
+        backgroundColor: '#fff',
+        marginTop: 35,        
         shadowOffset: { width: 4, height: 4 },
         shadowOpacity: 0.12,
         shadowRadius: 5,
         elevation: 4,
         borderRadius: 8,
+    },
+    dateContainer: {
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        marginVertical: 35,
         padding: 10,
         paddingHorizontal: 30,
-        width: imageWidth - 50
+        width: imageWidth - 50,
     },
     timeContainer: {
         width: imageWidth - 50,
         padding: 20,
-        backgroundColor: '#FFF',
-        marginBottom: 30,
+        backgroundColor: '#FFF',        
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 5,
+        elevation: 4,
+        borderRadius: 8,
     },
     inputNote: {
         paddingHorizontal: 20,
-        width: imageWidth - 80,
-        borderWidth: 1,
+        paddingTop: 0,
+        borderWidth: 2,
+        borderRadius: 8,
         borderColor: '#D9D9D9',
-        marginTop: 20
+        marginTop: 10,
     },
-    input: {
-        // borderWidth: 1,
-        height: 40,
-        // margin: 12,
-        paddingHorizontal: 20,
-        width: imageWidth - 150,
+    numberOfTimes: {
+        paddingVertical:10, 
+        width: imageWidth-50, 
+        flexDirection: 'row', 
+        justifyContent: 'center', 
+        alignItems:'center', 
+        backgroundColor: '#fff',        
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 5,
+        elevation: 4,
+        borderRadius: 8, 
     },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#F5E1A4',
-        marginHorizontal: 10,
-        borderRadius: 5,
-        padding: 5,
-    },
-    prefix: {
-        paddingHorizontal: 10,
-        fontWeight: 'bold',
-        color: 'black'
-    }
-    ,
     activityContainer: {
+        flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 150,
+        justifyContent: 'flex-end',
         borderRadius: 5,
-        marginTop: 20
+        marginHorizontal: 30,
+        marginVertical: 10,
+    },
+    buttonContainer: {
+        paddingHorizontal: 10,
     },
     activityLevel: {
         fontFamily: 'Prompt-Regular',
         color: '#012250',
         fontSize: 20,
-        marginHorizontal: 20,
-    }
+    },
+
 })
 
 export default AsthmaActivityPage;

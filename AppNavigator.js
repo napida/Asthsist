@@ -42,8 +42,8 @@ export const HomeStackScreen = () => {
           headerRightContainerStyle: { paddingHorizontal: 12 },
         }}
       />
-      <HomeStack.Screen name="PeakFlow" component={PeakFlowPage} />
-      <HomeStack.Screen name="AsthmaActivity" component={AsthmaActivityPage} />
+      <HomeStack.Screen name="Peak Flow" component={PeakFlowPage} />
+      <HomeStack.Screen name="Asthma Activity" component={AsthmaActivityPage} />
       <HomeStack.Screen name="Inhaler" component={InhalerPage} />
       <HomeStack.Screen name="Calendar" component={Calendar} />
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
@@ -67,7 +67,7 @@ export const ListStatusStackScreen = () => {
       <ListStatusStack.Screen name="Tracker" component={TrackerPage} />
       <ListStatusStack.Screen name="PeakFlow" component={PeakFlowPage} />
       <ListStatusStack.Screen name="Calendar" component={Calendar} />
-      <ListStatusStack.Screen name="AsthmaActivity" component={AsthmaActivityPage} />
+      <ListStatusStack.Screen name="Asthma Activity" component={AsthmaActivityPage} />
       <ListStatusStack.Screen name="Inhaler" component={InhalerPage} />
       <ListStatusStack.Screen name="Medicine" component={MedicinePage} />
     </ListStatusStack.Navigator>

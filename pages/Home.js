@@ -43,7 +43,7 @@ const menu = [
         id: '3',
         title: 'Asthma\nactivity',
         icon: require('../assets/asthma-attack-menu.png'),
-        page: 'AsthmaActivity'
+        page: 'Asthma Activity'
     },
     {
         id: '4',

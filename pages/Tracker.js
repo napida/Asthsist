@@ -29,7 +29,7 @@ const DATA = [
 ];
 
 const Item = ({ navigation, item }) => (
-  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate(item.title.replace(/\s/g, ''))}>
+  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate(item.title)}>
     <Image
       style={{ height: 70, width: 70, marginRight: 50 }}
       source={item.source}
@@ -37,7 +37,6 @@ const Item = ({ navigation, item }) => (
 
     <View>
       <Text style={styles.title}>{item.title}</Text>
-      {/* <Text style={[styles.title, {fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color}]}>{item.subtitle}</Text> */}
     </View>
   </TouchableOpacity>
 );

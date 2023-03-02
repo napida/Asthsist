@@ -31,7 +31,7 @@ const menu = [
         id: '1',
         title: 'Peak Flow',
         icon: require('../assets/peak-flow-meter-menu.png'),
-        page: 'PeakFlow'
+        page: 'Peak Flow'
     },
     {
         id: '2',

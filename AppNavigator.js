@@ -65,7 +65,7 @@ export const ListStatusStackScreen = () => {
       <ListStatusStack.Screen name="Health" component={HealthPage} />
       <ListStatusStack.Screen name="Air Quality" component={AirQualityPage} />
       <ListStatusStack.Screen name="Tracker" component={TrackerPage} />
-      <ListStatusStack.Screen name="PeakFlow" component={PeakFlowPage} />
+      <ListStatusStack.Screen name="Peak Flow" component={PeakFlowPage} />
       <ListStatusStack.Screen name="Calendar" component={Calendar} />
       <ListStatusStack.Screen name="Asthma Activity" component={AsthmaActivityPage} />
       <ListStatusStack.Screen name="Inhaler" component={InhalerPage} />

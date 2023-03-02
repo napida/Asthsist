@@ -7,6 +7,8 @@ import { Input } from 'react-native-elements';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+
+
 const Register = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -40,7 +42,6 @@ const Register = () => {
       await currentUser.updateProfile({
         displayName: fullName,
       });
-      Alert.alert('Registration Successful', `Welcome ${fullName}!`);
       // navigation.navigate('Login');
       // Signup successful, do something here like redirect the user to a new page
     } catch (error) {
@@ -130,7 +131,10 @@ const Register = () => {
             <Text style={{ color: 'blue' }}>Login here</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <TouchableOpacity style={styles.button} onPress={() => {
+          handleSignUp();
+          navigation.navigate('RegisterSuccessful');
+        }}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
 

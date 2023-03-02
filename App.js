@@ -25,7 +25,7 @@ import 'firebase/compat/firestore';
 import Login from './pages/Login';
 import firebaseConfig from './database/firebaseDB'
 import Register from './pages/Register';
-
+import RegisterSuccessfulPage from './pages/RegisterSuccessful';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -59,6 +59,7 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
           <Stack.Screen name="Register" component={Register} options={{headerShown:false}}/>
+          <Stack.Screen name="RegisterSuccessful" component={RegisterSuccessfulPage} />
         </Stack.Navigator>
       )}
     </NavigationContainer>

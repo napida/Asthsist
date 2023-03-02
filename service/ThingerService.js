@@ -80,7 +80,6 @@ export const ThingerService = ({ title, source, isRefreshing }) => {
       }
       return colourBlack
     }
-    console.log("kar", data);
     useEffect(() => {
         const timer = setTimeout(() => {
             getThinger();

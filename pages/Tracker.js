@@ -10,7 +10,7 @@ const DATA = [
   },
   {
     id: "2",
-    title: "Peak flow",
+    title: "Peak Flow",
     color: '#00CD00',
     source: require('../assets/peak-flow-meter.png'),
   },
@@ -23,7 +23,7 @@ const DATA = [
 ];
 
 const Item = ({ navigation, item }) => (
-  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('PeakFlow')}>
+  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate(item.title.replace(/\s/g, ''))}>
     <Image
       style={{ height: 70, width: 70, marginRight: 50 }}
       source={item.source}

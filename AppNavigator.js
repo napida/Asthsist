@@ -11,6 +11,8 @@ import AirQualityPage from './pages/AirQuality';
 import ListStatusPage from './pages/ListStatus';
 import Calendar from './pages/Calendar';
 import AsthmaActionPlan from './pages/AsthmaActionPlan';
+import AsthmaActivityPage from './pages/AsthmaActivity';
+import Setting from './pages/Setting';
 
 const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
 const HomeStack = createStackNavigator();
@@ -21,6 +23,7 @@ const headerStyle = {
 }
 export const HomeStackScreen = () => {
   return (
+    
     <HomeStack.Navigator screenOptions={headerStyle}>
       <HomeStack.Screen name='Asthsist' component={HomePage}
         options={{
@@ -38,10 +41,12 @@ export const HomeStackScreen = () => {
         }}
       />
       <HomeStack.Screen name="PeakFlow" component={PeakFlowPage} />
+      <HomeStack.Screen name="AsthmaActivity" component={AsthmaActivityPage} />
       <HomeStack.Screen name="Inhaler" component={InhalerPage} />
       <HomeStack.Screen name="Calendar" component={Calendar} />
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
       <HomeStack.Screen name="Asthma Action Plan" component={AsthmaActionPlan} />
+      <HomeStack.Screen name="Home" component={HomePage} />
     </HomeStack.Navigator>
   );
 }
@@ -55,6 +60,8 @@ export const ListStatusStackScreen = () => {
       <ListStatusStack.Screen name="Tracker" component={TrackerPage} />
       <ListStatusStack.Screen name="PeakFlow" component={PeakFlowPage} />
       <ListStatusStack.Screen name="Calendar" component={Calendar} />
+      <ListStatusStack.Screen name="AsthmaActivity" component={AsthmaActivityPage} />
+      <ListStatusStack.Screen name="Inhaler" component={InhalerPage} />
     </ListStatusStack.Navigator>
   );
 }
@@ -66,5 +73,13 @@ export const CalendarStackScreen = () => {
       <CalendarStack.Screen name="Calendar" component={Calendar} />
       <CalendarStack.Screen name="Tracker" component={TrackerPage} />
     </CalendarStack.Navigator>
+  );
+}
+const SettingStack = createStackNavigator();
+export const SettingStackScreen = () => {
+  return (
+    <SettingStack.Navigator screenOptions={headerStyle}>
+      <SettingStack.Screen name="Setting" component={Setting} />
+    </SettingStack.Navigator>
   );
 }

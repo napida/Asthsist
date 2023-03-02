@@ -70,7 +70,7 @@ const AsthmaActivityPage = ({ navigation }) => {
                     <DatePicker mode="time" date={date} onDateChange={setDate} />
                 </View>
             </View>
-            <View style={styles.activityContainer}>0
+            <View style={styles.activityContainer}>
                 <TouchableOpacity onPress={() => {
                     if (activityLevel > 0) {
                         setActivityLevel(activityLevel - 1);

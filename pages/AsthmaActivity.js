@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Text, View, StyleSheet, Dimensions, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { Button, Text, View, StyleSheet, Dimensions, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import DatePicker from 'react-native-date-picker'
@@ -14,23 +14,20 @@ if (!firebase.apps.length) {
 const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
-const getPeakFlowData = (uid) => {
-    db.ref(`/PeakFlowData/${uid}`).on('value', (snapshot) => {
-      const peakFlowData = snapshot.val();
-      console.log(peakFlowData); // Or do something else with the data
-    });
-  }
-  
+
 const AsthmaActivityPage = ({ navigation }) => {
     const [date, setDate] = useState(new Date())
     const [openDate, setOpenDate] = useState(false)
-    const getCurrentDate = () => {
-        var month = date.getMonth() + 1;
-        var day = date.getDate();
-        var year = date.getFullYear();
-        return month + '/' + day + '/' + year;//format: m/d/y;
-    }
-    const [value, onChangeText] = useState(null);
+    console.log(date.toDateString())
+    const formatDate = (date) => {
+        const options = {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        };
+        return date.toLocaleDateString('en-US', options);
+    };
     const [note, onChangeNoteText] = useState(null);
     const [activityLevel, setActivityLevel] = useState(0); // define activityLevel state variable here
 
@@ -44,79 +41,84 @@ const AsthmaActivityPage = ({ navigation }) => {
     }
 
     return (
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-            <View style={styles.dateContainer}>
-                <Text style={styles.text}>{getCurrentDate()}</Text>
-                <TouchableOpacity onPress={() => setOpenDate(true)}>
-                    <Ionicons name="calendar-sharp" size={30} />
-                </TouchableOpacity>
-            </View>
-            <DatePicker
-                modal
-                mode="date"
-                open={openDate}
-                date={date}
-                onConfirm={(date) => {
-                    setOpenDate(false)
-                    setDate(date)
-                }}
-                onCancel={() => {
-                    setOpenDate(false)
-                }}
-            />
-            <View style={styles.timeContainer}>
-                <Text style={styles.textTime}>TIMES</Text>
-                <View style={{ alignSelf: 'center', borderTopWidth: 4, borderTopColor: '#F5E1A4' }}>
-                    <DatePicker mode="time" date={date} onDateChange={setDate} />
+        <ScrollView>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <View style={styles.dateContainer}>
+                    <Text style={styles.text}>{formatDate(date)}</Text>
+                    <TouchableOpacity onPress={() => setOpenDate(true)}>
+                        <Ionicons name="calendar-sharp" size={30} />
+                    </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.activityContainer}>
-                <TouchableOpacity onPress={() => {
-                    if (activityLevel > 0) {
-                        setActivityLevel(activityLevel - 1);
-                    }
-                }}>
-                    <Icon name="remove-circle-outline" size={30} />
-                </TouchableOpacity>
-                <Text style={styles.activityLevel}>{activityLevel}</Text>
-                <TouchableOpacity onPress={() => setActivityLevel(activityLevel + 1)}>
-                    <Icon name="add-circle-outline" size={30} />
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <TextInput
-                    multiline
-                    numberOfLines={4}
-                    editable
-                    maxLength={40}
-                    onChangeText={(text) => onChangeNoteText(text)}
-                    placeholder="note..."
-                    value={note}
-                    style={styles.inputNote}
-                />
-            </View>
-            <View style={{ width: imageWidth / 2, margin: 20 }}>
-                <Button
-                    title="Add to Calendar"
-                    onPress={() => {
-                        saveAsthmaActivityData(firebase.auth().currentUser.uid);
-                        Alert.alert(
-                            "Do you want to add to calendar?",
-                            '',
-                            [
-                                {
-                                    text: "Cancel",
-                                    onPress: () => console.log("Cancel Pressed"),
-                                    style: "cancel"
-                                },
-                                { text: "OK", onPress: () => navigation.navigate('Calendar') }
-                            ]
-                        );
+                <DatePicker
+                    modal
+                    mode="date"
+                    open={openDate}
+                    date={date}
+                    onConfirm={(date) => {
+                        setOpenDate(false)
+                        setDate(date)
+                    }}
+                    onCancel={() => {
+                        setOpenDate(false)
                     }}
                 />
+                <View style={styles.timeContainer}>
+                    <Text style={styles.textTime}>TIMES</Text>
+                    <View style={{ alignSelf: 'center', borderTopWidth: 4, borderTopColor: '#F5E1A4' }}>
+                        <DatePicker mode="time" date={date} onDateChange={setDate} />
+                    </View>
+                </View>
+
+                <View>
+                    <TextInput
+                        multiline
+                        numberOfLines={3}
+                        editable
+                        maxLength={40}
+                        onChangeText={(text) => onChangeNoteText(text)}
+                        placeholder="note..."
+                        value={note}
+                        style={styles.inputNote}
+                    />
+                </View>
+                <View style={styles.activityContainer}>
+                    <TouchableOpacity
+                        disabled={activityLevel > 0 ? false : true}
+                        style={{ opacity: activityLevel <= 0 && 0.5 }}
+                        onPress={() => {
+                            if (activityLevel > 0) {
+                                setActivityLevel(activityLevel - 1);
+                            }
+                        }}>
+                        <Icon name="remove-circle-outline" size={30} />
+                    </TouchableOpacity>
+                    <Text style={styles.activityLevel}>{activityLevel}</Text>
+                    <TouchableOpacity onPress={() => setActivityLevel(activityLevel + 1)}>
+                        <Icon name="add-circle-outline" size={30} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ width: imageWidth / 2, margin: 20 }}>
+                    <Button
+                        title="Add to Calendar"
+                        onPress={() => {
+                            saveAsthmaActivityData(firebase.auth().currentUser.uid);
+                            Alert.alert(
+                                "Do you want to add to calendar?",
+                                '',
+                                [
+                                    {
+                                        text: "Cancel",
+                                        onPress: () => console.log("Cancel Pressed"),
+                                        style: "cancel"
+                                    },
+                                    { text: "OK", onPress: () => navigation.navigate('Calendar') }
+                                ]
+                            );
+                        }}
+                    />
+                </View>
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -187,6 +189,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         minWidth: 150,
         borderRadius: 5,
+        marginTop: 20
     },
     activityLevel: {
         fontFamily: 'Prompt-Regular',

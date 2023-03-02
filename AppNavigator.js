@@ -13,6 +13,8 @@ import Calendar from './pages/Calendar';
 import AsthmaActionPlan from './pages/AsthmaActionPlan';
 import AsthmaActivityPage from './pages/AsthmaActivity';
 import Setting from './pages/Setting';
+import MedicinePage from './pages/Medicine';
+import RegisterSuccessfulPage from './pages/RegisterSuccessful'; 
 
 const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
 const HomeStack = createStackNavigator();
@@ -47,6 +49,11 @@ export const HomeStackScreen = () => {
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
       <HomeStack.Screen name="Asthma Action Plan" component={AsthmaActionPlan} />
       <HomeStack.Screen name="Home" component={HomePage} />
+      <HomeStack.Screen
+        name="RegisterSuccessful" // add the RegisterSuccessful screen
+        component={RegisterSuccessfulPage}
+        options={{ headerShown: false }} // hide the header for the RegisterSuccessful screen
+      />
     </HomeStack.Navigator>
   );
 }
@@ -62,6 +69,7 @@ export const ListStatusStackScreen = () => {
       <ListStatusStack.Screen name="Calendar" component={Calendar} />
       <ListStatusStack.Screen name="AsthmaActivity" component={AsthmaActivityPage} />
       <ListStatusStack.Screen name="Inhaler" component={InhalerPage} />
+      <ListStatusStack.Screen name="Medicine" component={MedicinePage} />
     </ListStatusStack.Navigator>
   );
 }

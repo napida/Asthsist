@@ -10,16 +10,22 @@ const DATA = [
   },
   {
     id: "2",
+    title: "Medicine",
+    color: '#00CD00',
+    source: require('../assets/medicine.png'),
+  },
+  {
+    id: "3",
     title: "Peak Flow",
     color: '#00CD00',
     source: require('../assets/peak-flow-meter.png'),
   },
   {
-    id: "3",
+    id: "4",
     title: "Asthma Activity",
     color: '#00CD00',
     source: require('../assets/asthma-attack.png'),
-  }
+  },
 ];
 
 const Item = ({ navigation, item }) => (

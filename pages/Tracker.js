@@ -5,31 +5,31 @@ const DATA = [
   {
     id: "1",
     title: "Inhaler",
-    color: '#FFC100',
+    color: '#A5E1E9',
     source: require('../assets/inhaler.png'),
   },
   {
     id: "2",
     title: "Medicine",
-    color: '#00CD00',
+    color: '#F9CADC',
     source: require('../assets/medicine.png'),
   },
   {
     id: "3",
     title: "Peak Flow",
-    color: '#00CD00',
+    color: '#C4BDF3',
     source: require('../assets/peak-flow-meter.png'),
   },
   {
     id: "4",
     title: "Asthma Activity",
-    color: '#00CD00',
+    color: '#FBE8A4',
     source: require('../assets/asthma-attack.png'),
   },
 ];
 
 const Item = ({ navigation, item }) => (
-  <TouchableOpacity style={styles.item} onPress={() => navigation.navigate(item.title)}>
+  <TouchableOpacity style={[styles.item, {backgroundColor: item.color}]} onPress={() => navigation.navigate(item.title)}>
     <Image
       style={{ height: 70, width: 70, marginRight: 50 }}
       source={item.source}
@@ -57,6 +57,8 @@ const TrackerPage = ({ navigation }) => {
         data={DATA}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingVertical: 20}}
       />
     </SafeAreaView>
   );
@@ -65,7 +67,6 @@ const TrackerPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
     flexDirection: 'row',
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
     borderRadius: 8,
-    backgroundColor: '#D9E6D5',
+    // backgroundColor: '#D9E6D5',
     alignItems: 'center'
   },
   title: {

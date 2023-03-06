@@ -34,7 +34,7 @@ const AsthmaActivityPage = ({ navigation }) => {
 
     const saveAsthmaActivityData = (uid) => {
         db.ref(`/AsthmaActivityData/${uid}`).push({
-            time: date.toString(),
+            time: date.toISOString(),
             activity: activityLevel,
             note: note
         });

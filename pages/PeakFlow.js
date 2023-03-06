@@ -32,7 +32,7 @@ const PeakFlowPage = ({ navigation }) => {
 
   const savePeakFlowData = (uid) => {
     db.ref(`/PeakFlowData/${uid}`).push({
-      time: date.toString(),
+      time: date.toISOString(),
       peakflow: value,
       note: note
     });

@@ -59,7 +59,7 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
           <Stack.Screen name="Register" component={Register} options={{headerShown:false}}/>
-          <Stack.Screen name="RegisterSuccessful" component={RegisterSuccessfulPage} />
+          <Stack.Screen name="RegisterSuccessful" component={RegisterSuccessfulPage} options={{headerShown:false}}/>
         </Stack.Navigator>
       )}
     </NavigationContainer>

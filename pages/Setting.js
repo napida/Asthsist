@@ -5,7 +5,7 @@ import { Divider } from 'react-native-elements';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import Login from './Login';
 
-export default Setting = () => {
+export default Setting = ({ navigation }) => {
   const user = firebase.auth().currentUser;
   const handleSignOut = async () => {
     try {
@@ -25,7 +25,7 @@ export default Setting = () => {
               <Text>You are signed in as {user.email}</Text>
             </View>            
             <Divider width={10} />
-            <TouchableOpacity style={{marginVertical: 10 }}>
+            <TouchableOpacity onPress={ () => navigation.navigate('Profile')} style={{marginVertical: 10 }}>
               <View style={{ paddingHorizontal: 25, flexDirection: 'row'}}>
                 <FeatherIcons
                   name="user"

@@ -33,10 +33,11 @@ const AsthmaActivityPage = ({ navigation }) => {
 
 
     const saveAsthmaActivityData = (uid) => {
-        db.ref(`/AsthmaActivityData/${uid}`).push({
-            time: date.toISOString(),
+        db.ref(`/AsthmaActivityData/${firebase.auth().currentUser.uid}`).push({
+            time: date.toString(),
             activity: activityLevel,
-            note: note
+            note: note,
+            userUID: firebase.auth().currentUser.uid 
         });
     }
 

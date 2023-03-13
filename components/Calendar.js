@@ -6,172 +6,312 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
 import moment from 'moment';
-
+import 'firebase/compat/auth';
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
 
 const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 const timeToString = (time) => {
-    const date = new Date(time);
-    return date.toISOString().split('T')[0];
+  const date = new Date(time);
+  return date.toISOString().split('T')[0];
 };
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const localDate = date.toLocaleDateString('en-US', { timeZone: 'Asia/Bangkok' });
+  const [month, day, year] = localDate.split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
 
 const peakFlow = { key: 'peakFlow', color: 'red', selectedDotColor: 'red' };
 const inhaler = { key: 'inhaler', color: 'blue', selectedDotColor: 'blue' };
 const activity = { key: 'activity', color: 'green', selectedDotColor: 'green' };
+const medicine = { key: 'medicine', color: 'orange', selectedDotColor: 'orange' };
 
 const CalendarPage = () => {
-    const [items, setItems] = useState({});
-    const [isLoading, setIsLoading] = useState(true);
-    const markedDates = Object.keys(items).reduce((obj, key) => {
-        obj[key] = { dots: [] };
-        items[key].forEach((item) => {
-            if (item.peakflow) {
-                obj[key].dots.push(peakFlow);
-            }
-            if (item.inhaler) {
-                obj[key].dots.push(inhaler);
-            }
-            if (item.note) {
-                obj[key].dots.push(activity);
-            }
-        });
-        return obj;
-    }, {});
+  const [items, setItems] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const markedDates = Object.keys(items).reduce((obj, key) => {
+    obj[key] = { dots: [] };
+    let hasPeakFlow = false;
+    let hasInhaler = false;
+    let hasActivity = false;
+    let hasMedicine = false;
+    items[key].forEach((item) => {
+      const formattedDate = moment(item.date, 'MM/DD/YYYY').format('YYYY-MM-DD');
+      if (formattedDate === key && item.peakflow && !hasPeakFlow) {
+        obj[key].dots.push(peakFlow);
+        hasPeakFlow = true;
+      }
+      if (formattedDate === key && item.inhaler && !hasInhaler) {
+        obj[key].dots.push(inhaler);
+        hasInhaler = true;
+      }
+      if (formattedDate === key && item.activity && !hasActivity) {
+        obj[key].dots.push(activity);
+        hasActivity = true;
+      }
+      if (formattedDate === key && item.medicine && !hasMedicine) {
+        obj[key].dots.push(medicine);
+        hasMedicine = true;
+      }
+    });
+    return obj;
+  }, {});
 
-    const loadItems = async (day) => {
-        console.log("Loading items...");
-        const start = new Date(day.timestamp).setHours(0, 0, 0, 0);
-        const end = new Date(day.timestamp).setHours(23, 59, 59, 999);
-        const uid = firebase.auth().currentUser.uid;
-        console.log(uid);
-        console.log("db", db);
-        console.log("db.ref", db.ref(`/PeakFlowData/${uid}`));
-        try {
-          const snapshotPeakFlow = await db.ref('PeakFlowData/').once('value');
-          console.log('snapshotPeakFlow', snapshotPeakFlow);
-          const peakFlowData = snapshotPeakFlow.val();
+  const loadItems = async (day) => {
+    const start = new Date(day.timestamp).setHours(0, 0, 0, 0);
+    const end = new Date(day.timestamp).setHours(23, 59, 59, 999);
+    const uid = firebase.auth().currentUser.uid;
+    if (items[timeToString(start)]) {
+      return;
+    }
 
-          const snapshotAsthmaActivity = await db.ref('AsthmaActivityData/').once('value');
-          console.log('snapshotAsthmaActivity', snapshotAsthmaActivity);
-          const asthmaActivityData = snapshotAsthmaActivity.val();
-          
-          if (peakFlowData === null && asthmaActivityData === null) {
-            console.log("No events found");
-            setIsLoading(false);
-            return;
-          }
-          console.log('peakFlowData', peakFlowData);
-          console.log('asthmaActivityData', asthmaActivityData);
-          const items = {};
-          Object.entries(peakFlowData).forEach(([parentKey, parentEvent]) => {
+    try {
+      const snapshotPeakFlow = await db.ref('PeakFlowData/').once('value');
+      const peakFlowData = snapshotPeakFlow.val();
+
+      const snapshotAsthmaActivity = await db.ref('AsthmaActivityData/').once('value');
+      const asthmaActivityData = snapshotAsthmaActivity.val();
+
+      const snapshotInhaler = await db.ref('Inhaler/').once('value');
+      const inhalerData = snapshotInhaler.val();
+
+      const snapshotMedicine = await db.ref('Medicine/').once('value');
+      const medicineData = snapshotMedicine.val();
+
+      if (peakFlowData === null && asthmaActivityData === null && inhalerData === null && medicineData ===null) {
+        setIsLoading(false);
+        return;
+      }
+
+      const items = {};
+      if (peakFlowData !== null) {
+        Object.entries(peakFlowData).forEach(([parentKey, parentEvent]) => {
+          if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
-              console.log("peakflow event.time",event.time);
-              const date = moment(event.time, 'YYYY-MM-DDTHH:mm:ss.SSSZ').toDate();
-              const strTime = timeToString(date.getTime());
+              const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
+              const strdate = event.time;
+              const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
               }
               items[strTime].push({
-                key: key,
+                key: Date.now() + '_' + Math.random().toString(36).substring(2, 15),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 peakflow: event.peakflow,
                 note: event.note
               });
             });
-          });
-          Object.entries(asthmaActivityData).forEach(([parentKey, parentEvent]) => {
+          }
+        });
+      }
+      if (asthmaActivityData !== null) {
+        Object.entries(asthmaActivityData).forEach(([parentKey, parentEvent]) => {
+          if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
-              console.log("activity event.time",event.time);
-              const date = moment(event.time, 'YYYY-MM-DDTHH:mm:ss.SSSZ').toDate();
-              const strTime = timeToString(date.getTime());
+              const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
+              const strdate = event.time;
+              const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
               }
               items[strTime].push({
-                key: key,
+                key: Date.now() + '_' + Math.random().toString(36).substring(2, 16),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 activity: event.activity,
                 note: event.note
               });
             });
-          });
-          setItems(items);
-          setIsLoading(false);
-          console.log("Data loaded:", items);
-        } catch (error) {
-          console.error("Error loading items:", error);
-        }
-      };
-      
-    
+          }
+        });
+      }
+      if (inhalerData !== null) {
+        Object.entries(inhalerData).forEach(([parentKey, parentEvent]) => {
+          if (parentKey === uid) {
+            Object.entries(parentEvent).forEach(([key, event]) => {
+              const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
+              const strdate = event.time;
+              const strTime = formatDate(event.time);
+              if (!items[strTime]) {
+                items[strTime] = [];
+              }
+              items[strTime].push({
+                key: Date.now() + '_' + Math.random().toString(36).substring(2, 17),
+                date: date.toLocaleDateString(),
+                time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                inhaler: event.usage,
+                name: event.name,
+                note: event.note
+              });
+            });
+          }
+        });
+      }
+      if (medicineData !== null) {
+        Object.entries(medicineData).forEach(([parentKey, parentEvent]) => {
+          if (parentKey === uid) {
+            Object.entries(parentEvent).forEach(([key, event]) => {
+              const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
+              const strdate = event.time;
+              const strTime = formatDate(event.time);
+              if (!items[strTime]) {
+                items[strTime] = [];
+              }
+              items[strTime].push({
+                key: Date.now() + '_' + Math.random().toString(36).substring(2, 18),
+                date: date.toLocaleDateString(),
+                time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                medicine: event.usage,
+                name: event.name,
+                note: event.note
+              });
+            });
+          }
+        });
+      }
+      setItems(items);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error loading items:", error);
+    }
+  };
 
-    useEffect(() => {
-        loadItems({ timestamp: Date.now() });
-    }, []);
 
-    const renderItem = (item) => {
-        return (
-            <TouchableOpacity onPress={() => Alert.alert(item.name)} style={[styles.item, {borderLeftColor: item.borderLeftColor}]}>
-            <Card>
-              <Card.Content>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <Text>{item.name}</Text>
-                </View>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-        );
-    };
 
-    return (
-        <View style={styles.container}>
-            {isLoading ? (
-                <ActivityIndicator size="large" color="blue" />
-            ) : (
-                <Agenda
-                    items={items}
-                    loadItemsForMonth={loadItems}
-                    renderItem={renderItem}
-                    markingType={'multi-dot'}
-                    markedDates={markedDates}
-                    theme={{
-                        agendaDayTextColor: 'black',
-                        agendaDayNumColor: 'black',
-                        agendaTodayColor: 'red',
-                        agendaKnobColor: '#F5E1A4',
-                        selectedDayBackgroundColor: '#F1EAE4',
-                        selectedDayTextColor: '#012250',
-                    }}
-                />
-            )}
-            <StatusBar />
-        </View>
-    );
+  useEffect(() => {
+    loadItems({ timestamp: Date.now() });
+  }, []);
+
+  const renderItem = (item) => {
+    let cards = [];
+    if (item.peakflow) {
+      cards.push(
+        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: peakFlow.color }]}>
+          <Card>
+            <Card.Content>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text>{item.time}  Peakflow</Text>
+                <Text>{item.peakflow} L/min</Text>
+              </View>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      );
+    }
+    if (item.inhaler) {
+      cards.push(
+        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: inhaler.color }]}>
+          <Card>
+            <Card.Content>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text>{item.time}  Inhaler</Text>
+                <Text>{item.name}  {item.inhaler}</Text>
+              </View>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      );
+    }
+    if (item.medicine) {
+      cards.push(
+        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: medicine.color }]}>
+          <Card>
+            <Card.Content>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text>{item.time}  Medicine</Text>
+                <Text>{item.name}  {item.medicine}</Text>
+              </View>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      );
+    }
+    if (item.activity) {
+      cards.push(
+        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: activity.color }]}>
+          <Card>
+            <Card.Content>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}>
+                <Text>{item.time}  Activity</Text>
+                <Text>{item.activity}</Text>
+              </View>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      );
+    }
+    if (item === null || item.length === 0) {
+      return <View><Text>No events</Text></View>;
+    }
+    return cards.length > 0 ? <View>{cards}</View> : <View><Text>No events</Text></View>;
+  };
+
+
+
+  return (
+    <View style={styles.container}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="blue" />
+      ) : (
+        <Agenda
+          items={items}
+          loadItemsForMonth={loadItems}
+          renderItem={renderItem}
+          markingType={'multi-dot'}
+          markedDates={markedDates}
+          theme={{
+            agendaDayTextColor: 'black',
+            agendaDayNumColor: 'black',
+            agendaTodayColor: 'red',
+            agendaKnobColor: '#F5E1A4',
+            selectedDayBackgroundColor: '#F1EAE4',
+            selectedDayTextColor: '#012250',
+          }}
+        />
+      )}
+      <StatusBar />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: imageWidth,
-    },
-    item: {
-        borderRadius: 5,
-        // paddingTop: 20,
-        marginRight: 10,
-        marginTop: 17 + 20,
-        borderLeftWidth: 4,
-    },
+  container: {
+    flex: 1,
+    width: imageWidth,
+  },
+  item: {
+    borderRadius: 5,
+    // paddingTop: 20,
+    marginRight: 10,
+    marginTop: 17 + 20,
+    borderLeftWidth: 4,
+  },
 });
 
 export default CalendarPage;

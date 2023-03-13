@@ -31,10 +31,12 @@ const PeakFlowPage = ({ navigation }) => {
   const [note, onChangeNoteText] = useState(null);
 
   const savePeakFlowData = (uid) => {
-    db.ref(`/PeakFlowData/${uid}`).push({
-      time: date.toISOString(),
+    db.ref(`/PeakFlowData/${firebase.auth().currentUser.uid }`).push({
+      time: date.toString(),
       peakflow: value,
-      note: note
+      note: note,
+      timeforref: date.toISOString(),
+      userUID: firebase.auth().currentUser.uid 
     });
   }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, TextInput, Button, Alert } from 'react-native'
 import DatePicker from 'react-native-date-picker'
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -24,6 +24,17 @@ const Profile = () => {
         height: '',
         weight: '',
     });
+    useEffect(() => {
+        const userRef = db.ref('users/' + user.uid);
+        userRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                setUserInfo(data);
+            }
+        });
+    }, []);
+
+
     const [name, setName] = useState(userInfo.name);
     const [DOB, setDOB] = useState(userInfo.DOB);
     const [phone, setPhone] = useState(userInfo.phone);
@@ -32,8 +43,8 @@ const Profile = () => {
     const [weight, setWeight] = useState(userInfo.weight);
     const [editingEnabled, setEditingEnabled] = useState(false);
     const genderOption = [
-        { label: 'Male', value: 1 },
-        { label: 'Female', value: 2 },
+        { label: 'Male', value: 'Male' },
+        { label: 'Female', value: 'Female' },
     ];
 
     const [date, setDate] = useState(new Date())
@@ -49,13 +60,41 @@ const Profile = () => {
         setEditingEnabled(true);
     };
 
+    const uploadData = () => {
+        const updatedData = { name, DOB: date.toLocaleDateString(), phone, gender, height, weight };
+        //console.log("updatedData", updatedData);
+    
+        const updateProfile = () => {
+          user.updateProfile({
+            displayName: name,
+          })
+          .then(() => {
+            //console.log('User display name updated');
+          })
+          .catch((error) => {
+            console.error('Error updating user display name:', error);
+          });
+        };
+    
+        db.ref('users/' + user.uid).set(updatedData)
+            .then(() => {
+                setUserInfo(updatedData);
+                setEditingEnabled(false);
+                updateProfile();
+            })
+            .catch((error) => {
+                console.error('Error updating user data:', error);
+                Alert.alert('Error', 'An error occurred while updating your data. Please try again.');
+            });
+    };
+    
+
     const saveChanges = () => {
-        setUserInfo({ name, DOB, phone, gender, height, weight });
         Alert.alert(
             "Are you sure?",
             null,
             [
-              { text: "OK", onPress: () =>  setEditingEnabled(false)},
+              { text: "OK", onPress: uploadData },
               {
                 text: 'Cancel',
                 style: 'cancel',
@@ -103,7 +142,7 @@ const Profile = () => {
                         <InputField
                             isInput={true}
                             leftFiled='Phone'
-                            fieldIconRigheditUserInfotFunction={() => setOpenDate(true)}
+                            onChangeText={(value) => setPhone(value)}
                             placeholder={!!userInfo.phone ? userInfo.phone : 'Not set'}
                         />
                         <InputField

@@ -16,6 +16,7 @@ export default function InputField({
   isInput,
   detail,
   detailProps,
+  onChangeText,
 }) {
   return (
     <View
@@ -45,6 +46,7 @@ export default function InputField({
             <TextInput
               placeholder={placeholder}
               keyboardType={keyboardType}
+              onChangeText={onChangeText}
               style={{ flex: 1, paddingVertical: 0 }}
             />
           )

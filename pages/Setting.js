@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Button, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
 import { Divider } from 'react-native-elements';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import Login from './Login';
@@ -14,19 +15,50 @@ export default Setting = ({ navigation }) => {
       console.error(error);
     }
   };
+  const [displayName, setDisplayName] = useState('');
+  
+  const fetchDisplayName = async (uid) => {
+    try {
+      const snapshot = await firebase.database().ref(`users/${uid}`).once('value');
+      //console.log("snapshot",snapshot);
+      const data = snapshot.val();
+      return data ? data.name : '';
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
+  };
+  
+  useEffect(() => {
+    if (user) {
+      fetchDisplayName(user.uid).then((name) => setDisplayName(name));
+      //console.log("displayName",displayName);
+      const onValueChange = firebase.database().ref(`users/${user.uid}`).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setDisplayName(data.name);
+        }
+      });
+      return () => {
+        firebase.database().ref(`users/${user.uid}`).off('value', onValueChange);
+      };
+    }
+  }, [user]);
+  
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View>
         {user ? (
           <View style={{ flexDirection: 'column' }}>
-            <View style={{ paddingTop: 30,paddingHorizontal: 25, marginBottom:20, marginRight: 20}}> 
-              <Text style={styles.title}>{user.displayName}</Text>
+            <View style={{ paddingTop: 30, paddingHorizontal: 25, marginBottom: 20, marginRight: 20 }}>
+              <Text style={styles.title}>{displayName}</Text>
               <Text>You are signed in as {user.email}</Text>
-            </View>            
+            </View>
             <Divider width={10} />
-            <TouchableOpacity onPress={ () => navigation.navigate('Profile')} style={{marginVertical: 10 }}>
-              <View style={{ paddingHorizontal: 25, flexDirection: 'row'}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={{ marginVertical: 10 }}>
+              <View style={{ paddingHorizontal: 25, flexDirection: 'row' }}>
                 <FeatherIcons
                   name="user"
                   size={20}
@@ -37,8 +69,8 @@ export default Setting = ({ navigation }) => {
               </View>
             </TouchableOpacity>
             <Divider width={2} />
-            <TouchableOpacity style={{marginVertical: 10 }}>
-              <View style={{ paddingHorizontal: 25, flexDirection: 'row'   }}>
+            <TouchableOpacity style={{ marginVertical: 10 }}>
+              <View style={{ paddingHorizontal: 25, flexDirection: 'row' }}>
                 <FeatherIcons
                   name="bell"
                   size={20}

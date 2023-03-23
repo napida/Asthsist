@@ -1,30 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { VictoryChart, VictoryLine, VictoryLegend, VictoryAxis, VictoryTooltip, VictoryTheme, VictoryScatter } from 'victory-native';
 import { useRoute } from '@react-navigation/native';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import firebaseConfig from '../database/firebaseDB';
+import { format, parseISO, parse } from 'date-fns';
 
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 // static data
 // if you do the back-end, you have to get the highest peakflow in the same day
-const data = [
-  { x: new Date('2022-01-01T08:00:00Z'), y: 400 },
-  { x: new Date('2022-01-02T12:00:00Z'), y: 450 },
-  { x: new Date('2022-01-01T16:00:00Z'), y: 500 },
-  { x: new Date('2022-01-01T20:00:00Z'), y: 450 },
-  { x: new Date('2022-01-02T08:00:00Z'), y: 500 },
-  { x: new Date('2022-01-02T12:00:00Z'), y: 550 },
-  { x: new Date('2022-01-02T16:00:00Z'), y: 600 },
-  { x: new Date('2022-01-02T20:00:00Z'), y: 550 },
-  { x: new Date('2022-01-03T08:00:00Z'), y: 600 },
-  { x: new Date('2022-11-03T12:00:00Z'), y: 650 },
-  { x: new Date('2023-11-03T16:00:00Z'), y: 700 },
-  { x: new Date('2023-11-03T20:00:00Z'), y: 650 },
-];
+// const data = [
+//   { x: new Date('2022-01-01T08:00:00Z'), y: 400 },
+//   { x: new Date('2022-01-02T12:00:00Z'), y: 450 },
+//   { x: new Date('2022-01-01T16:00:00Z'), y: 500 },
+//   { x: new Date('2022-01-01T20:00:00Z'), y: 450 },
+//   { x: new Date('2022-01-02T08:00:00Z'), y: 500 },
+//   { x: new Date('2022-01-02T12:00:00Z'), y: 550 },
+//   { x: new Date('2022-01-02T16:00:00Z'), y: 600 },
+//   { x: new Date('2022-01-02T20:00:00Z'), y: 550 },
+//   { x: new Date('2022-01-03T08:00:00Z'), y: 600 },
+//   { x: new Date('2022-11-03T12:00:00Z'), y: 650 },
+//   { x: new Date('2023-11-03T16:00:00Z'), y: 700 },
+//   { x: new Date('2023-11-03T20:00:00Z'), y: 650 },
+// ];
 
+const db = firebase.database();
 
 const Chart = ({ navigation, title, value, datetime }) => {
   const route = useRoute();
   const [view, setView] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date('2022-03-03T00:00:00Z'));
+  const [data, setData] = useState([]);
+  
+  useEffect(() => {
+    const fetchData = () => {
+      const uid = firebase.auth().currentUser.uid;
+      const ref = db.ref(`/PeakFlowData/${uid}`);
+      ref.on('value', (snapshot) => {
+        const data = snapshot.val();
+        console.log('data', data);
+        if (data) {
+          const dataArray = Object.entries(data).map(([key, value]) => {
+            const date = new Date(value.time);
+            console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
+            return {
+              x: date,
+              y: parseInt(value.peakflow),
+            };
+          });
+          setData(dataArray);
+          console.log('dataArray', dataArray);
+        }
+      });
+    };
+    fetchData();
+  }, []);
 
   const handlePrevDate = () => {
     if (view === 'day') {

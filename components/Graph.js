@@ -34,11 +34,24 @@ const Chart = ({ navigation, title, value, datetime }) => {
   const [view, setView] = useState('')
   const [selectedDate, setSelectedDate] = useState(new Date('2022-03-03T00:00:00Z'));
   const [data, setData] = useState([]);
-  
+
   useEffect(() => {
     const fetchData = () => {
+
+      const title = route.params.name.replace(/\s/g, '');
+      console.log('title', title);
+
       const uid = firebase.auth().currentUser.uid;
-      const ref = db.ref(`/PeakFlowData/${uid}`);
+      let ref = null;
+
+      if (title === 'PeakFlow') {
+        ref = db.ref(`/PeakFlowData/${uid}`);
+      } else if (title === 'Inhaler') {
+        ref = db.ref(`/Inhaler/${uid}`);
+      } else if (title === 'AsthmaActivity') {
+        ref = db.ref(`/AsthmaActivityData/${uid}`);
+      }
+
       ref.on('value', (snapshot) => {
         const data = snapshot.val();
         console.log('data', data);
@@ -46,9 +59,18 @@ const Chart = ({ navigation, title, value, datetime }) => {
           const dataArray = Object.entries(data).map(([key, value]) => {
             const date = new Date(value.time);
             console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
+
+            let yValue;
+            if (title === 'PeakFlow') {
+              yValue = parseInt(value.peakflow);
+            } else if (title === 'Inhaler') {
+              yValue = parseInt(value.usage);
+            } else if (title === 'AsthmaActivity') {
+              yValue = parseInt(value.activity);
+            }
             return {
               x: date,
-              y: parseInt(value.peakflow),
+              y: yValue,
             };
           });
           setData(dataArray);

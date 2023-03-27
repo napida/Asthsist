@@ -14,18 +14,18 @@ import AsthmaActionPlan from './pages/AsthmaActionPlan';
 import AsthmaActivityPage from './pages/AsthmaActivity';
 import Setting from './pages/Setting';
 import MedicinePage from './pages/Medicine';
-import RegisterSuccessfulPage from './pages/RegisterSuccessful'; 
+import RegisterSuccessfulPage from './pages/RegisterSuccessful';
+import Notification from './pages/Notification';
 
-const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
 const HomeStack = createStackNavigator();
 const headerStyle = {
   headerStyle: { backgroundColor: '#517EB9' },
   headerTintColor: '#FFF',
   headerTitleStyle: { fontFamily: 'Prompt-Medium', fontSize: 25 },
 }
-export const HomeStackScreen = () => {
+export const HomeStackScreen = ({navigation}) => {
   return (
-    
+
     <HomeStack.Navigator screenOptions={headerStyle}>
       <HomeStack.Screen name='Asthsist' component={HomePage}
         options={{
@@ -38,7 +38,13 @@ export const HomeStackScreen = () => {
           />),
           headerTitle: 'Asthsist',
           headerTitleAlign: 'center',
-          headerRight: notification,
+          headerRight: () => (
+            <Icon
+              name="notifications-sharp"
+              size={30}
+              color='#F1EAE4'
+              onPress={() => navigation.navigate("Notification")}
+            />),
           headerRightContainerStyle: { paddingHorizontal: 12 },
         }}
       />
@@ -49,6 +55,7 @@ export const HomeStackScreen = () => {
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
       <HomeStack.Screen name="Asthma Action Plan" component={AsthmaActionPlan} />
       <HomeStack.Screen name="Home" component={HomePage} />
+      <HomeStack.Screen name="Notification" component={Notification} />
       <HomeStack.Screen
         name="RegisterSuccessful" // add the RegisterSuccessful screen
         component={RegisterSuccessfulPage}

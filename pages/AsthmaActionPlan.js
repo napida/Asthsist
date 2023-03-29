@@ -92,7 +92,6 @@ function calculateAsthmaScore(breathing, sleeping, wheezing, medication, peakFlo
   return totalScore;
 }
 
-
 const AsthmaActionPlan = ({ navigation }) => {
   const [breathingScore, setBreathingScore] = useState(1);
   const [sleepingScore, setSleepingScore] = useState(1);
@@ -155,7 +154,6 @@ const AsthmaActionPlan = ({ navigation }) => {
 
         console.log("newPercent", newPercent);
 
-        const peakFlowData = peakFlowSnapshot.val();
         const preselectedPeakFlow = newPercent < 100 ? "Decreased" : "Normal";
         setPeakFlowScore(preselectedPeakFlow);
       } catch (error) {
@@ -170,29 +168,15 @@ const AsthmaActionPlan = ({ navigation }) => {
 
   const calculateZone = () => {
     let zone
-    let zoneMeaning
     const score = calculateAsthmaScore(breathingScore, sleepingScore, wheezingScore, medicationScore, peakFlowScore)
     if (score >= 1 && score <= 4) {
       zone = 'Green';
-      zoneMeaning = 'Take your maintenance medications as prescribed. Stay active and continue with your normal routine.'
     } else if (score >= 5 && score <= 7) {
-      zoneMeaning = 'Increase use of quick-relief medication as directed. Call your healthcare provider for further instructions.'
       zone = 'Yellow';
     } else if (score >= 8) {
-      zoneMeaning = 'Use quick-relief medication immediately. Call emergency or go to the nearest emergency room.'
       zone = 'Red';
     }
-    Alert.alert(
-      !!zone ? "You are in the " + zone + " Zone." : "Please answer the question",
-      !!zone ? zoneMeaning : null,
-      [
-        { text: "OK", onPress: () => navigation.navigate('Home') },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        }
-      ]
-    )
+    navigation.navigate('Zone', { zone: zone })
   };
 
   return (
@@ -231,22 +215,6 @@ const AsthmaActionPlan = ({ navigation }) => {
         />
       </View>
       <View style={styles.item}>
-        {/* <Text style={[styles.title, { fontFamily: 'Prompt-Bold', margin: 15 }]}>
-          How many times did you experience wheezing in the past 24 hours?</Text>
-        <Text style={styles.title}>Wheezing: {wheezingScore} {criteria('Wheezing', wheezingScore)}</Text> */}
-        {/* <Slider
-          maximumValue={10}
-          minimumValue={0}
-          minimumTrackTintColor="#D50000"
-          maximumTrackTintColor="#01579B"
-          step={1}
-          value={wheezingScore}
-          onValueChange={
-            (sliderValue) => setWheezingScore(sliderValue)
-          }
-          thumbTintColor="#1B5E20"
-          style={{ width: 300, height: 40 }}
-        /> */}
         <ItemSelector
           title='How many times did you experience wheezing in the past 24 hours?'
           items={['Never', '1-3 times', '4 or more']}
@@ -254,21 +222,6 @@ const AsthmaActionPlan = ({ navigation }) => {
         />
       </View>
       <View style={styles.item}>
-        {/* <Text style={[styles.title, { fontFamily: 'Prompt-Bold', margin: 15 }]}>On a scale of 1 to 10, with 1 being infrequent and 10 being frequent, how would you rate your current Medication use?</Text>
-            <Text style={styles.title}>Medication use: {medicationScore}</Text>
-                <Slider
-                    maximumValue={10}
-                    minimumValue={0}
-                    minimumTrackTintColor="#D50000"
-                    maximumTrackTintColor="#01579B"
-                    step={1}
-                    value={medicationScore}
-                    onValueChange={
-                        (sliderValue) => setMedicationScore(sliderValue)
-                    }
-                    thumbTintColor="#1B5E20"
-                    style={{ width: 300, height: 40 }}
-                /> */}
         <ItemSelector
           title='Select Medication use:'
           items={['Rare', 'Occasional', 'Frequent']}
@@ -277,21 +230,6 @@ const AsthmaActionPlan = ({ navigation }) => {
         />
       </View>
       <View style={styles.item}>
-        {/* <Text style={[styles.title, { fontFamily: 'Prompt-Bold', margin: 15 }]}>On a scale of 1 to 10, with 1 being infrequent and 10 being frequent, how would you rate your current Medication use?</Text> */}
-        {/* <Text style={styles.title}>Peak Flow reading: {peakFlowScore}</Text> */}
-        {/* <Slider
-                    maximumValue={10}
-                    minimumValue={0}
-                    minimumTrackTintColor="#D50000"
-                    maximumTrackTintColor="#01579B"
-                    step={1}
-                    value={medicationScore}
-                    onValueChange={
-                        (sliderValue) => setPeakFlowScore(sliderValue)
-                    }
-                    thumbTintColor="#1B5E20"
-                    style={{ width: 300, height: 40 }}
-                /> */}
         <ItemSelector
           title='Select Peak Flow reading:'
           items={['Normal', 'Decreased']}

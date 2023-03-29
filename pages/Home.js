@@ -89,7 +89,7 @@ const totalScore = route.params?.totalScore || 0;
                 {/* </View> */}
             </ScrollView>
             <TouchableOpacity style={styles.percentContainer}>
-                <Progress style={styles.text} value={totalScore} />
+                <Progress style={styles.text} value={totalScore} color='#00CD00'/>
                 <View>
                     <Text style={[styles.text, { paddingBottom: 10 }]}>
                         How well you control asthma

@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Dimensions, Image, Button } from 'react-native';
 import PropTypes from 'prop-types';
+import Progress from './Progress';
 
 const imageWidth = Dimensions.get('window').width;
 
 export default function ZoneCard({
     imageSource,
+    score,
+    scoreColor,
     titleText,
     subTitleText,
     textContent,
@@ -14,7 +17,12 @@ export default function ZoneCard({
 }) {
     return (
         <View style={styles.container}>
-            <Image source={imageSource} style={styles.image} />
+            {score ?
+                <View style={{marginBottom: 50}}>
+                    <Progress style={[styles.titleText, {fontSize: 40}]} value={score} color={scoreColor} radius={100}/>
+                </View>
+                : <Image source={imageSource} style={styles.image} />
+            }
             <Text style={styles.titleText}>{titleText}</Text>
             <Text style={styles.text}> {subTitleText}</Text>
             <Text style={[styles.textContent, { marginBottom: 40 }]}>{textContent}</Text>

@@ -16,7 +16,10 @@ function ResultACT({ route, navigation }) {
                     subTitleText='Take Charge of Your Asthma!'
                     textContent='A total score of less than 16 on the Asthma Control Test indicates poorly controlled asthma. Work with your healthcare provider to develop a management plan and take an active role in managing your asthma to achieve better asthma control and enjoy a better quality of life.'
                     buttonLabel='Back to home'
-                    onPress={() => navigation.navigate('Home')}
+                    onPress={() => navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Asthsist', params: { totalScore: score } }],
+                    })}
                     backgroundColor='#D9FDDC'
                 />
                 : score > 15 && score <= 20 ?
@@ -28,7 +31,10 @@ function ResultACT({ route, navigation }) {
                         subTitleText={`Don't Let Asthma Hold You Back!`}
                         textContent='A total score of 16-19 on the Asthma Control Test indicates room for improvement in your asthma control. Work with your healthcare provider to develop a plan to improve your score and breathe easier.'
                         buttonLabel='Back to home'
-                        onPress={() => navigation.navigate('Home')}
+                        onPress={() => navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Asthsist', params: { totalScore: score } }],
+                        })}
                         backgroundColor='#F8F0D6'
                     />
                     : score > 20 && score <= 25 ?
@@ -42,7 +48,7 @@ function ResultACT({ route, navigation }) {
                             buttonLabel='Back to home'
                             onPress={() => navigation.reset({
                                 index: 0,
-                                routes: [{ name: 'Home', params: { totalScore: score } }],
+                                routes: [{ name: 'Asthsist', params: { totalScore: score } }],
                             })}
                             backgroundColor='#FCC3C3'
                         />

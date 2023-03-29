@@ -15,6 +15,7 @@ import AsthmaActivityPage from './pages/AsthmaActivity';
 import Setting from './pages/Setting';
 import MedicinePage from './pages/Medicine';
 import RegisterSuccessfulPage from './pages/RegisterSuccessful'; 
+import Profile from './pages/Profile';
 import ZonePage from './pages/ZonePage';
 
 const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
@@ -90,6 +91,7 @@ export const SettingStackScreen = () => {
   return (
     <SettingStack.Navigator screenOptions={headerStyle}>
       <SettingStack.Screen name="Setting" component={Setting} />
+      <SettingStack.Screen name="Profile" component={Profile} />
     </SettingStack.Navigator>
   );
 }

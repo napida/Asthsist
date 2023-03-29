@@ -34,7 +34,13 @@ const MedicinePage = ({ navigation }) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(null);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([
+    { label: 'Ephedrine', value: 1 },
+    { label: 'Aminophylline', value: 2 },
+    { label: 'Salbutamol', value: 3 },
+    { label: 'Tedral', value: 4 },
+    { label: 'Franol', value: 5 },
+  ]);
 
   const [text, setText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -54,10 +60,12 @@ const MedicinePage = ({ navigation }) => {
   ];
 
   const saveMedicineData = (uid) => {
-    db.ref(`/Medicine/${uid}`).push({
-      time: date.toISOString(),
+    db.ref(`/Medicine/${firebase.auth().currentUser.uid}`).push({
+      time: date.toString(),
       name: name,
-      note: note
+      usage: usage,
+      note: note,
+      userUID: firebase.auth().currentUser.uid 
     });
   }
 
@@ -112,7 +120,7 @@ const MedicinePage = ({ navigation }) => {
           open={open}
           value={value}
           items={dropdownItems}
-          placeholder="Select your medicine"
+          placeholder="Select your Medicine"
           setOpen={setOpen}
           setValue={setValue}
           setItems={setItems}
@@ -141,6 +149,29 @@ const MedicinePage = ({ navigation }) => {
           </View>
         </View>
         <Divider width={20} />
+        <View style={styles.numberOfTimes}>
+          <View style={{ flex: 2 }}>
+            <Text style={[styles.textTime, { textAlign: 'center' }]} >Number of Times</Text>
+          </View>
+          <View style={styles.activityContainer}>
+            <TouchableOpacity
+              disabled={usage > 0 ? false : true}
+              style={[styles.buttonContainer, { opacity: usage <= 0 && 0.5 }]}
+              onPress={() => {
+                if (usage > 0) {
+                  setUsage(usage - 1);
+                }
+              }}>
+              <Icon name="minuscircle" size={30} color='#72BFB9' />
+            </TouchableOpacity>
+            <Text style={[styles.usage, { width: 30, textAlign: 'center' }]}>{usage}</Text>
+            <TouchableOpacity
+              style={[styles.buttonContainer, { paddingRight: 0 }]}
+              onPress={() => setUsage(usage + 1)}>
+              <Icon name="pluscircle" size={30} color='#72BFB9' />
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={{ width: imageWidth - 50, marginVertical: 20, marginTop: 30 }}>
           <Text>Note</Text>
           <TextInput

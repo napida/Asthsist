@@ -61,11 +61,12 @@ const InhalerPage = ({ navigation }) => {
   ];
 
   const saveInhalerData = (uid) => {
-    db.ref(`/Inhaler/${uid}`).push({
-      time: date.toISOString(),
+    db.ref(`/Inhaler/${firebase.auth().currentUser.uid}`).push({
+      time: date.toString(),
       name: name,
       usage: usage,
-      note: note
+      note: note,
+      userUID: firebase.auth().currentUser.uid 
     });
   }
 

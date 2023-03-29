@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View, Button, Alert } from "react-native";
+import React, { useState } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, View, Button, Alert } from "react-native";
 import RadioForm from 'react-native-simple-radio-button';
 
 const question = [
@@ -37,16 +37,15 @@ const AsthmaControlTest = ({ navigation }) => {
   const [chosenOption, setChosenOption] = useState(new Array(question.length).fill(-1));
   // number of elements and sets each element to -1
   const [formKey, setFormKey] = useState(0);
-  const [totalScore, setTotalScore] = useState(0);
 
-  const SumScore = chosenOption && chosenOption.length > 0
-  ? chosenOption.reduce((sum, value) => {
+  const totalScore = chosenOption && chosenOption.length > 0
+    ? chosenOption.reduce((sum, value) => {
       if (value > 0) {
         return sum + value;
       }
       return sum;
     }, 0)
-  : 0;
+    : 0;
 
 
   const renderItem = ({ item, index }) => {
@@ -78,18 +77,12 @@ const AsthmaControlTest = ({ navigation }) => {
               const newSelectedOptions = [...chosenOption];
               newSelectedOptions[index] = value;
               setChosenOption(newSelectedOptions);
-              setTotalScore(SumScore)
             }}
           />
         </View>
       </View>
     );
   };
-  const clear = () => {
-    setFormKey(Math.random())
-    setTotalScore(-1)
-  }
-  // const answeredAllQuestions = selected.every((value) => value > 0);
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -101,35 +94,10 @@ const AsthmaControlTest = ({ navigation }) => {
             <Button
               title="Submit"
               onPress={() => {
-                if (chosenOption.includes(-1)) {
+                if (chosenOption.includes(-1) || totalScore < 0 && totalScore > 25) {
                   Alert.alert("Please answer all the questions");
                 } else {
-                  Alert.alert(
-                    totalScore >= 0 && totalScore <= 25
-                      ? `Your Score is ${totalScore}`
-                      : "Please answer the question",
-                    totalScore >= 0 && totalScore <= 15
-                      ? "VERY POORLY CONTROLLED ASTHMA"
-                      : totalScore > 15 && totalScore <= 20
-                        ? "POORLY CONTROLLED ASTHMA"
-                        : totalScore > 20 && totalScore <= 25
-                          ? "WELL-CONTROLLED ASTHMA"
-                          : '',
-                    [
-                      {
-                        text: "OK", onPress: () => {
-                          navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Home', params: { totalScore: totalScore } }],
-                          }); clear();
-                        }
-                      },
-                      {
-                        text: 'Cancel',
-                        style: 'cancel',
-                      },
-                    ]
-                  )
+                  navigation.navigate('Result ACT', { score: totalScore })
                 }
               }}
             />

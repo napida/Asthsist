@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, View, Text, Image, SafeAreaView, Dimensions } from 'react-native';
+import { StyleSheet, StatusBar, FlatList, View, Text, Image, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-elements';
 
 const DATA = [
@@ -21,11 +21,59 @@ const DATA = [
     message: 'You got warnning',
     img: require('../assets/oximeter.png'),
   },
+  {
+    id: '4',
+    title: 'First Item',
+    message: 'You got warnning',
+    img: require('../assets/inhaler.png'),
+  },
+  {
+    id: '5',
+    title: 'Second Item',
+    message: 'You got warnning',
+    img: require('../assets/medicine.png'),
+  },
+  {
+    id: '6',
+    title: 'Third Item',
+    message: 'You got warnning',
+    img: require('../assets/oximeter.png'),
+  },
+  {
+    id: '7',
+    title: 'Second Item',
+    message: 'You got warnning',
+    img: require('../assets/medicine.png'),
+  },
+  {
+    id: '8',
+    title: 'Third Item',
+    message: 'You got warnning',
+    img: require('../assets/oximeter.png'),
+  },
+  {
+    id: '9',
+    title: 'First Item',
+    message: 'You got warnning',
+    img: require('../assets/inhaler.png'),
+  },
+  {
+    id: '10',
+    title: 'Second Item',
+    message: 'You got warnning',
+    img: require('../assets/medicine.png'),
+  },
+  {
+    id: '11',
+    title: 'Third Item',
+    message: 'You got warnning',
+    img: require('../assets/oximeter.png'),
+  },
 ];
 const imageWidth = Dimensions.get('window').width;
 
 const Item = ({ title, message , img}) => (
-  <View style={styles.notificationContainer}>
+  <TouchableOpacity style={styles.notificationContainer}>
     <View style={styles.notificationIconContainer}>
       <Image
         source={img}
@@ -38,7 +86,7 @@ const Item = ({ title, message , img}) => (
         {message}
       </Text>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
 const Notification = () => {
@@ -52,6 +100,8 @@ const Notification = () => {
         ItemSeparatorComponent={
           <Divider width={5} color='#f2f2f2' />
         }
+        style={{paddingTop: 5}}
+        showsVerticalScrollIndicator={false}
       />
       {/* ) : (
           <Text>No new notifications.</Text>
@@ -64,7 +114,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   notificationContainer: {
     flexDirection: 'row',

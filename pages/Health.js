@@ -11,6 +11,14 @@ if (!firebase.apps.length) {
 
 const db = firebase.database();
 
+const ItemWrapper = ({ children }) => {
+  return (
+    <TouchableOpacity style={styles.item}>
+      {children}
+    </TouchableOpacity>
+  );
+};
+
 const DATA = [
   {
     id: "1",
@@ -46,43 +54,43 @@ const determinePeakFlowZone = (percent) => {
 };
 
 
-const Item = ({ item, percent }) => {
+const Item = ({ item, percent, fontColor, value }) => {
   const peakFlowData =
     item.title === "Peak flow" && percent !== null
       ? determinePeakFlowZone(percent)
       : { zone: "", color: item.color };
 
-  const textColor = peakFlowData.color;
+  const textColor = fontColor || peakFlowData.color;
 
   return (
-    <TouchableOpacity style={styles.item}>
-      <View style={{ flexDirection: "row" }}>
-        <Image
-          style={{ height: 70, width: 70, marginRight: 50 }}
-          source={item.source}
-          resizeMode="contain"
-        />
-        <View>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text
-            style={[
-              styles.title,
-              {
-                fontFamily: "Prompt-Medium",
-                fontSize: 17,
-                color: textColor,
-              },
-            ]}
-          >
-            {item.title === "Peak flow" && percent !== null
-              ? `${peakFlowData.zone} (${percent}%)`
-              : item.subtitle}
-          </Text>
-        </View>
+    <View style={{ flexDirection: "row" }}>
+      <Image
+        style={{ height: 70, width: 70, marginRight: 50 }}
+        source={item.source}
+        resizeMode="contain"
+      />
+      <View>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text
+          style={[
+            styles.title,
+            {
+              fontFamily: "Prompt-Medium",
+              fontSize: 17,
+              color: textColor,
+            },
+          ]}
+        >
+          {item.title === "Peak flow" && percent !== null
+            ? `${peakFlowData.zone} (${percent}%)`
+            : value || item.subtitle}
+        </Text>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
+
+
 
 
 const HealthPage = ({ navigation }) => {
@@ -152,12 +160,23 @@ const HealthPage = ({ navigation }) => {
   
   const renderItem = ({ item }) => {
     return (
-      <Item
-        item={item}
-        percent={item.id === "3" ? percent : null}
-      />
+      <ItemWrapper>
+        {item.title === "Heart rate" || item.title === "SpO2" ? (
+          <ThingerService
+            title={item.title}
+            source={item.source}
+            isRefreshing={false}
+          />
+        ) : (
+          <Item
+            item={item}
+            percent={item.id === "3" ? percent : null}
+          />
+        )}
+      </ItemWrapper>
     );
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>

@@ -37,7 +37,7 @@ const AsthmaActivityPage = ({ navigation }) => {
             time: date.toString(),
             activity: activityLevel,
             note: note,
-            userUID: firebase.auth().currentUser.uid 
+            userUID: firebase.auth().currentUser.uid
         });
     }
 
@@ -74,8 +74,8 @@ const AsthmaActivityPage = ({ navigation }) => {
                 </View>
                 <Divider width={20} />
                 <View style={styles.numberOfTimes}>
-                    <View style={{flex: 2}}>
-                        <Text style={[styles.textTime, {textAlign: 'center'}]} >Number of Times</Text>
+                    <View style={{ flex: 2 }}>
+                        <Text style={[styles.textTime, { textAlign: 'center' }]} >Number of Times</Text>
                     </View>
                     <View style={styles.activityContainer}>
                         <TouchableOpacity
@@ -86,13 +86,13 @@ const AsthmaActivityPage = ({ navigation }) => {
                                     setActivityLevel(activityLevel - 1);
                                 }
                             }}>
-                            <Icon name="minuscircle" size={30} color='#72BFB9'/>
+                            <Icon name="minuscircle" size={30} color='#72BFB9' />
                         </TouchableOpacity>
                         <Text style={[styles.activityLevel, { width: 30, textAlign: 'center' }]}>{activityLevel}</Text>
                         <TouchableOpacity
-                            style={[styles.buttonContainer, {paddingRight: 0}]}
+                            style={[styles.buttonContainer, { paddingRight: 0 }]}
                             onPress={() => setActivityLevel(activityLevel + 1)}>
-                            <Icon name="pluscircle" size={30} color='#72BFB9'/>
+                            <Icon name="pluscircle" size={30} color='#72BFB9' />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -109,11 +109,10 @@ const AsthmaActivityPage = ({ navigation }) => {
                         style={styles.inputNote}
                     />
                 </View>
-                <View style={{ width: imageWidth / 2}}>
+                <View style={{ width: imageWidth / 2 }}>
                     <Button
                         title="Add to Calendar"
                         onPress={() => {
-                            saveAsthmaActivityData(firebase.auth().currentUser.uid);
                             Alert.alert(
                                 "Do you want to add to calendar?",
                                 '',
@@ -123,7 +122,12 @@ const AsthmaActivityPage = ({ navigation }) => {
                                         onPress: () => console.log("Cancel Pressed"),
                                         style: "cancel"
                                     },
-                                    { text: "OK", onPress: () => navigation.navigate('Calendar') }
+                                    {
+                                        text: "OK", onPress: () => {
+                                            saveAsthmaActivityData(firebase.auth().currentUser.uid); 
+                                            navigation.navigate('Calendar')
+                                        }
+                                    }
                                 ]
                             );
                         }}
@@ -173,17 +177,17 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     numberOfTimes: {
-        paddingVertical:10, 
-        width: imageWidth-50, 
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        alignItems:'center', 
+        paddingVertical: 10,
+        width: imageWidth - 50,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#f4f8f7',
         borderRadius: 20,
         shadowOffset: { width: 2, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
-        elevation: 4, 
+        elevation: 4,
     },
     activityContainer: {
         flex: 1,

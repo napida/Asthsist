@@ -65,7 +65,7 @@ const MedicinePage = ({ navigation }) => {
       name: name,
       usage: usage,
       note: note,
-      userUID: firebase.auth().currentUser.uid 
+      userUID: firebase.auth().currentUser.uid
     });
   }
 
@@ -189,7 +189,6 @@ const MedicinePage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
-              saveMedicineData(firebase.auth().currentUser.uid);
               Alert.alert(
                 "Do you want to add to calendar?",
                 '',
@@ -199,7 +198,12 @@ const MedicinePage = ({ navigation }) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => navigation.navigate('Calendar') }
+                  {
+                    text: "OK", onPress: () => {
+                      navigation.navigate('Calendar');
+                      saveMedicineData(firebase.auth().currentUser.uid);
+                    }
+                  }
                 ]
               );
             }}

@@ -66,7 +66,7 @@ const InhalerPage = ({ navigation }) => {
       name: name,
       usage: usage,
       note: note,
-      userUID: firebase.auth().currentUser.uid 
+      userUID: firebase.auth().currentUser.uid
     });
   }
 
@@ -190,7 +190,6 @@ const InhalerPage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
-              saveInhalerData(firebase.auth().currentUser.uid);
               Alert.alert(
                 "Do you want to add to calendar?",
                 '',
@@ -200,7 +199,11 @@ const InhalerPage = ({ navigation }) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => navigation.navigate('Calendar') }
+                  {
+                    text: "OK", onPress: () => {
+                      saveInhalerData(firebase.auth().currentUser.uid); navigation.navigate('Calendar')
+                    }
+                  }
                 ]
               );
             }}

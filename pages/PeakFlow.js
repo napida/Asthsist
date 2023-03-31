@@ -27,7 +27,7 @@ const PeakFlowPage = ({ navigation }) => {
     };
     return date.toLocaleDateString('en-US', options);
   };
-  const [value, onChangeText] = useState(null);
+  const [value, onChangeText] = useState('');
   const [note, onChangeNoteText] = useState(null);
 
   const savePeakFlowData = (uid) => {
@@ -100,7 +100,6 @@ const PeakFlowPage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
-              !value && onChangeText('')
               const trimmedValue = value.trim();
               if (trimmedValue === '') {
                   Alert.alert(

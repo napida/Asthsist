@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, StatusBar, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, StatusBar, Alert, ActivityIndicator, Image } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
 import firebase from 'firebase/compat/app';
@@ -34,6 +34,7 @@ const medicine = { key: 'medicine', color: 'orange', selectedDotColor: 'orange' 
 const CalendarPage = () => {
   const [items, setItems] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+
   const markedDates = Object.keys(items).reduce((obj, key) => {
     obj[key] = { dots: [] };
     let hasPeakFlow = false;
@@ -64,7 +65,6 @@ const CalendarPage = () => {
 
   const loadItems = async (day) => {
     const start = new Date(day.timestamp).setHours(0, 0, 0, 0);
-    const end = new Date(day.timestamp).setHours(23, 59, 59, 999);
     const uid = firebase.auth().currentUser.uid;
     if (items[timeToString(start)]) {
       return;
@@ -87,14 +87,11 @@ const CalendarPage = () => {
         setIsLoading(false);
         return;
       }
-
-      const items = {};
       if (peakFlowData !== null) {
         Object.entries(peakFlowData).forEach(([parentKey, parentEvent]) => {
           if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
               const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
-              const strdate = event.time;
               const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
@@ -115,7 +112,6 @@ const CalendarPage = () => {
           if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
               const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
-              const strdate = event.time;
               const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
@@ -136,7 +132,6 @@ const CalendarPage = () => {
           if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
               const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
-              const strdate = event.time;
               const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
@@ -158,7 +153,6 @@ const CalendarPage = () => {
           if (parentKey === uid) {
             Object.entries(parentEvent).forEach(([key, event]) => {
               const date = moment(event.time, 'ddd MMM DD YYYY HH:mm:ss ZZ').toDate();
-              const strdate = event.time;
               const strTime = formatDate(event.time);
               if (!items[strTime]) {
                 items[strTime] = [];
@@ -181,8 +175,6 @@ const CalendarPage = () => {
       console.error("Error loading items:", error);
     }
   };
-
-
 
   useEffect(() => {
     loadItems({ timestamp: Date.now() });
@@ -266,13 +258,8 @@ const CalendarPage = () => {
         </TouchableOpacity>
       );
     }
-    if (item === null || item.length === 0) {
-      return <View><Text>No events</Text></View>;
-    }
-    return cards.length > 0 ? <View>{cards}</View> : <View><Text>No events</Text></View>;
+    return cards.length > 0 && <View>{cards}</View>;
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -285,6 +272,21 @@ const CalendarPage = () => {
           renderItem={renderItem}
           markingType={'multi-dot'}
           markedDates={markedDates}
+          renderEmptyDate={() => {
+            return (
+              <View /> //instead of ActivityIndicator
+            );
+          }}
+          renderEmptyData={() => {
+            return (
+              <View style={{flex:1, justifyContent: 'flex-start', marginTop: 20, alignItems: 'center'}}>
+                <Image source={require('../assets/no-event-calendar.png')} resizeMode='contain' style={{height: 250, opacity: 0.8}}/>
+                <Text style={styles.titleText}>Oopsie daisy!</Text>
+                <Text style={styles.text}>No events to show yet.</Text>
+                <Text style={styles.textContent}>No events to show yet. Start tracking your peak flow, inhaler, medication, and asthma activity info to improve your asthma management.</Text>
+              </View>
+            );
+          }}
           theme={{
             agendaDayTextColor: 'black',
             agendaDayNumColor: 'black',
@@ -311,6 +313,26 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 17 + 20,
     borderLeftWidth: 4,
+  },
+  text: {
+      fontFamily: 'Prompt-Medium',
+      alignSelf: 'center',
+      textAlign: 'center',
+      marginHorizontal: 30,
+      fontSize: 15,
+      marginVertical: 10
+  },
+  textContent: {
+    fontFamily: 'Prompt-Light',
+    alignSelf: 'center',
+    textAlign: 'center',
+    marginHorizontal: 30,
+    marginVertical: 10,
+},
+  titleText: {
+      fontSize: 20,
+      fontWeight: "bold",
+      fontFamily: 'Prompt-Bold',
   },
 });
 

@@ -193,7 +193,7 @@ const CalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Text>{item.time}  Peakflow</Text>
+                <Text>{item.time} |  Peakflow</Text>
                 <Text>{item.peakflow} L/min</Text>
               </View>
             </Card.Content>
@@ -212,8 +212,8 @@ const CalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Text>{item.time}  Inhaler</Text>
-                <Text>{item.name}  {item.inhaler}</Text>
+                <Text>{item.time} |  Inhaler</Text>
+                <Text>{item.name} :  {item.inhaler} {item.inhaler===1 ? `time`: `times`}</Text>
               </View>
             </Card.Content>
           </Card>
@@ -231,8 +231,8 @@ const CalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Text>{item.time}  Medicine</Text>
-                <Text>{item.name}  {item.medicine}</Text>
+                <Text>{item.time} |  Medicine</Text>
+                <Text>{item.medicine}  {item.name}</Text>
               </View>
             </Card.Content>
           </Card>
@@ -250,8 +250,8 @@ const CalendarPage = () => {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}>
-                <Text>{item.time}  Activity</Text>
-                <Text>{item.activity}</Text>
+                <Text>{item.time} |  Asthma Activity</Text>
+                <Text>{item.activity} {item.activity===1 ? `time`: `times`}</Text>
               </View>
             </Card.Content>
           </Card>

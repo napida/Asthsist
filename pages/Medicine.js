@@ -149,9 +149,9 @@ const MedicinePage = ({ navigation }) => {
           </View>
         </View>
         <Divider width={20} />
-        <View style={styles.numberOfTimes}>
+        <View style={styles.numberOfPill}>
           <View style={{ flex: 2 }}>
-            <Text style={[styles.textTime, { textAlign: 'center' }]} >Number of Times</Text>
+            <Text style={[styles.textTime, { textAlign: 'center' }]} >Number of Pills</Text>
           </View>
           <View style={styles.activityContainer}>
             <TouchableOpacity
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
-  numberOfTimes: {
+  numberOfPill: {
     paddingVertical: 10,
     width: imageWidth - 50,
     flexDirection: 'row',

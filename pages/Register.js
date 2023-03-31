@@ -6,6 +6,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Input } from 'react-native-elements';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import 'firebase/compat/database';
+
 
 
 
@@ -23,6 +25,16 @@ const Register = () => {
       ...prevState,
       [field]: value.trim() === '' ? 'This field is required.' : ''
     }));
+  };
+  const saveUserToDatabase = async (user) => {
+    try {
+      await firebase.database().ref(`users/${user.uid}`).set({
+        name: user.displayName,
+        email: user.email,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const navigation = useNavigation();
@@ -42,6 +54,7 @@ const Register = () => {
       await currentUser.updateProfile({
         displayName: fullName,
       });
+      await saveUserToDatabase(currentUser);
       // navigation.navigate('Login');
       // Signup successful, do something here like redirect the user to a new page
     } catch (error) {

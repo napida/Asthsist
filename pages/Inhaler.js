@@ -45,8 +45,21 @@ const InhalerPage = ({ navigation }) => {
 
   const [text, setText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  
   const addItem = () => {
+    const trimmedValue = text.trim();
+    if (trimmedValue ==='' ){
+      Alert.alert(
+        "Please input inhaler name",
+        '',
+        [
+          {
+            text: "OK",
+          }
+        ]
+      );
+      return;
+    }
     const newItem = { label: text, value: items.length + 1 };
     setItems([...items, newItem]);
     setText('');
@@ -72,6 +85,7 @@ const InhalerPage = ({ navigation }) => {
 
   const toggleModalVisibility = () => {
     setIsModalVisible(!isModalVisible);
+    setValue('Select your inhaler')
   };
 
 
@@ -128,7 +142,6 @@ const InhalerPage = ({ navigation }) => {
           containerStyle={{ width: imageWidth - 50, alignSelf: 'center' }}
           listMode="SCROLLVIEW"
           onSelectItem={(item) => {
-            console.log(item)
             item.value === 'add' && setIsModalVisible(!isModalVisible)
             setName(item.label)
           }}
@@ -190,6 +203,18 @@ const InhalerPage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
+              if (usage == 0 || !name || name === 'Add') {
+                Alert.alert(
+                  "Please input your inhaler and number of times",
+                  '',
+                  [
+                    {
+                      text: "OK",
+                    }
+                  ]
+                );
+              }
+              else {
               Alert.alert(
                 "Do you want to add to calendar?",
                 '',
@@ -201,11 +226,11 @@ const InhalerPage = ({ navigation }) => {
                   },
                   {
                     text: "OK", onPress: () => {
-                      saveInhalerData(firebase.auth().currentUser.uid); navigation.navigate('Calendar')
+                      saveInhalerData(firebase.auth().currentUser.uid); navigation.navigate('Calendar Tab')
                     }
                   }
                 ]
-              );
+              );}
             }}
           />
         </View>

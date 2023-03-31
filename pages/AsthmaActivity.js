@@ -113,23 +113,36 @@ const AsthmaActivityPage = ({ navigation }) => {
                     <Button
                         title="Add to Calendar"
                         onPress={() => {
-                            Alert.alert(
-                                "Do you want to add to calendar?",
-                                '',
-                                [
-                                    {
-                                        text: "Cancel",
-                                        onPress: () => console.log("Cancel Pressed"),
-                                        style: "cancel"
-                                    },
-                                    {
-                                        text: "OK", onPress: () => {
-                                            saveAsthmaActivityData(firebase.auth().currentUser.uid); 
-                                            navigation.navigate('Calendar')
+                            if (activityLevel == 0) {
+                                Alert.alert(
+                                    "Please enter number of asthma attacks",
+                                    '',
+                                    [
+                                        {
+                                            text: "OK",
                                         }
-                                    }
-                                ]
-                            );
+                                    ]
+                                );
+                            }
+                            else {
+                                Alert.alert(
+                                    "Do you want to add to calendar?",
+                                    '',
+                                    [
+                                        {
+                                            text: "Cancel",
+                                            onPress: () => console.log("Cancel Pressed"),
+                                            style: "cancel"
+                                        },
+                                        {
+                                            text: "OK", onPress: () => {
+                                                saveAsthmaActivityData(firebase.auth().currentUser.uid);
+                                                navigation.navigate('Calendar Tab')
+                                            }
+                                        }
+                                    ]
+                                );
+                            }
                         }}
                     />
                 </View>

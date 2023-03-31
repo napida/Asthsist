@@ -39,7 +39,7 @@ const PeakFlowPage = ({ navigation }) => {
       userUID: firebase.auth().currentUser.uid
     });
   }
-
+  console.log(value)
   return (
     <ScrollView>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -100,24 +100,40 @@ const PeakFlowPage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
-              Alert.alert(
-                "Do you want to add to calendar?",
-                '',
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  {
-                    text: "OK", onPress: () => {
-                      savePeakFlowData(firebase.auth().currentUser.uid);
-                      navigation.navigate('Calendar')
-                    }
-                  }
-                ]
-              );
-            }}
+              !value && onChangeText('')
+              const trimmedValue = value.trim();
+              if (trimmedValue === '') {
+                  Alert.alert(
+                    "Please input your peak flow value",
+                    '',
+                    [
+                      {
+                        text: "OK",
+                      }
+                    ]
+                  );
+                }
+                else {
+                  Alert.alert(
+                    "Do you want to add to calendar?",
+                    '',
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      {
+                        text: "OK", onPress: () => {
+                          savePeakFlowData(firebase.auth().currentUser.uid);
+                          navigation.navigate('Calendar Tab')
+                        }
+                      }
+                    ]
+                  );
+                }
+              }
+            }
           />
         </View>
       </View>

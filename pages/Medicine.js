@@ -46,6 +46,19 @@ const MedicinePage = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const addItem = () => {
+    const trimmedValue = text.trim();
+    if (trimmedValue ==='' ){
+      Alert.alert(
+        "Please input inhaler name",
+        '',
+        [
+          {
+            text: "OK",
+          }
+        ]
+      );
+      return;
+    }
     const newItem = { label: text, value: items.length + 1 };
     setItems([...items, newItem]);
     setText('');
@@ -71,6 +84,7 @@ const MedicinePage = ({ navigation }) => {
 
   const toggleModalVisibility = () => {
     setIsModalVisible(!isModalVisible);
+    setValue('Select your inhaler')
   };
 
 
@@ -127,7 +141,6 @@ const MedicinePage = ({ navigation }) => {
           containerStyle={{ width: imageWidth - 50, alignSelf: 'center' }}
           listMode="SCROLLVIEW"
           onSelectItem={(item) => {
-            console.log(item)
             item.value === 'add' && setIsModalVisible(!isModalVisible)
             setName(item.label)
           }}
@@ -189,6 +202,18 @@ const MedicinePage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
+              if (usage == 0 || !name || name === 'Add') {
+                Alert.alert(
+                  "Please input your inhaler and number of times",
+                  '',
+                  [
+                    {
+                      text: "OK",
+                    }
+                  ]
+                );
+              }
+              else {
               Alert.alert(
                 "Do you want to add to calendar?",
                 '',
@@ -200,12 +225,13 @@ const MedicinePage = ({ navigation }) => {
                   },
                   {
                     text: "OK", onPress: () => {
-                      navigation.navigate('Calendar');
+                      navigation.navigate('Calendar Tab');
                       saveMedicineData(firebase.auth().currentUser.uid);
                     }
                   }
                 ]
               );
+              }
             }}
           />
         </View>

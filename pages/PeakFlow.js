@@ -27,17 +27,19 @@ const PeakFlowPage = ({ navigation }) => {
     };
     return date.toLocaleDateString('en-US', options);
   };
-  const [value, onChangeText] = useState(null);
+  const [value, onChangeText] = useState('');
   const [note, onChangeNoteText] = useState(null);
 
   const savePeakFlowData = (uid) => {
-    db.ref(`/PeakFlowData/${uid}`).push({
+    db.ref(`/PeakFlowData/${firebase.auth().currentUser.uid}`).push({
       time: date.toString(),
       peakflow: value,
-      note: note
+      note: note,
+      timeforref: date.toISOString(),
+      userUID: firebase.auth().currentUser.uid
     });
   }
-
+  console.log(value)
   return (
     <ScrollView>
       <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -82,40 +84,59 @@ const PeakFlowPage = ({ navigation }) => {
           <Text style={styles.prefix}>L/min</Text>
         </View>
         <View style={{ width: imageWidth - 50, marginVertical: 20, marginTop: 30 }}>
-                    <Text>Note</Text>
-                    <TextInput
-                        multiline
-                        numberOfLines={3}
-                        editable
-                        maxLength={40}
-                        onChangeText={(text) => onChangeNoteText(text)}
-                        placeholder="E.g. because of exercise"
-                        value={note}
-                        style={styles.inputNote}
-                    />
-                </View>
-                <View style={{ width: imageWidth / 2}}>
-                    <Button
-                        title="Add to Calendar"
-                        onPress={() => {
-                          savePeakFlowData(firebase.auth().currentUser.uid);          
-                          Alert.alert(
-                            "Do you want to add to calendar?",
-                            '',
-                            [
-                              {
-                                text: "Cancel",
-                                onPress: () => console.log("Cancel Pressed"),
-                                style: "cancel"
-                              },
-                              { text: "OK", onPress: () => navigation.navigate('Calendar') }
-                            ]
-                          );
-                        }}
-                    />
-                </View>
-            </View>
-        </ScrollView>
+          <Text>Note</Text>
+          <TextInput
+            multiline
+            numberOfLines={3}
+            editable
+            maxLength={40}
+            onChangeText={(text) => onChangeNoteText(text)}
+            placeholder="E.g. because of exercise"
+            value={note}
+            style={styles.inputNote}
+          />
+        </View>
+        <View style={{ width: imageWidth / 2 }}>
+          <Button
+            title="Add to Calendar"
+            onPress={() => {
+              const trimmedValue = value.trim();
+              if (trimmedValue === '') {
+                  Alert.alert(
+                    "Please input your peak flow value",
+                    '',
+                    [
+                      {
+                        text: "OK",
+                      }
+                    ]
+                  );
+                }
+                else {
+                  Alert.alert(
+                    "Do you want to add to calendar?",
+                    '',
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      {
+                        text: "OK", onPress: () => {
+                          savePeakFlowData(firebase.auth().currentUser.uid);
+                          navigation.navigate('Calendar Tab')
+                        }
+                      }
+                    ]
+                  );
+                }
+              }
+            }
+          />
+        </View>
+      </View>
+    </ScrollView>
   )
 }
 
@@ -134,29 +155,29 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   datetime: {
-      backgroundColor: '#fff',
-      marginTop: 35,
+    backgroundColor: '#fff',
+    marginTop: 35,
   },
   dateContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 10,
-      paddingHorizontal: 30,
-      width: imageWidth - 50,
-      backgroundColor: '#F5E1A4'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    paddingHorizontal: 30,
+    width: imageWidth - 50,
+    backgroundColor: '#F5E1A4'
   },
   timeContainer: {
-      width: imageWidth - 50,
-      padding: 20,
-      backgroundColor: '#FFF',
+    width: imageWidth - 50,
+    padding: 20,
+    backgroundColor: '#FFF',
   },
   inputNote: {
-      paddingHorizontal: 20,
-      paddingTop: 0,
-      borderWidth: 2,
-      borderRadius: 8,
-      borderColor: '#D9D9D9',
-      marginTop: 10,
+    paddingHorizontal: 20,
+    paddingTop: 0,
+    borderWidth: 2,
+    borderRadius: 8,
+    borderColor: '#D9D9D9',
+    marginTop: 10,
   },
   input: {
     height: 40,
@@ -174,7 +195,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 4, 
+    elevation: 4,
   },
   prefix: {
     paddingHorizontal: 10,

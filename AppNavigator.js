@@ -15,6 +15,9 @@ import AsthmaActivityPage from './pages/AsthmaActivity';
 import Setting from './pages/Setting';
 import MedicinePage from './pages/Medicine';
 import RegisterSuccessfulPage from './pages/RegisterSuccessful';
+import Profile from './pages/Profile';
+import ZonePage from './pages/ZonePage';
+import ResultACT from './pages/ResultACT';
 import Chart from './components/Graph';
 
 const notification = () => (<Icon name="notifications-sharp" size={30} color='#F1EAE4' />)
@@ -26,7 +29,7 @@ const headerStyle = {
 }
 export const HomeStackScreen = () => {
   return (
-
+    
     <HomeStack.Navigator screenOptions={headerStyle}>
       <HomeStack.Screen name='Asthsist' component={HomePage}
         options={{
@@ -49,6 +52,8 @@ export const HomeStackScreen = () => {
       <HomeStack.Screen name="Calendar" component={Calendar} />
       <HomeStack.Screen name="Asthma Control Test" component={AsthmaControlTest} />
       <HomeStack.Screen name="Asthma Action Plan" component={AsthmaActionPlan} />
+      <HomeStack.Screen name="Zone" component={ZonePage} />
+      <HomeStack.Screen name="Result ACT" component={ResultACT} />
       <HomeStack.Screen name="Home" component={HomePage} />
       <HomeStack.Screen name="Chart" component={Chart} options={({ route }) => ({ title: route.params.name })}/>
       <HomeStack.Screen
@@ -90,6 +95,7 @@ export const SettingStackScreen = () => {
   return (
     <SettingStack.Navigator screenOptions={headerStyle}>
       <SettingStack.Screen name="Setting" component={Setting} />
+      <SettingStack.Screen name="Profile" component={Profile} />
     </SettingStack.Navigator>
   );
 }

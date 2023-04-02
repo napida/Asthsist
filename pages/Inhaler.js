@@ -45,8 +45,21 @@ const InhalerPage = ({ navigation }) => {
 
   const [text, setText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  
   const addItem = () => {
+    const trimmedValue = text.trim();
+    if (trimmedValue ==='' ){
+      Alert.alert(
+        "Please input inhaler name",
+        '',
+        [
+          {
+            text: "OK",
+          }
+        ]
+      );
+      return;
+    }
     const newItem = { label: text, value: items.length + 1 };
     setItems([...items, newItem]);
     setText('');
@@ -61,16 +74,18 @@ const InhalerPage = ({ navigation }) => {
   ];
 
   const saveInhalerData = (uid) => {
-    db.ref(`/Inhaler/${uid}`).push({
-      time: date.toISOString(),
+    db.ref(`/Inhaler/${firebase.auth().currentUser.uid}`).push({
+      time: date.toString(),
       name: name,
       usage: usage,
-      note: note
+      note: note,
+      userUID: firebase.auth().currentUser.uid
     });
   }
 
   const toggleModalVisibility = () => {
     setIsModalVisible(!isModalVisible);
+    setValue('Select your inhaler')
   };
 
 
@@ -127,7 +142,6 @@ const InhalerPage = ({ navigation }) => {
           containerStyle={{ width: imageWidth - 50, alignSelf: 'center' }}
           listMode="SCROLLVIEW"
           onSelectItem={(item) => {
-            console.log(item)
             item.value === 'add' && setIsModalVisible(!isModalVisible)
             setName(item.label)
           }}
@@ -189,7 +203,18 @@ const InhalerPage = ({ navigation }) => {
           <Button
             title="Add to Calendar"
             onPress={() => {
-              saveInhalerData(firebase.auth().currentUser.uid);
+              if (usage == 0 || !name || name === 'Add') {
+                Alert.alert(
+                  "Please input your inhaler and number of times",
+                  '',
+                  [
+                    {
+                      text: "OK",
+                    }
+                  ]
+                );
+              }
+              else {
               Alert.alert(
                 "Do you want to add to calendar?",
                 '',
@@ -199,9 +224,13 @@ const InhalerPage = ({ navigation }) => {
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => navigation.navigate('Calendar') }
+                  {
+                    text: "OK", onPress: () => {
+                      saveInhalerData(firebase.auth().currentUser.uid); navigation.navigate('Calendar Tab')
+                    }
+                  }
                 ]
-              );
+              );}
             }}
           />
         </View>

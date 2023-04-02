@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const ItemSelector = ({ title, items, onSelect }) => {
+const ItemSelector = ({ title, items, onSelect, preselected }) => {
     const [selected, setSelected] = useState(null);
+
+    useEffect(() => {
+        if (preselected) {
+            setSelected(preselected);
+        }
+    }, [preselected]);
 
     const handleSelect = (item) => {
         setSelected(item);

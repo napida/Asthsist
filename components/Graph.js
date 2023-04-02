@@ -1,45 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { VictoryChart, VictoryLine, VictoryLegend, VictoryAxis, VictoryTooltip, VictoryTheme, VictoryScatter } from 'victory-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { VictoryChart, VictoryLine, VictoryLegend, VictoryAxis, VictoryTooltip, VictoryTheme, VictoryScatter, VictoryLabel } from 'victory-native';
 import { useRoute } from '@react-navigation/native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
-import { format, parseISO, parse } from 'date-fns';
+import moment from 'moment';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-// static data
-// if you do the back-end, you have to get the highest peakflow in the same day
-// const data = [
-//   { x: new Date('2022-01-01T08:00:00Z'), y: 400 },
-//   { x: new Date('2022-01-02T12:00:00Z'), y: 450 },
-//   { x: new Date('2022-01-01T16:00:00Z'), y: 500 },
-//   { x: new Date('2022-01-01T20:00:00Z'), y: 450 },
-//   { x: new Date('2022-01-02T08:00:00Z'), y: 500 },
-//   { x: new Date('2022-01-02T12:00:00Z'), y: 550 },
-//   { x: new Date('2022-01-02T16:00:00Z'), y: 600 },
-//   { x: new Date('2022-01-02T20:00:00Z'), y: 550 },
-//   { x: new Date('2022-01-03T08:00:00Z'), y: 600 },
-//   { x: new Date('2022-11-03T12:00:00Z'), y: 650 },
-//   { x: new Date('2023-11-03T16:00:00Z'), y: 700 },
-//   { x: new Date('2023-11-03T20:00:00Z'), y: 650 },
-// ];
-
 const db = firebase.database();
 
-const Chart = ({ navigation, title, value, datetime }) => {
+const Chart = ({ navigation }) => {
   const route = useRoute();
-  const [view, setView] = useState('')
-  const [selectedDate, setSelectedDate] = useState(new Date('2022-03-03T00:00:00Z'));
+  const [view, setView] = useState('day')
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [data, setData] = useState([]);
+  const [selectedPoint, setSelectedPoint] = useState(null);
 
+  const handlePointClick = (datum) => {
+    setSelectedPoint(datum.label);
+  };
   useEffect(() => {
     const fetchData = () => {
 
       const title = route.params.name.replace(/\s/g, '');
-      console.log('title', title);
 
       const uid = firebase.auth().currentUser.uid;
       let ref = null;
@@ -54,11 +40,10 @@ const Chart = ({ navigation, title, value, datetime }) => {
 
       ref.on('value', (snapshot) => {
         const data = snapshot.val();
-        console.log('data', data);
         if (data) {
           const dataArray = Object.entries(data).map(([key, value]) => {
             const date = new Date(value.time);
-            console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
+            // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
 
             let yValue;
             if (title === 'PeakFlow') {
@@ -74,7 +59,6 @@ const Chart = ({ navigation, title, value, datetime }) => {
             };
           });
           setData(dataArray);
-          console.log('dataArray', dataArray);
         }
       });
     };
@@ -124,89 +108,127 @@ const Chart = ({ navigation, title, value, datetime }) => {
   // const view = 'day'; // change this to 'month'
 
   let filteredData = data.filter((d) => {
-    if (view === 'day' || view === 'week') {
+    if (view === 'day') {
       return (
         d.x.getFullYear() === selectedDate.getFullYear() &&
         d.x.getMonth() === selectedDate.getMonth() &&
         d.x.getDate() === selectedDate.getDate()
       );
+    } else if (view === 'week') {
+      let weekStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay());
+      let weekEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay() + 6);
+      return (d.x >= weekStart && d.x <= weekEnd);
     } else if (view === 'month') {
       return d.x.getFullYear() === selectedDate.getFullYear() && d.x.getMonth() === selectedDate.getMonth();
     } else if (view === 'year') {
       return d.x.getFullYear() === selectedDate.getFullYear();
     }
   });
-
+  console.log('filteredData', filteredData)
   // find average of Peak Flow
   const groupedData = {};
   filteredData.forEach((d) => {
     const date = new Date(d.x);
     const day = date.toDateString();
-    if (!groupedData[day]) {
-      groupedData[day] = { x: date, y: [], count: 0 };
+    const isoDateTime = date.toISOString();
+    const dateFromView = view === 'day' ? isoDateTime : day // if view is not day then find avg only date not time
+    if (!groupedData[dateFromView]) {
+      groupedData[dateFromView] = { x: date, y: [], count: 0 };
     }
-    groupedData[day].y.push(d.y);
-    groupedData[day].count++;
+    groupedData[dateFromView].y.push(d.y);
+    groupedData[dateFromView].count++;
   });
 
-  const groupedDataArray = Object.keys(groupedData).map((day) => {
-    const data = groupedData[day];
+  const groupedDataArray = Object.keys(groupedData).map((dateFromView) => {
+    const data = groupedData[dateFromView];
     return { x: data.x, y: data.y.reduce((a, b) => a + b, 0) / data.count };
   });
 
   // find max of Peak Flow
-  const maxPeakFlowData = Object.keys(groupedData).map((day) => {
+  const maxData = Object.keys(groupedData).map((day) => {
     const data = groupedData[day];
-    const maxPeakFlow = Math.max(...data.y);
-    return { x: data.x, y: maxPeakFlow };
+    const max = Math.max(...data.y);
+    return { x: data.x, y: max };
   });
 
+  const message =
+    route.params.name === "Peak Flow" ? "Measure your peak flow regularly to track your lung function and help manage your asthma symptoms! 😊" :
+      route.params.name === "Inhaler" ? "Make sure you have your inhaler with you at all times and use it as prescribed by your doctor to manage your asthma symptoms! 😊" :
+        // route.params.name === "medication" ? "Remember to take your asthma medication as prescribed by your doctor to keep your asthma symptoms under control! 😊" :
+        route.params.name === "Asthma Activity" ? "Check your asthma activity regularly to track your asthma symptoms and identify potential triggers. This will help you take proactive steps to manage your asthma! 😊" :
+          "Remember to measure your peak flow, take your asthma medication, use your inhaler as prescribed, and check your asthma activity regularly to stay on top of your asthma! 😊";
+  
+  
+  const tickValues = [];
+  if (filteredData.length > 0) {
+    const getYear = filteredData[0].x.getFullYear();
+    const getMonth = filteredData[0].x.getMonth();
+    const getDay = filteredData[0].x.getDate();
 
+    if (view === 'year') {
+      for (let i = 0; i < 12; i++) {
+        tickValues.push(new Date(getYear, i));
+      }
+    } else if (view === 'month') {
+      const startDate = new Date(getYear, getMonth, 1);
+      const endDate = new Date(getYear, getMonth + 1, 0);
+      for (let i = startDate.getDate(); i <= endDate.getDate(); i++) {
+        tickValues.push(new Date(getYear, getMonth, i));
+      }
+    } else if (view === 'week') {
+      const firstDayOfWeek = 0; 
+      const startDate = new Date(selectedDate);
+      startDate.setDate(selectedDate.getDate() - selectedDate.getDay() + firstDayOfWeek);
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+      for (let i = 0; i < 7; i++) {
+        const tickDate = new Date(startDate);
+        tickDate.setDate(startDate.getDate() + i);
+        tickValues.push(tickDate);
+      }
+    } else if (view === 'day') {
+      tickValues.push(
+        new Date(getYear, getMonth, getDay, 0), // 0:00 AM
+        new Date(getYear, getMonth, getDay, 6), // 6:00 AM
+        new Date(getYear, getMonth, getDay, 12), // 12:00 PM
+        new Date(getYear, getMonth, getDay, 18) // 6:00 PM
+      );
+    }    
+  }
 
-  // const getMaxPeakFlowForDay = (data, date) => {
-  //   const filteredData = data.filter(d => {
-  //     const dDate = new Date(d.x);
-  //     return (
-  //       dDate.getFullYear() === date.getFullYear() &&
-  //       dDate.getMonth() === date.getMonth() &&
-  //       dDate.getDate() === date.getDate()
-  //     );
-  //   });
-  //   if (filteredData.length === 0) {
-  //     return null; // no data for this day
-  //   }
-  //   return filteredData.reduce((max, d) => {
-  //     return d.y > max ? d.y : max;
-  //   }, filteredData[0].y);
-  // }
-  // const maxPeakFlow = getMaxPeakFlowForDay(data, selectedDate);
-  // console.log(maxPeakFlow)
   return (
     <View style={styles.container}>
       {filteredData.length <= 1 ? (
         <>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
+            <Text style={styles.title}>{view.toLocaleUpperCase()}: {formatDate(selectedDate, view)}</Text>
           </View>
-          <View style={{ flex: 1, backgroundColor: '#C4DCE8', justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={styles.noDataText}>Looks like you haven't measured your peak flow in a while, why not take a reading now?</Text>
+          <View style={{ flex: 1, backgroundColor: '#C4DCE8', justifyContent: 'flex-start', alignItems: 'center' }}>
+            <Image
+              source={require('../assets/no-tracking.png')}
+              resizeMode='contain'
+              style={{ height: 250, opacity: 0.8 }}
+            />
+            <Text style={styles.titleText}>Hey there!</Text>
+            <Text style={styles.text}>Looks like you haven't input any data yet.</Text>
+            <Text style={styles.textContent}>{message}</Text>
             <Button title={`input ${route.params.name}`} onPress={() => navigation.navigate(route.params.name)} />
           </View>
         </>
       ) :
         <>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
+            <Text style={styles.title}>{view.toLocaleUpperCase()}: {formatDate(selectedDate, view)}</Text>
           </View>
           <View style={styles.chartContainer}>
             <VictoryChart
               // theme={{ axis: { style: { tickLabels: { fontSize: 10 } } } }}
-              height={300}
-              padding={{ top: 20, bottom: 50, left: 50, right: 20 }}
+              height={400}
+              padding={{ top: 50, bottom: 100, left: 60, right: 20 }}
               domainPadding={{ x: 10 }}
               theme={VictoryTheme.material}
             >
-              <VictoryLegend x={50} y={280}
+              <VictoryLegend x={50} y={380}
                 orientation="horizontal"
                 gutter={20}
                 colorScale={["#0097A7", "#FF8A65"]}
@@ -215,34 +237,75 @@ const Chart = ({ navigation, title, value, datetime }) => {
                   { name: 'Max', symbol: { type: 'minus', fill: '#FF8A65' } }
                 ]}
               />
-
-              <VictoryAxis
-                label="time"
-                tickCount={4}
-                tickFormat={(x) => {
-                  if (!x) {
-                    return '';
-                  }
-                  if (view === 'day') {
+              {console.log('tickValues', tickValues)}
+              {view === 'day' && (
+                <VictoryAxis
+                  label="Time"
+                  tickCount={4}
+                  tickFormat={(x) => {
+                    if (!x) {
+                      return '';
+                    }
                     return new Date(x).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                  } else if (view === 'week') {
+                  }}
+                  style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 30 } }}
+                  tickValues={tickValues}
+                />
+              )}
+              {view === 'week' && (
+                <VictoryAxis
+                  label="Time"
+                  tickCount={7}
+                  tickFormat={(x) => {
+                    if (!x) {
+                      return '';
+                    }
                     const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                     const dayOfWeek = new Date(x).getDay();
                     return weekdays[dayOfWeek];
-                  } else if (view === 'month') {
+                  }}
+                  style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 30 } }}
+                  tickValues={tickValues}
+                />
+              )}
+              {view === 'month' && (
+                <VictoryAxis
+                  label="Time"
+                  tickCount={4}
+                  tickFormat={(x) => {
+                    if (!x) {
+                      return '';
+                    }
                     return new Date(x).getDate();
-                  } else if (view === 'year') {
+                  }}
+                  style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 30 } }}
+                  tickValues={tickValues}
+                />
+              )}
+              {view === 'year' && (
+                <VictoryAxis
+                  label="Time"
+                  tickCount={12}
+                  tickFormat={(x) => {
+                    if (!x) {
+                      return '';
+                    }
                     return new Date(x).toLocaleString('default', { month: 'short' });
-                  }
-                }}
-                style={{ tickLabels: { padding: 5 } }}
-              />
+                  }}
+                  tickValues={tickValues}
+                  style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 30 } }}
+                />
+              )}
               <VictoryAxis
-                label="Peakflow (L/min)"
+                label={
+                  route.params.name === 'Peak Flow' ?
+                    "Peak Flow (L/min)" :
+                    "Number of Times"
+                }
                 dependentAxis
                 tickCount={4}
-                domain={[400, 700]} // set the y-axis domain to be between 500 and 1000
-                style={{ tickLabels: { padding: 5 } }}
+                // domain={[400, 700]} // set the y-axis domain to be between 500 and 1000
+                style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 40 } }}
               />
               <VictoryLine
                 data={groupedDataArray}
@@ -253,22 +316,66 @@ const Chart = ({ navigation, title, value, datetime }) => {
                 labelComponent={<VictoryTooltip />}
               />
               <VictoryLine
-                data={maxPeakFlowData}
+                data={maxData}
                 x="x"
                 y="y"
                 style={{ data: { stroke: '#FF5722', strokeWidth: 3 } }}
                 labelComponent={<VictoryTooltip />}
               />
               <VictoryScatter
-                style={{ data: { fill: "#72BDB7" } }}
+                style={{ data: { fill: "orange", opacity: 0.5 } }}
                 size={7}
-                data={groupedDataArray}
+                data={maxData}
+                labels={({ datum }) =>
+                  `${route.params.name === 'Peak Flow' ?
+                    `${datum.y.toFixed(2)} L/min` :
+                    datum.y.toFixed(2) == 1 ?
+                      `${datum.y.toFixed(2)} time` :
+                      `${datum.y.toFixed(2)} times`}
+                      \n ${moment(datum.x).format('DD MMM YYYY, h:mm A')}`
+                }
+                labelComponent={
+                  <VictoryTooltip
+                    constrainToVisibleArea
+                    cornerRadius={10}
+                    flyoutStyle={{ fill: 'orange' }}
+                    renderInPortal={false}
+                    style={{ fontSize: 10 }}
+                  />
+                }
+                onPress={handlePointClick}
               />
               <VictoryScatter
-                style={{ data: { fill: "orange" } }}
+                style={{ data: { fill: "#72BDB7", opacity: 0.5 } }}
                 size={7}
-                data={maxPeakFlowData}
+                data={groupedDataArray}
+                labels={({ datum }) =>
+                  `${route.params.name === 'Peak Flow' ?
+                    `${datum.y.toFixed(2)} L/min` :
+                    datum.y.toFixed(2) == 1 ?
+                      `${datum.y.toFixed(2)} time` :
+                      `${datum.y.toFixed(2)} times`}
+                    \n ${moment(datum.x).format('DD MMM YYYY, h:mm A')}`
+                }
+                labelComponent={
+                  <VictoryTooltip
+                    cornerRadius={10}
+                    flyoutStyle={{ fill: '#72BDB7' }}
+                    renderInPortal={false}
+                    style={{ fontSize: 10 }}
+                    constrainToVisibleArea
+                  />
+                }
+                onPress={handlePointClick}
               />
+
+              {selectedPoint && (
+                <VictoryLabel
+                  x={selectedPoint.x}
+                  y={selectedPoint.y}
+                  text={selectedPoint.label}
+                />
+              )}
             </VictoryChart>
           </View>
 
@@ -310,12 +417,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingBottom: 20,
   },
-  noDataText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  text: {
+    fontFamily: 'Prompt-Medium',
+    alignSelf: 'center',
     textAlign: 'center',
-    color: 'red',
-    margin: 30,
+    marginHorizontal: 30,
+    fontSize: 15,
+    marginVertical: 10
+  },
+  textContent: {
+    fontFamily: 'Prompt-Light',
+    alignSelf: 'center',
+    textAlign: 'center',
+    marginHorizontal: 30,
+    marginVertical: 10,
+  },
+  titleText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    fontFamily: 'Prompt-Bold',
   },
 });
 

@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, StatusBar, FlatList, View, Text, Image, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, StatusBar, FlatList, View, Text, Image, SafeAreaView, Dimensions, TouchableOpacity, Platform } from 'react-native';
 import { Divider } from 'react-native-elements';
+import PushNotification from 'react-native-push-notification';
 
+const sendNotification = (title, message) => {
+  PushNotification.localNotification({
+    channelId: 'your-channel-id', // Add the channelId here
+    title,
+    message,
+    playSound: true,
+    soundName: 'default',
+  });
+};
 
 const colourRed = '#FF0000';
 const getfontColour = (key, value) => {
@@ -81,15 +91,44 @@ const Notification = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
+    if (Platform.OS === 'android') {
+      PushNotification.createChannel(
+        {
+          channelId: 'your-channel-id',
+          channelName: 'Your Channel Name',
+          importance: 4,
+          vibrationPattern: [100, 200, 300, 400, 500],
+          playSound: true,
+        },
+        created => console.log(`createChannel returned '${created}'`),
+      );
+    }
+  
+    PushNotification.configure({
+      onNotification: function (notification) {
+        console.log('Notification:', notification);
+        notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+    });
+  
+    // Schedule a one-time notification 10 seconds after the app starts
+    PushNotification.localNotificationSchedule({
+      channelId: 'your-channel-id',
+      title: 'Test Notification',
+      message: 'This is a test notification scheduled for 10 seconds after the app starts.',
+      playSound: true,
+      soundName: 'default',
+      date: new Date(Date.now() + 10 * 1000), // in 10 seconds
+    });
     const fetchData = async () => {
       const aqiData = await fetchAQIData();
       const iotData = await fetchIOTData();
       console.log('AQI Data:', aqiData);
       console.log('IOT Data:', iotData);
-    
+
       // Process the data and add notifications if needed
       const newNotifications = [];
-    
+
       // Check AQI data
       for (const key in aqiData) {
         const value = aqiData[key].v;
@@ -102,7 +141,7 @@ const Notification = () => {
           });
         }
       }
-    
+
       // Check IOT data
       const latestIOT = iotData[iotData.length - 1];
       console.log("latestIOT.val.fingerStatus", latestIOT.val.fingerStatus);
@@ -140,11 +179,26 @@ const Notification = () => {
           img: require('../assets/humidity.png'),
         });
       }
-    
+
       // Update notifications
       setNotifications([...notifications, ...newNotifications]);
+      // Check AQI data
+      for (const key in aqiData) {
+        const value = aqiData[key].v;
+        if (getfontColour(key, value) === colourRed) {
+          newNotifications.push({
+            id: `aqi_${key}`,
+            title: `High ${key.toUpperCase()} level`,
+            message: `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`,
+            img: require('../assets/air-quality.png'),
+          });
+          sendNotification(`High ${key.toUpperCase()} level`, `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`);
+        }
+      }
+
+
     };
-    
+
 
     fetchData();
     console.log('Notifications:', notifications);

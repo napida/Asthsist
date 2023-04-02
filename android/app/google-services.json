@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "357373367436",
+    "firebase_url": "https://asthsist-510af-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "asthsist-510af",
+    "storage_bucket": "asthsist-510af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357373367436:android:68b3466b742cf67ba517a9",
+        "android_client_info": {
+          "package_name": "com.asthist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "357373367436-adqn5arullecc3grpgef8jgbllssu0co.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbh7yOTcnpU7ubWh0I6vMNVjyvtAMWhhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "357373367436-adqn5arullecc3grpgef8jgbllssu0co.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357373367436:android:92e54d9da235d409a517a9",
+        "android_client_info": {
+          "package_name": "com.asthsistapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "357373367436-adqn5arullecc3grpgef8jgbllssu0co.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbh7yOTcnpU7ubWh0I6vMNVjyvtAMWhhc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "357373367436-adqn5arullecc3grpgef8jgbllssu0co.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

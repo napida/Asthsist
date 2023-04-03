@@ -91,18 +91,18 @@ const Notification = () => {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      PushNotification.createChannel(
-        {
-          channelId: 'your-channel-id',
-          channelName: 'Your Channel Name',
-          importance: 4,
-          vibrationPattern: [100, 200, 300, 400, 500],
-          playSound: true,
-        },
-        created => console.log(`createChannel returned '${created}'`),
-      );
-    }
+    // if (Platform.OS === 'android') {
+    //   PushNotification.createChannel(
+    //     {
+    //       channelId: 'your-channel-id',
+    //       channelName: 'Your Channel Name',
+    //       importance: 4,
+    //       vibrationPattern: [100, 200, 300, 400, 500],
+    //       playSound: true,
+    //     },
+    //     created => console.log(`createChannel returned '${created}'`),
+    //   );
+    // }
   
     PushNotification.configure({
       onNotification: function (notification) {

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, TouchableOpacity } from 'react-native';
 import { VictoryChart, VictoryLine, VictoryLegend, VictoryAxis, VictoryTooltip, VictoryTheme, VictoryScatter, VictoryLabel } from 'victory-native';
 import { useRoute } from '@react-navigation/native';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
 import moment from 'moment';
+import Swiper from 'react-native-swiper';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -124,7 +125,6 @@ const Chart = ({ navigation }) => {
       return d.x.getFullYear() === selectedDate.getFullYear();
     }
   });
-  console.log('filteredData', filteredData)
   // find average of Peak Flow
   const groupedData = {};
   filteredData.forEach((d) => {
@@ -201,7 +201,7 @@ const Chart = ({ navigation }) => {
       {filteredData.length <= 1 ? (
         <>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{view.toLocaleUpperCase()}: {formatDate(selectedDate, view)}</Text>
+            <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: '#C4DCE8', justifyContent: 'flex-start', alignItems: 'center' }}>
             <Image
@@ -218,7 +218,7 @@ const Chart = ({ navigation }) => {
       ) :
         <>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{view.toLocaleUpperCase()}: {formatDate(selectedDate, view)}</Text>
+            <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
           </View>
           <View style={styles.chartContainer}>
             <VictoryChart
@@ -382,12 +382,24 @@ const Chart = ({ navigation }) => {
         </>
       }
       <View style={styles.buttonContainer}>
-        <Button title="<" onPress={handlePrevDate} />
-        <Button title="Day" onPress={() => setView('day')} />
-        <Button title="Week" onPress={() => setView('week')} />
-        <Button title="Month" onPress={() => setView('month')} />
-        <Button title="Year" onPress={() => setView('year')} />
-        <Button title=">" onPress={handleNextDate} />
+        <TouchableOpacity onPress={handlePrevDate}>
+          <Text style={styles.buttonText}>{'<'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setView('day')} style={[styles.button, view === 'day' && styles.selectedButton]}>
+          <Text style={[styles.buttonText, view === 'day' && styles.selectedButtonText]}>Day</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setView('week')} style={[styles.button, view === 'week' && styles.selectedButton]}>
+          <Text style={[styles.buttonText, view === 'week' && styles.selectedButtonText]}>Week</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setView('month')} style={[styles.button, view === 'month' && styles.selectedButton]}>
+          <Text style={[styles.buttonText, view === 'month' && styles.selectedButtonText]}>Month</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setView('year')} style={[styles.button, view === 'year' && styles.selectedButton]}>
+          <Text style={[styles.buttonText, view === 'year' && styles.selectedButtonText]}>Year</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNextDate}>
+          <Text style={styles.buttonText}>{'>'}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -400,11 +412,13 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: 'center',
+    backgroundColor: '#C4DCE8',
     padding: 10,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Prompt-SemiBold',
+    fontSize: 25,
+    color: '#517EB9'
   },
   chartContainer: {
     flex: 1,
@@ -416,6 +430,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingBottom: 20,
+    backgroundColor: '#C4DCE8',
+    alignItems: 'center'
+  },
+  button: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    backgroundColor: '#eee',
+    marginHorizontal: 5,
+  },
+  selectedButton: {
+    backgroundColor: '#517EB9',
+  },
+  buttonText: {
+    fontFamily: 'Prompt-Medium',
+    fontSize: 18,
+  },
+  selectedButtonText: {
+    color: 'white',
   },
   text: {
     fontFamily: 'Prompt-Medium',

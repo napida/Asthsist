@@ -25,43 +25,93 @@ const Chart = ({ navigation }) => {
   };
   useEffect(() => {
     const fetchData = () => {
-
       const title = route.params.name.replace(/\s/g, '');
+      console.log('title:', title);
 
-      const uid = firebase.auth().currentUser.uid;
-      let ref = null;
+      const fetchThingerData = async () => {
+        try {
+          const response = await fetch(
+            'https://api.thinger.io/v1/users/Rnunaunfairy2544/buckets/kar/data?authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJEZXZpY2VDYWxsYmFja19hc3Roc2lzdG1vYmlsZSIsInN2ciI6ImFwLXNvdXRoZWFzdC5hd3MudGhpbmdlci5pbyIsInVzciI6IlJudW5hdW5mYWlyeTI1NDQifQ.U6_SCVtAhAB6Wz0i5Y3zlZHMSmANs2MsWIIyubMNxJo'
+          );
+          const thingerData = await response.json();
+          console.log('Thinger Data:', thingerData);
 
-      if (title === 'PeakFlow') {
-        ref = db.ref(`/PeakFlowData/${uid}`);
-      } else if (title === 'Inhaler') {
-        ref = db.ref(`/Inhaler/${uid}`);
-      } else if (title === 'AsthmaActivity') {
-        ref = db.ref(`/AsthmaActivityData/${uid}`);
-      }
-
-      ref.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const dataArray = Object.entries(data).map(([key, value]) => {
-            const date = new Date(value.time);
-            // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
+          // Convert Thinger data to the required format
+          const thingerDataArray = thingerData.map((value) => {
+            console.log('value:', value);
+            const date = new Date(value.ts);
+            console.log('date:', date);
 
             let yValue;
-            if (title === 'PeakFlow') {
-              yValue = parseInt(value.peakflow);
-            } else if (title === 'Inhaler') {
-              yValue = parseInt(value.usage);
-            } else if (title === 'AsthmaActivity') {
-              yValue = parseInt(value.activity);
+            if (title === 'Heartrate') {
+              yValue = parseInt(value.val.bpmAvg);
+              console.log('value.bpmAvg:', value.val.bpmAvg);
+            } else if (title === 'SpO2') {
+              yValue = parseInt(value.val.spO2);
+              console.log('value.SpO2:', value.val.SpO2);
+            } else if (title === 'Humidity') {
+              yValue = parseInt(value.val.humidity);
+              console.log('value.humidity:', value.val.humidity);
+            } else if (title === 'Temperature') {
+              yValue = parseInt(value.val.temperature);
+              console.log('value.temperature:', value.val.temperature);
             }
             return {
               x: date,
               y: yValue,
             };
           });
-          setData(dataArray);
+
+          setData(thingerDataArray);
+
+        } catch (error) {
+          console.error('Error fetching Thinger data:', error);
         }
-      });
+      };
+      if (title === 'Heartrate' || title === 'SpO2' || title === 'Humidity' || title === 'Temperature') {
+        fetchThingerData();
+      }
+
+
+      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity') {
+
+        const uid = firebase.auth().currentUser.uid;
+        let ref = null;
+
+        if (title === 'PeakFlow') {
+          ref = db.ref(`/PeakFlowData/${uid}`);
+        } else if (title === 'Inhaler') {
+          ref = db.ref(`/Inhaler/${uid}`);
+        } else if (title === 'AsthmaActivity') {
+          ref = db.ref(`/AsthmaActivityData/${uid}`);
+        }
+
+        ref.on('value', (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const dataArray = Object.entries(data).map(([key, value]) => {
+              const date = new Date(value.time);
+              console.log('date:', date);
+
+              // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
+
+              let yValue;
+              if (title === 'PeakFlow') {
+                yValue = parseInt(value.peakflow);
+              } else if (title === 'Inhaler') {
+                yValue = parseInt(value.usage);
+              } else if (title === 'AsthmaActivity') {
+                yValue = parseInt(value.activity);
+              }
+              return {
+                x: date,
+                y: yValue,
+              };
+            });
+            setData(dataArray);
+          }
+        });
+      }
     };
     fetchData();
   }, []);
@@ -157,8 +207,8 @@ const Chart = ({ navigation }) => {
         // route.params.name === "medication" ? "Remember to take your asthma medication as prescribed by your doctor to keep your asthma symptoms under control! 😊" :
         route.params.name === "Asthma Activity" ? "Check your asthma activity regularly to track your asthma symptoms and identify potential triggers. This will help you take proactive steps to manage your asthma! 😊" :
           "Remember to measure your peak flow, take your asthma medication, use your inhaler as prescribed, and check your asthma activity regularly to stay on top of your asthma! 😊";
-  
-  
+
+
   const tickValues = [];
   if (filteredData.length > 0) {
     const getYear = filteredData[0].x.getFullYear();
@@ -176,7 +226,7 @@ const Chart = ({ navigation }) => {
         tickValues.push(new Date(getYear, getMonth, i));
       }
     } else if (view === 'week') {
-      const firstDayOfWeek = 0; 
+      const firstDayOfWeek = 0;
       const startDate = new Date(selectedDate);
       startDate.setDate(selectedDate.getDate() - selectedDate.getDay() + firstDayOfWeek);
       const endDate = new Date(startDate);
@@ -193,7 +243,7 @@ const Chart = ({ navigation }) => {
         new Date(getYear, getMonth, getDay, 12), // 12:00 PM
         new Date(getYear, getMonth, getDay, 18) // 6:00 PM
       );
-    }    
+    }
   }
 
   return (

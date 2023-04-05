@@ -13,6 +13,14 @@ const sendNotification = (title, message) => {
   });
 };
 
+const isSameDate = (date1, date2) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
+
 const colourRed = '#FF0000';
 const getfontColour = (key, value) => {
 
@@ -103,14 +111,14 @@ const Notification = () => {
     //     created => console.log(`createChannel returned '${created}'`),
     //   );
     // }
-  
+
     PushNotification.configure({
       onNotification: function (notification) {
         console.log('Notification:', notification);
         notification.finish(PushNotificationIOS.FetchResult.NoData);
       },
     });
-  
+
     // Schedule a one-time notification 10 seconds after the app starts
     PushNotification.localNotificationSchedule({
       channelId: 'your-channel-id',
@@ -144,42 +152,48 @@ const Notification = () => {
 
       // Check IOT data
       const latestIOT = iotData[iotData.length - 1];
-      console.log("latestIOT.val.fingerStatus", latestIOT.val.fingerStatus);
-      if (latestIOT.val.fingerStatus === true) {
-        if (getfontColour('bpmAvg', latestIOT.val.bpmAvg) === colourRed) {
-          newNotifications.push({
-            id: 'iot_heartrate',
-            title: 'High Heart rate',
-            message: `Your heart rate is ${latestIOT.val.bpmAvg}, which is in the red zone.`,
-            img: require('../assets/medicine.png'),
-          });
-        }
-        if (getfontColour('spO2', latestIOT.val.spO2) === colourRed) {
-          newNotifications.push({
-            id: 'iot_spo2',
-            title: 'Low SpO2',
-            message: `Your SpO2 level is ${latestIOT.val.spO2}, which is in the red zone.`,
-            img: require('../assets/oximeter.png'),
-          });
-        }
-      }
-      if (getfontColour('temperature', latestIOT.val.temperature) === colourRed) {
-        newNotifications.push({
-          id: 'iot_temperature',
-          title: 'High Temperature',
-          message: `Your temperature is ${latestIOT.val.temperature.toFixed(2)}°C, which is in the red zone.`,
-          img: require('../assets/temperature.png'),
-        });
-      }
-      if (getfontColour('humidity', latestIOT.val.humidity) === colourRed) {
-        newNotifications.push({
-          id: 'iot_humidity',
-          title: 'High Humidity',
-          message: `The humidity level is ${latestIOT.val.humidity.toFixed(2)}%, which is in the red zone.`,
-          img: require('../assets/humidity.png'),
-        });
-      }
+      const iotDate = new Date(latestIOT.ts); // Assuming the timestamp is in seconds
+      console.log('iotDate', iotDate);
+      const currentDate = new Date();
+      console.log('currentDate', currentDate);
+      if (isSameDate(iotDate, currentDate)) {
 
+        console.log("latestIOT.val.fingerStatus", latestIOT.val.fingerStatus);
+        if (latestIOT.val.fingerStatus === true) {
+          if (getfontColour('bpmAvg', latestIOT.val.bpmAvg) === colourRed) {
+            newNotifications.push({
+              id: 'iot_heartrate',
+              title: 'High Heart rate',
+              message: `Your heart rate is ${latestIOT.val.bpmAvg}, which is in the red zone.`,
+              img: require('../assets/medicine.png'),
+            });
+          }
+          if (getfontColour('spO2', latestIOT.val.spO2) === colourRed) {
+            newNotifications.push({
+              id: 'iot_spo2',
+              title: 'Low SpO2',
+              message: `Your SpO2 level is ${latestIOT.val.spO2}, which is in the red zone.`,
+              img: require('../assets/oximeter.png'),
+            });
+          }
+        }
+        if (getfontColour('temperature', latestIOT.val.temperature) === colourRed) {
+          newNotifications.push({
+            id: 'iot_temperature',
+            title: 'High Temperature',
+            message: `Your temperature is ${latestIOT.val.temperature.toFixed(2)}°C, which is in the red zone.`,
+            img: require('../assets/temperature.png'),
+          });
+        }
+        if (getfontColour('humidity', latestIOT.val.humidity) === colourRed) {
+          newNotifications.push({
+            id: 'iot_humidity',
+            title: 'High Humidity',
+            message: `The humidity level is ${latestIOT.val.humidity.toFixed(2)}%, which is in the red zone.`,
+            img: require('../assets/humidity.png'),
+          });
+        }
+      }
       // Update notifications
       setNotifications([...notifications, ...newNotifications]);
       // Check AQI data

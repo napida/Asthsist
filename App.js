@@ -24,6 +24,13 @@ const sendNotification = (title, message) => {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
+const isSameDate = (date1, date2) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
 const colourRed = '#FF0000';
 const getfontColour = (key, value) => {
 
@@ -221,21 +228,26 @@ const fetchData = async () => {
     }
     // Check IOT data
     const latestIOT = iotData[iotData.length - 1];
-    console.log('latestIOT ', latestIOT);
-    console.log("latestIOT.val.fingerStatus", latestIOT.val.fingerStatus);
-    if (latestIOT.val.fingerStatus === true) {
-      if (getfontColour('bpmAvg', latestIOT.val.bpmAvg) === colourRed) {
-        sendNotification(`High Heartrate level`, `The Heartrate level is ${latestIOT.val.bpmAvg}, which is in the red zone.`);
+    const iotDate = new Date(latestIOT.ts); // Assuming the timestamp is in seconds
+    console.log('iotDate', iotDate);
+    const currentDate = new Date();
+    console.log('currentDate', currentDate);
+    if (isSameDate(iotDate, currentDate)) {
+
+      if (latestIOT.val.fingerStatus === true) {
+        if (getfontColour('bpmAvg', latestIOT.val.bpmAvg) === colourRed) {
+          sendNotification(`High Heartrate level`, `The Heartrate level is ${latestIOT.val.bpmAvg.toFixed(2)}, which is in the red zone.`);
+        }
+        if (getfontColour('spO2', latestIOT.val.spO2) === colourRed) {
+          sendNotification(`High spO2 level`, `The spO2 level is ${latestIOT.val.spO2.toFixed(2)}, which is in the red zone.`);
+        }
       }
-      if (getfontColour('spO2', latestIOT.val.spO2) === colourRed) {
-        sendNotification(`High spO2 level`, `The spO2 level is ${latestIOT.val.spO2}, which is in the red zone.`);
+      if (getfontColour('temperature', latestIOT.val.temperature) === colourRed) {
+        sendNotification(`High temperature level`, `The temperature level is ${latestIOT.val.temperature.toFixed(2)}, which is in the red zone.`);
       }
-    }
-    if (getfontColour('temperature', latestIOT.val.temperature) === colourRed) {
-      sendNotification(`High temperature level`, `The temperature level is ${latestIOT.val.temperature}, which is in the red zone.`);
-    }
-    if (getfontColour('humidity', latestIOT.val.humidity) === colourRed) {
-      sendNotification(`High humidity level`, `The humidity level is ${latestIOT.val.humidity}, which is in the red zone.`);
+      if (getfontColour('humidity', latestIOT.val.humidity) === colourRed) {
+        sendNotification(`High humidity level`, `The humidity level is ${latestIOT.val.humidity.toFixed(2)}, which is in the red zone.`);
+      }
     }
     return { title, message };
   } catch (error) {

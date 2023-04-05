@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar, Image, Dimensions, TouchableOpacity } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 
 
 const DATA = [
@@ -23,24 +23,25 @@ const DATA = [
 const imageWidth = Dimensions.get('window').width;
 
 function ListStatusPage({ navigation }) {
-    renderItem = ({ item }) => (
-      <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
-        <Image
-          style={styles.item}
-          source={item.source}
-          resizeMode="cover" />
-      </TouchableOpacity>
-    );
+  renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
+      <Image
+        style={styles.item}
+        source={item.source}
+        resizeMode="cover" />
+    </TouchableOpacity>
+  );
 
-    return (
-      <SafeAreaView style={styles.container}>
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-        />
-      </SafeAreaView>
-    );
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={DATA}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+      />
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

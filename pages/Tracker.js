@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { FlatList, SafeAreaView, StyleSheet, Image, Text, TouchableOpacity, View } from "react-native";
 
 const DATA = [
   {
@@ -58,7 +58,7 @@ const TrackerPage = ({ navigation }) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingVertical: 20}}
+        contentContainerStyle={{paddingVertical: 10}}
       />
     </SafeAreaView>
   );
@@ -79,7 +79,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
     borderRadius: 8,
-    // backgroundColor: '#D9E6D5',
     alignItems: 'center'
   },
   title: {

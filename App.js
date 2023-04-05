@@ -197,8 +197,9 @@ const fetchAQIData = async () => {
   const data = await response.json();
   console.log('data ', data);
 
+
   const storeAqiInDatabase = (aqi, timestamp, co, no2, o3, pm10, pm25, so2) => {
-    const aqiRef = db.ref(`aqi/${timestamp}`);
+    const aqiRef = db.ref(`aqi/${firebase.auth().currentUser.uid}`);
     aqiRef.set({
       value: aqi,
       time: new Date(timestamp).toISOString(),
@@ -215,7 +216,7 @@ const fetchAQIData = async () => {
 
   storeAqiInDatabase(
     aqiData.aqi,
-    aqiData.time.v*1000,
+    aqiData.time.iso,
     aqiData.iaqi.co.v,
     aqiData.iaqi.no2.v,
     aqiData.iaqi.o3.v,

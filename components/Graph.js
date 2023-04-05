@@ -73,7 +73,7 @@ const Chart = ({ navigation }) => {
       }
 
 
-      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity') {
+      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity'|| title ==='PM2.5') {
 
         const uid = firebase.auth().currentUser.uid;
         let ref = null;
@@ -84,7 +84,10 @@ const Chart = ({ navigation }) => {
           ref = db.ref(`/Inhaler/${uid}`);
         } else if (title === 'AsthmaActivity') {
           ref = db.ref(`/AsthmaActivityData/${uid}`);
+        } else if (title === 'PM2.5') {
+          ref = db.ref(`/aqi/${uid}`);
         }
+        console.log("ref",ref);
 
         ref.on('value', (snapshot) => {
           const data = snapshot.val();
@@ -102,6 +105,10 @@ const Chart = ({ navigation }) => {
                 yValue = parseInt(value.usage);
               } else if (title === 'AsthmaActivity') {
                 yValue = parseInt(value.activity);
+              }
+              else if (title === 'PM2.5') {
+                console.log("value.pm25",value.pm25);
+                yValue = parseInt(value.pm25);
               }
               return {
                 x: date,

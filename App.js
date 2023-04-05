@@ -21,9 +21,13 @@ const sendNotification = (title, message) => {
     soundName: 'default',
   });
 };
+
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
+const db = firebase.database();
+
 const isSameDate = (date1, date2) => {
   return (
     date1.getFullYear() === date2.getFullYear() &&
@@ -192,8 +196,36 @@ const fetchAQIData = async () => {
   );
   const data = await response.json();
   console.log('data ', data);
-  console.log('data.data.iaqi ', data.data.iaqi);
-  return data.data.iaqi;
+
+  const storeAqiInDatabase = (aqi, timestamp, co, no2, o3, pm10, pm25, so2) => {
+    const aqiRef = db.ref(`aqi/${timestamp}`);
+    aqiRef.set({
+      value: aqi,
+      time: new Date(timestamp).toISOString(),
+      co: co,
+      no2: no2,
+      o3: o3,
+      pm10: pm10,
+      pm25: pm25,
+      so2: so2
+    });
+  };
+
+  const aqiData = data.data;
+
+  storeAqiInDatabase(
+    aqiData.aqi,
+    aqiData.time.v*1000,
+    aqiData.iaqi.co.v,
+    aqiData.iaqi.no2.v,
+    aqiData.iaqi.o3.v,
+    aqiData.iaqi.pm10.v,
+    aqiData.iaqi.pm25.v,
+    aqiData.iaqi.so2.v
+  );
+  
+  console.log('data.data.iaqi ', aqiData.iaqi);
+  return aqiData.iaqi;
 };
 
 const fetchIOTData = async () => {
@@ -213,7 +245,7 @@ const fetchData = async () => {
     const iotData = await fetchIOTData();
     console.log('aqiData ', aqiData);
     console.log('iotData ', iotData);
-
+    
     let title, message;
     console.log('aqiData.pm25 ', aqiData.pm25);
     console.log('aqiData.pm25.v ', aqiData.pm25.v);

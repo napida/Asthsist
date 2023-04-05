@@ -25,6 +25,36 @@ const items = [
         source: require('../assets/inhaler-graph.png'),
         date: '3d ago'
     },
+    {
+        id: '4',
+        title: 'Heart rate',
+        source: require('../assets/inhaler-graph.png'),
+        date: '5d ago'
+    },
+    {
+        id: '5',
+        title: 'SpO2',
+        source: require('../assets/inhaler-graph.png'),
+        date: '2d ago'
+    },
+    {
+        id: '6',
+        title: 'Humidity',
+        source: require('../assets/inhaler-graph.png'),
+        date: '3d ago'
+    },
+    {
+        id: '7',
+        title: 'Temperature',
+        source: require('../assets/inhaler-graph.png'),
+        date: '3d ago'
+    },
+    {
+        id: '8',
+        title: 'PM2.5',
+        source: require('../assets/inhaler-graph.png'),
+        date: '3d ago'
+    },
 ];
 const menu = [
     {

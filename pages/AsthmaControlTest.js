@@ -2,35 +2,63 @@ import React, { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, View, Button, Alert } from "react-native";
 import RadioForm from 'react-native-simple-radio-button';
 
-const question = [
-  {
-    id: "1",
-    title: "how much of the time has your asthma kept you from getting as much done at work, school or home?",
-  },
-  {
-    id: "2",
-    title: "how often have you had shortness of breath?",
-  },
-  {
-    id: "3",
-    title: "how often have your asthma symptoms (wheezing, coughing, shortness of breath, chest tightness or pain) woken you up at night or earlier than usual in the morning?",
-  },
-  {
-    id: "4",
-    title: "how often have you used your rescue inhaler or nebuliser medication (such as Salbutamol)?",
-  },
-  {
-    id: "5",
-    title: "How would you rate your asthma control during the last 4 weeks?",
-  }
+const question = [{
+  id: "1",
+  title: "During the last 4 weeks, how much of the time has your asthma kept you from getting as much done at work, school or home?",
+  options: [
+    { label: "All of the time", value: 1 },
+    { label: "Most of the time", value: 2 },
+    { label: "Some of the time", value: 3 },
+    { label: "A little of the time", value: 4 },
+    { label: "None of the time", value: 5 },
+  ]
+},
+{
+  id: "2",
+  title: "During the last 4 weeks, how often have you had shortness of breath?",
+  options: [
+    { label: "More than once a day", value: 1 },
+    { label: "Once a day", value: 2 },
+    { label: "3 to 6 times a week", value: 3 },
+    { label: "Once or twice a week", value: 4 },
+    { label: "Not at all", value: 5 },
+  ]
+},
+{
+  id: "3",
+  title: "During the last 4 weeks, how often have your asthma symptoms (wheezing, coughing, shortness of breath, chest tightness or pain) woken you up at night or earlier than usual in the morning?",
+  options: [
+    { label: "4 or more nights a week", value: 1 },
+    { label: "2 to 3 nights a week", value: 2 },
+    { label: "Once a week", value: 3 },
+    { label: "Once or Twice", value: 4 },
+    { label: "Not at all", value: 5 },
+  ]
+},
+{
+  id: "4",
+  title: "During the last 4 weeks, how often have you used your rescue inhaler or nebuliser medication (such as Salbutamol)?",
+  options: [
+    { label: "3 or more times per day", value: 1 },
+    { label: "Once or twice per day", value: 2 },
+    { label: "2 or 3 times per week", value: 3 },
+    { label: "Once a week or less", value: 4 },
+    { label: "Not at all", value: 5 },
+  ]
+},
+{
+  id: "5",
+  title: "How would you rate your asthma control during the last 4 weeks?",
+  options: [
+    { label: "Not Controlled at all", value: 1 },
+    { label: "Poorly Controlled", value: 2 },
+    { label: "Somewhat Controlled", value: 3 },
+    { label: "Well Controlled", value: 4 },
+    { label: "Completely Controlled", value: 5 },
+  ]
+},
 ];
-const options = [
-  { label: 'All of the time', value: 5 },
-  { label: 'Most of the time', value: 4 },
-  { label: 'Some of the time', value: 3 },
-  { label: 'A little of the time', value: 2 },
-  { label: 'None of the time', value: 1 },
-];
+
 
 const AsthmaControlTest = ({ navigation }) => {
 
@@ -50,36 +78,28 @@ const AsthmaControlTest = ({ navigation }) => {
 
   const renderItem = ({ item, index }) => {
     return (
-      <View style={{
-        margin: 15,
-        backgroundColor: '#F1EAE4',
-        padding: 20,
-        borderRadius: 13,
-        shadowOffset: { width: 4, height: 4 },
-        shadowOpacity: 0.12,
-        elevation: 2,
-      }}>
-        <Text style={styles.title}>{item.id}. {item.title}</Text>
-        <View style={{ marginLeft: 20 }}>
-          <RadioForm
-            key={formKey}
-            style={{ marginTop: 21 }}
-            radioStyle={{ marginBottom: 22 }}
-            labelStyle={{ fontFamily: 'Prompt-Regular', fontSize: 15 }}
-            buttonColor={'#49C0B8'}
-            selectedButtonColor={'#49C0B8'}
-            buttonSize={9}
-            buttonOuterSize={19}
-            animation={false}
-            radio_props={options}
-            initial={-1} //initial value of this group
-            onPress={(value) => {
-              const newSelectedOptions = [...chosenOption];
-              newSelectedOptions[index] = value;
-              setChosenOption(newSelectedOptions);
-            }}
-          />
-        </View>
+      <View style={styles.item}>
+        <Text style={styles.title}>
+          {item.id}. {item.title}
+        </Text>
+        <RadioForm
+          key={formKey}
+          style={{ marginTop: 21 }}
+          radioStyle={{ marginBottom: 22 }}
+          labelStyle={{ fontFamily: 'Prompt-Regular', fontSize: 15 }}
+          buttonColor={'#49C0B8'}
+          selectedButtonColor={'#49C0B8'}
+          buttonSize={9}
+          buttonOuterSize={19}
+          animation={false}
+          radio_props={item.options}
+          initial={-1}
+          onPress={(value) => {
+            const newSelectedOptions = [...chosenOption];
+            newSelectedOptions[index] = value;
+            setChosenOption(newSelectedOptions);
+          }}
+        />
       </View>
     );
   };
@@ -112,8 +132,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   item: {
-    flexDirection: 'row',
-    padding: 40,
+    flexDirection: 'column',
+    padding: 20,
     paddingLeft: 25,
     marginVertical: 8,
     marginHorizontal: 16,
@@ -123,7 +143,6 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 8,
     backgroundColor: '#D9E6D5',
-    alignItems: 'center'
   },
   title: {
     fontFamily: 'Prompt-Medium',

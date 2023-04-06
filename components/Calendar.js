@@ -26,10 +26,10 @@ function formatDate(dateString) {
 }
 
 
-const peakFlow = { key: 'peakFlow', color: 'red', selectedDotColor: 'red' };
-const inhaler = { key: 'inhaler', color: 'blue', selectedDotColor: 'blue' };
-const activity = { key: 'activity', color: 'green', selectedDotColor: 'green' };
-const medicine = { key: 'medicine', color: 'orange', selectedDotColor: 'orange' };
+const peakFlow = { key: 'peakFlow', color: '#A57DF3', selectedDotColor: '#A57DF3' };
+const inhaler = { key: 'inhaler', color: '#7CAAF3', selectedDotColor: '#7CAAF3' };
+const activity = { key: 'activity', color: '#EFA45E', selectedDotColor: '#EFA45E' };
+const medicine = { key: 'medicine', color: '#EB5B79', selectedDotColor: '#EB5B79' };
 
 const CalendarPage = () => {
   const [items, setItems] = useState({});

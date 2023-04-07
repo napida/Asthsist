@@ -201,7 +201,7 @@ const fetchAQIData = async () => {
   const timestamp = aqiData.time.iso;
 
   console.log('aqiData.aqi ', aqiData.aqi);
-  console.log('aqiData.iaqi.co.v ', aaqiData.iaqi.co.v);
+  console.log('aqiData.iaqi.co.v ', aqiData.iaqi.co.v);
   console.log('aqiData.iaqi.no2.v ', aqiData.iaqi.no2.v);
   console.log('aqiData.iaqi.o3.v ', aqiData.iaqi.o3.v);
   console.log('aqiData.iaqi.pm10.v ', aqiData.iaqi.pm10.v);

@@ -34,7 +34,7 @@ const DATA = [
 ];
 
 const Item = ({ navigation, item }) => (
-  <TouchableOpacity onPress={() => navigation.navigate(item.title)}>
+  <TouchableOpacity style={styles.button} onPress={() => navigation.navigate(item.title)}>
     <LinearGradient
         colors={[item.color, item.secondColor]}
         style={styles.item}
@@ -86,10 +86,6 @@ const styles = StyleSheet.create({
     paddingLeft: 25,
     marginVertical: 8,
     marginHorizontal: 16,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 5,
-    elevation: 4,
     borderRadius: 8,
     alignItems: 'center'
   },
@@ -97,6 +93,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Prompt-Medium',
     color: '#012250',
     fontSize: 25,
+  },
+  button: {
+    borderRadius: 20,
+    overflow: "hidden",
   },
 });
 

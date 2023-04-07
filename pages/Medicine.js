@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { Button, Text, View, StyleSheet, Modal, Dimensions, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Icon from 'react-native-vector-icons/AntDesign'
-import { Divider } from 'react-native-elements';
-import DatePicker from 'react-native-date-picker'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
 import DropDownPicker from 'react-native-dropdown-picker';
+import LinearGradient from 'react-native-linear-gradient';
+import TrackerComponent from '../components/TrackerComponent';
+import PrimaryButton from '../components/PrimaryButton';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -17,23 +16,16 @@ const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 
-const MedicinePage = ({ navigation }) => {
+const MedicinePage = ({ }) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
-  const formatDate = (date) => {
-    const options = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    };
-    return date.toLocaleDateString('en-US', options);
-  };
+
   const [note, onChangeNoteText] = useState(null);
   const [usage, setUsage] = useState(0); // define Usage state variable here
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(null);
   const [value, setValue] = useState(null);
+
   const [items, setItems] = useState([
     { label: 'Ephedrine', value: 1 },
     { label: 'Aminophylline', value: 2 },
@@ -47,7 +39,7 @@ const MedicinePage = ({ navigation }) => {
 
   const addItem = () => {
     const trimmedValue = text.trim();
-    if (trimmedValue ==='' ){
+    if (trimmedValue === '') {
       Alert.alert(
         "Please input inhaler name",
         '',
@@ -84,159 +76,129 @@ const MedicinePage = ({ navigation }) => {
 
   const toggleModalVisibility = () => {
     setIsModalVisible(!isModalVisible);
-    setValue('Select your inhaler')
+    setValue('Select your Medicine')
   };
 
-
-
   return (
-    <ScrollView>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <View style={styles.datetime}>
-          <View style={styles.dateContainer}>
-            <Text style={styles.text}>{formatDate(date)}</Text>
-            <TouchableOpacity onPress={() => setOpenDate(true)}>
-              <Ionicons name="calendar-sharp" size={30} />
-            </TouchableOpacity>
-          </View>
-          <DatePicker
-            modal
-            mode="date"
-            open={openDate}
+    <LinearGradient
+      colors={['#FF4136', '#A36EDF']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{ flex: 1 }}
+    >
+      <ScrollView>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <TrackerComponent
+            onConfirmDateFuntion={(date) => { setDate(date), setOpenDate(false) }}
+            setTrueOpenDate={() => setOpenDate(true)}
+            setFalseOpenDate={() => setOpenDate(false)}
+            onChangeNote={(text) => onChangeNoteText(text)}
+            placeholderNote="E.g. because of exercise"
             date={date}
-            onConfirm={(date) => {
-              setOpenDate(false)
-              setDate(date)
+            openDate={openDate}
+            onDateChange={setDate}
+            numberTitle="Number of Pills"
+            isDisabled={usage > 0 ? false : true}
+            decreaseFunction={() => {
+              if (usage > 0) {
+                setUsage(usage - 1);
+              }
             }}
-            onCancel={() => {
-              setOpenDate(false)
-            }}
+            numberValue={usage}
+            increaseFunction={() => setUsage(usage + 1)}
+            titleNoteStyle={{ color: 'black' }}
+            DropDownComponent={(
+              <>
+                <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                  <View style={styles.modal}>
+                    <View style={styles.modalContent}>
+                      <TextInput
+                        style={styles.input}
+                        value={text}
+                        onChangeText={setText}
+                        placeholder="Enter item text"
+                      />
+                      <View style={styles.modalButtons}>
+                        <Button title="Cancel" onPress={toggleModalVisibility} />
+                        <Button title="Add" onPress={addItem} />
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
+                <DropDownPicker
+                  open={open}
+                  value={value}
+                  items={dropdownItems}
+                  placeholder="Select your inhaler"
+                  setOpen={setOpen}
+                  setValue={setValue}
+                  setItems={setItems}
+                  containerStyle={{ width: imageWidth - 60, alignSelf: 'center' }}
+                  listMode="SCROLLVIEW"
+                  onSelectItem={(item) => {
+                    item.value === 'add' && setIsModalVisible(!isModalVisible)
+                    setName(item.label)
+                  }}
+                  style={{
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    paddingLeft: 30,
+                    backgroundColor: '#7DC7CD'
+                  }}
+                  textStyle={styles.text}
+                />
+              </>
+            )}
           />
-        </View>
-        <Divider width={5} />
-        <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-          <View style={styles.modal}>
-            <View style={styles.modalContent}>
-              <TextInput
-                style={styles.input}
-                value={text}
-                onChangeText={setText}
-                placeholder="Enter item text"
-              />
-              <View style={styles.modalButtons}>
-                <Button title="Cancel" onPress={toggleModalVisibility} />
-                <Button title="Add" onPress={addItem} />
-              </View>
-            </View>
-          </View>
-        </Modal>
-        <DropDownPicker
-          open={open}
-          value={value}
-          items={dropdownItems}
-          placeholder="Select your Medicine"
-          setOpen={setOpen}
-          setValue={setValue}
-          setItems={setItems}
-          containerStyle={{ width: imageWidth - 50, alignSelf: 'center' }}
-          listMode="SCROLLVIEW"
-          onSelectItem={(item) => {
-            item.value === 'add' && setIsModalVisible(!isModalVisible)
-            setName(item.label)
-          }}
-          style={{
-            borderWidth: 0,
-            shadowOffset: { width: 2, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 3,
-            elevation: 4,
-            paddingLeft: 30
-          }}
-          textStyle={styles.text}
-        />
-        <Divider width={5} />
-        <View style={styles.timeContainer}>
-          <Text style={styles.textTime}>TIMES</Text>
-          <View style={{ alignSelf: 'center', borderTopWidth: 4, borderTopColor: '#F5E1A4' }}>
-            <DatePicker mode="time" date={date} onDateChange={setDate} />
-          </View>
-        </View>
-        <Divider width={20} />
-        <View style={styles.numberOfPill}>
-          <View style={{ flex: 2 }}>
-            <Text style={[styles.textTime, { textAlign: 'center' }]} >Number of Pills</Text>
-          </View>
-          <View style={styles.activityContainer}>
-            <TouchableOpacity
-              disabled={usage > 0 ? false : true}
-              style={[styles.buttonContainer, { opacity: usage <= 0 && 0.5 }]}
+          <View style={{ width: imageWidth / 2, marginBottom: 35 }}>
+            <PrimaryButton
+              title="Add to Calendar"
               onPress={() => {
-                if (usage > 0) {
-                  setUsage(usage - 1);
+                if (usage == 0 || !name || name === 'Add') {
+                  Alert.alert(
+                    "Please input your medicine and number of pills",
+                    '',
+                    [
+                      {
+                        text: "OK",
+                      }
+                    ]
+                  );
                 }
-              }}>
-              <Icon name="minuscircle" size={30} color='#72BFB9' />
-            </TouchableOpacity>
-            <Text style={[styles.usage, { width: 30, textAlign: 'center' }]}>{usage}</Text>
-            <TouchableOpacity
-              style={[styles.buttonContainer, { paddingRight: 0 }]}
-              onPress={() => setUsage(usage + 1)}>
-              <Icon name="pluscircle" size={30} color='#72BFB9' />
-            </TouchableOpacity>
+                else {
+                  Alert.alert(
+                    "Do you want to add to calendar?",
+                    '',
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      {
+                        text: "OK", onPress: () => {
+                          saveMedicineData(firebase.auth().currentUser.uid);
+                          Alert.alert(
+                            'Success',
+                            'Event added to calendar successfully!',
+                            [
+                              {
+                                text: 'OK',
+                                onPress: () => console.log('OK pressed')
+                              }
+                            ]
+                          )
+                        }
+                      }
+                    ]
+                  );
+                }
+              }}
+            />
           </View>
         </View>
-        <View style={{ width: imageWidth - 50, marginVertical: 20, marginTop: 30 }}>
-          <Text>Note</Text>
-          <TextInput
-            multiline
-            numberOfLines={3}
-            editable
-            maxLength={40}
-            onChangeText={(text) => onChangeNoteText(text)}
-            placeholder="E.g. because of exercise"
-            value={note}
-            style={styles.inputNote}
-          />
-        </View>
-        <View style={{ width: imageWidth / 2, marginBottom: 35 }}>
-          <Button
-            title="Add to Calendar"
-            onPress={() => {
-              if (usage == 0 || !name || name === 'Add') {
-                Alert.alert(
-                  "Please input your inhaler and number of times",
-                  '',
-                  [
-                    {
-                      text: "OK",
-                    }
-                  ]
-                );
-              }
-              else {
-              Alert.alert(
-                "Do you want to add to calendar?",
-                '',
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  {
-                    text: "OK", onPress: () => {
-                      navigation.navigate('Calendar Tab');
-                      saveMedicineData(firebase.auth().currentUser.uid);
-                    }
-                  }
-                ]
-              );
-              }
-            }}
-          />
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </LinearGradient>
   )
 }
 
@@ -303,35 +265,6 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-  },
-  numberOfPill: {
-    paddingVertical: 10,
-    width: imageWidth - 50,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f4f8f7',
-    borderRadius: 20,
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 4,
-  },
-  activityContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    borderRadius: 5,
-    marginHorizontal: 30,
-    marginVertical: 10,
-  },
-  buttonContainer: {
-    paddingHorizontal: 10,
-  },
-  usage: {
-    fontFamily: 'Prompt-Regular',
-    color: '#012250',
-    fontSize: 20,
   },
 })
 

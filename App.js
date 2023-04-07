@@ -197,35 +197,33 @@ const fetchAQIData = async () => {
   const data = await response.json();
   console.log('data ', data);
 
+  const aqiData = data.data;
+  const timestamp = aqiData.time.iso;
 
-  const storeAqiInDatabase = (aqi, timestamp, co, no2, o3, pm10, pm25, so2) => {
+  console.log('aqiData.aqi ', aqiData.aqi);
+  console.log('aqiData.iaqi.co.v ', aaqiData.iaqi.co.v);
+  console.log('aqiData.iaqi.no2.v ', aqiData.iaqi.no2.v);
+  console.log('aqiData.iaqi.o3.v ', aqiData.iaqi.o3.v);
+  console.log('aqiData.iaqi.pm10.v ', aqiData.iaqi.pm10.v);
+  console.log('aqiData.iaqi.pm25.v ', aqiData.iaqi.pm25.v);
+  console.log('aqiData.iaqi.so2.v ', aqiData.iaqi.so2.v);
+  console.log('timestamp ',timestamp);
+
+  const storeAqiInDatabase = (uid) => {
     const aqiRef = db.ref(`aqi/${firebase.auth().currentUser.uid}`);
-    aqiRef.set({
-      value: aqi,
-      time: new Date(timestamp).toISOString(),
-      co: co,
-      no2: no2,
-      o3: o3,
-      pm10: pm10,
-      pm25: pm25,
-      so2: so2
+    aqiRef.push({
+      value: aqiData.aqi,
+      time: timestamp,
+      co: aqiData.iaqi.co.v,
+      no2: aqiData.iaqi.no2.v,
+      o3: aqiData.iaqi.o3.v,
+      pm10: aqiData.iaqi.pm10.v,
+      pm25: aqiData.iaqi.pm25.v,
+      so2: aqiData.iaqi.so2.v
     });
   };
+  storeAqiInDatabase(firebase.auth().currentUser.uid);
 
-  const aqiData = data.data;
-
-  storeAqiInDatabase(
-    aqiData.aqi,
-    aqiData.time.iso,
-    aqiData.iaqi.co.v,
-    aqiData.iaqi.no2.v,
-    aqiData.iaqi.o3.v,
-    aqiData.iaqi.pm10.v,
-    aqiData.iaqi.pm25.v,
-    aqiData.iaqi.so2.v
-  );
-  
-  console.log('data.data.iaqi ', aqiData.iaqi);
   return aqiData.iaqi;
 };
 

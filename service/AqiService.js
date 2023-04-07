@@ -34,21 +34,6 @@ export const AqiService = ({ source, isRefreshing }) => {
   const pollutantsArr = ['co', 'no2', 'o3', 'pm10', 'pm25', 'so2'];
   const navigation = useNavigation();
 
-  function storeAqiInDatabase(aqi, timestamp, co, no2, o3, pm10, pm25, so2) {
-    const aqiRef = db.ref(`aqi/${timestamp}`);
-    aqiRef.set({
-      value: aqi,
-      time: new Date(timestamp).toISOString(),
-      co: co,
-      no2: no2,
-      o3: o3,
-      pm10: pm10,
-      pm25: pm25,
-      so2: so2
-    });
-  }
-
-
 
   function timeSince(date) {
     var seconds = Math.floor(date / 1000);
@@ -83,24 +68,28 @@ export const AqiService = ({ source, isRefreshing }) => {
       const response = await fetch('https://api.waqi.info/feed/here/?token=a1b89043d4f7de03fe168ee473acc6c6c6aae8c9');
       const json = await response.json();
       setData(json.data);
-      const timestamp = new Date(json.data.time.iso).getTime(); // Get the timestamp in milliseconds
-  
+      const timestamp = json.data.time.iso; // Get the timestamp in milliseconds
+      console.log('timestamp'.timestamp);
+
       const pollutants = getIaqi(json.data);
       const pollutantValues = {};
       pollutants.forEach(p => {
         pollutantValues[p.value] = p.v;
       });
-  
-      storeAqiInDatabase(
-        json.data.aqi,
-        timestamp,
-        pollutantValues.co,
-        pollutantValues.no2,
-        pollutantValues.o3,
-        pollutantValues.pm10,
-        pollutantValues.pm25,
-        pollutantValues.so2
-      );
+      const storeAqiInDatabase = (uid) => {
+        const aqiRef = db.ref(`aqi/${firebase.auth().currentUser.uid}`);
+        aqiRef.push({
+          value: json.data.aqi,
+          time: timestamp,
+          co: pollutantValues.co,
+          no2: pollutantValues.no2,
+          o3: pollutantValues.o3,
+          pm10: pollutantValues.pm10,
+          pm25: pollutantValues.pm25,
+          so2: pollutantValues.so2
+        });
+      };
+      storeAqiInDatabase(firebase.auth().currentUser.uid);
     } catch (error) {
       console.error(error);
       navigation.navigate('No Internet');

@@ -1,10 +1,13 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions } from 'react-native'
 import Swiper from 'react-native-swiper'
+import { useNavigation } from '@react-navigation/native';
+import Chart from './Graph';
 
 export default ({ items }) => {
     const imageWidth = Dimensions.get('window').width;
     const imageHeight = imageWidth / 2;
+    const navigation = useNavigation();
     return (
         <Swiper
             style={styles.wrapper}
@@ -12,11 +15,15 @@ export default ({ items }) => {
             showsPagination={false}
         >
             {items.map((item, index) => (
-                <View 
-                key={item.id} style={styles.graphContainer}>
+                <View
+                    key={item.id} style={styles.graphContainer}>
+                    
                     <TouchableOpacity
-                    // onPress={() => navigation.navigate(item.title)}
+                        onPress={() => navigation.navigate('Chart', {
+                            name: item.title
+                        })}
                     >
+                        {/* <Chart title={item.title} /> */}
                         <Image
                             style={{
                                 height: imageHeight,
@@ -37,7 +44,9 @@ export default ({ items }) => {
 
 
 const styles = StyleSheet.create({
-    wrapper: {},
+    wrapper: {
+        backgroundColor: '#C4DCE8',
+    },
     text: {
         fontFamily: 'Prompt-Medium',
         letterSpacing: 2,

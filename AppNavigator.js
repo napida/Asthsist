@@ -19,6 +19,7 @@ import Notification from './pages/Notification';
 import Profile from './pages/Profile';
 import ZonePage from './pages/ZonePage';
 import ResultACT from './pages/ResultACT';
+import Chart from './components/Graph';
 
 const HomeStack = createStackNavigator();
 const headerStyle = {
@@ -61,6 +62,7 @@ export const HomeStackScreen = ({navigation}) => {
       <HomeStack.Screen name="Result ACT" component={ResultACT} />
       <HomeStack.Screen name="Home" component={HomePage} />
       <HomeStack.Screen name="Notification" component={Notification} />
+      <HomeStack.Screen name="Chart" component={Chart} options={({ route }) => ({ title: route.params.name })}/>
       <HomeStack.Screen
         name="RegisterSuccessful" // add the RegisterSuccessful screen
         component={RegisterSuccessfulPage}

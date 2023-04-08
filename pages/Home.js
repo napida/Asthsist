@@ -90,8 +90,9 @@ const menu = [
 ];
 
 function HomePage({ navigation }) {
-const route = useRoute();
-const totalScore = route.params?.totalScore || 0;
+    const route = useRoute();
+    const totalScore = route.params?.totalScore || 0;
+    const scoreColor = route.params?.scoreColor || '#00CD00';
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ flex: 3 }}>
@@ -100,7 +101,7 @@ const totalScore = route.params?.totalScore || 0;
             <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.menuContainer}>
                 {/* <View style={styles.menuContainer}> */}
                 {menu.map((item) => (
-                    <View key={item.id} style={{marginHorizontal: 11}}>
+                    <View key={item.id} style={{ marginHorizontal: 11 }}>
                         <TouchableOpacity onPress={() => navigation.navigate(item.page)}>
                             <Image
                                 style={{ height: 70, width: 70 }}
@@ -119,13 +120,23 @@ const totalScore = route.params?.totalScore || 0;
                 {/* </View> */}
             </ScrollView>
             <TouchableOpacity style={styles.percentContainer}>
-                <Progress style={styles.text} value={totalScore} color='#00CD00'/>
-                <View>
+                <View style={{flex:1}}>
+                    <Progress style={styles.text} value={totalScore} color={scoreColor} />
+                </View>
+                <View style={{flex:2.5}}>
                     <Text style={[styles.text, { paddingBottom: 10 }]}>
                         How well you control asthma
                     </Text>
-                    <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4' }]}>
-                        You did good today :)
+                    <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4', textAlign: 'center' }]}>
+                        {totalScore >= 1 && totalScore <= 15 ?
+                            `You may be facing a difficult challenge, but don't give up!`
+                            : totalScore > 15 && totalScore <= 20 ?
+                                `You're on the right path towards better asthma control`
+                                : totalScore > 20 && totalScore <= 25 ?
+                                    `You're doing an amazing job of managing your asthma :)`
+                                    : `Get on the path to better asthma control - take the test now!`
+
+                        }
                     </Text>
                 </View>
 
@@ -163,11 +174,12 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 4,
         borderRadius: 8,
+        paddingHorizontal: 10
     },
     menuContainer: {
         flex: 1,
         marginVertical: 3,
-        paddingVertical:20, 
+        paddingVertical: 20,
         flexDirection: 'column',
         backgroundColor: '#FFF',
         shadowOffset: { width: 4, height: 4 },

@@ -6,7 +6,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
 import moment from 'moment';
-import Swiper from 'react-native-swiper';
+import PrimaryButton from './PrimaryButton';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -72,8 +72,7 @@ const Chart = ({ navigation }) => {
         fetchThingerData();
       }
 
-
-      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity'|| title ==='PM2.5') {
+      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity' || title === 'PM2.5') {
 
         const uid = firebase.auth().currentUser.uid;
         let ref = null;
@@ -87,14 +86,13 @@ const Chart = ({ navigation }) => {
         } else if (title === 'PM2.5') {
           ref = db.ref(`/aqi/${uid}`);
         }
-        console.log("ref",ref);
+        console.log("ref", ref);
 
         ref.on('value', (snapshot) => {
           const data = snapshot.val();
           if (data) {
             const dataArray = Object.entries(data).map(([key, value]) => {
               const date = new Date(value.time);
-              console.log('date:', date);
 
               // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
 
@@ -107,7 +105,7 @@ const Chart = ({ navigation }) => {
                 yValue = parseInt(value.activity);
               }
               else if (title === 'PM2.5') {
-                console.log("value.pm25",value.pm25);
+                console.log("value.pm25", value.pm25);
                 yValue = parseInt(value.pm25);
               }
               return {
@@ -182,7 +180,7 @@ const Chart = ({ navigation }) => {
       return d.x.getFullYear() === selectedDate.getFullYear();
     }
   });
-  // find average of Peak Flow
+  // find average 
   const groupedData = {};
   filteredData.forEach((d) => {
     const date = new Date(d.x);
@@ -201,7 +199,7 @@ const Chart = ({ navigation }) => {
     return { x: data.x, y: data.y.reduce((a, b) => a + b, 0) / data.count };
   });
 
-  // find max of Peak Flow
+  // find max 
   const maxData = Object.keys(groupedData).map((day) => {
     const data = groupedData[day];
     const max = Math.max(...data.y);
@@ -213,8 +211,8 @@ const Chart = ({ navigation }) => {
       route.params.name === "Inhaler" ? "Make sure you have your inhaler with you at all times and use it as prescribed by your doctor to manage your asthma symptoms! 😊" :
         // route.params.name === "medication" ? "Remember to take your asthma medication as prescribed by your doctor to keep your asthma symptoms under control! 😊" :
         route.params.name === "Asthma Activity" ? "Check your asthma activity regularly to track your asthma symptoms and identify potential triggers. This will help you take proactive steps to manage your asthma! 😊" :
-          "Remember to measure your peak flow, take your asthma medication, use your inhaler as prescribed, and check your asthma activity regularly to stay on top of your asthma! 😊";
-
+          null
+  // "Remember to measure your peak flow, take your asthma medication, use your inhaler as prescribed, and check your asthma activity regularly to stay on top of your asthma! 😊";
 
   const tickValues = [];
   if (filteredData.length > 0) {
@@ -251,11 +249,12 @@ const Chart = ({ navigation }) => {
         new Date(getYear, getMonth, getDay, 18) // 6:00 PM
       );
     }
+    console.log('filteredData', filteredData)
   }
 
   return (
     <View style={styles.container}>
-      {filteredData.length <= 1 ? (
+      {filteredData.length <= 0 ? (
         <>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
@@ -268,8 +267,12 @@ const Chart = ({ navigation }) => {
             />
             <Text style={styles.titleText}>Hey there!</Text>
             <Text style={styles.text}>Looks like you haven't input any data yet.</Text>
-            <Text style={styles.textContent}>{message}</Text>
-            <Button title={`input ${route.params.name}`} onPress={() => navigation.navigate(route.params.name)} />
+            {!!message && (
+              <>
+                <Text style={styles.textContent}>{message}</Text>
+                <PrimaryButton title={`input ${route.params.name}`} onPress={() => navigation.navigate(route.params.name)} />
+              </>
+            )}
           </View>
         </>
       ) :
@@ -357,13 +360,24 @@ const Chart = ({ navigation }) => {
                 label={
                   route.params.name === 'Peak Flow' ?
                     "Peak Flow (L/min)" :
-                    "Number of Times"
+                    route.params.name === 'PM2.5' ?
+                      'PM2.5 (µg./m)' :
+                      route.params.name === 'Heart rate' ?
+                        'Heart rate (bpm)' :
+                        route.params.name === 'SpO2' ?
+                          'SpO2 (%)' :
+                          route.params.name === 'Humidity' ?
+                            'Humidity (%)' :
+                            route.params.name === 'Temperature' ?
+                              'Temperature (°C)' :
+                              "Number of Times"
                 }
                 dependentAxis
                 tickCount={4}
-                // domain={[400, 700]} // set the y-axis domain to be between 500 and 1000
+                tickFormat={(tick) => Number(tick).toFixed(2)}
                 style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 40 } }}
               />
+              {console.log(route.params.name)}
               <VictoryLine
                 data={groupedDataArray}
                 x="x"
@@ -386,9 +400,17 @@ const Chart = ({ navigation }) => {
                 labels={({ datum }) =>
                   `${route.params.name === 'Peak Flow' ?
                     `${datum.y.toFixed(2)} L/min` :
-                    datum.y.toFixed(2) == 1 ?
-                      `${datum.y.toFixed(2)} time` :
-                      `${datum.y.toFixed(2)} times`}
+                    route.params.name === 'PM2.5' ?
+                      `${datum.y.toFixed(2)} µg./m` :
+                      route.params.name === 'Heart rate' ?
+                        `${datum.y.toFixed(2)} bpm` :
+                        route.params.name === 'SpO2' || route.params.name === 'Humidity' ?
+                          `${datum.y.toFixed(2)} %` :
+                          route.params.name === 'Temperature' ?
+                            `${datum.y.toFixed(2)} °C` :
+                            datum.y.toFixed(2) == 1 ?
+                              `${datum.y.toFixed(2)} time` :
+                              `${datum.y.toFixed(2)} times`}
                       \n ${moment(datum.x).format('DD MMM YYYY, h:mm A')}`
                 }
                 labelComponent={
@@ -409,10 +431,18 @@ const Chart = ({ navigation }) => {
                 labels={({ datum }) =>
                   `${route.params.name === 'Peak Flow' ?
                     `${datum.y.toFixed(2)} L/min` :
-                    datum.y.toFixed(2) == 1 ?
-                      `${datum.y.toFixed(2)} time` :
-                      `${datum.y.toFixed(2)} times`}
-                    \n ${moment(datum.x).format('DD MMM YYYY, h:mm A')}`
+                    route.params.name === 'PM2.5' ?
+                      `${datum.y.toFixed(2)} µg./m` :
+                      route.params.name === 'Heart rate' ?
+                        `${datum.y.toFixed(2)} bpm` :
+                        route.params.name === 'SpO2' || route.params.name === 'Humidity' ?
+                          `${datum.y.toFixed(2)} %` :
+                          route.params.name === 'Temperature' ?
+                            `${datum.y.toFixed(2)} °C` :
+                            datum.y.toFixed(2) == 1 ?
+                              `${datum.y.toFixed(2)} time` :
+                              `${datum.y.toFixed(2)} times`}
+                      \n ${moment(datum.x).format('DD MMM YYYY, h:mm A')}`
                 }
                 labelComponent={
                   <VictoryTooltip

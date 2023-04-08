@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FlatList, SafeAreaView, StatusBar, StyleSheet, Image, Text, TouchableOpacity, View, RefreshControl } from "react-native";
+import React from "react";
+import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, RefreshControl } from "react-native";
 import {AqiService} from "../service/AqiService";
 import {ThingerService} from "../service/ThingerService";
 
@@ -32,20 +32,7 @@ const Item = ({ item, isRefresh }) => (
     {item.title === "AQI"
       ? <AqiService source={item.source} isRefresh={isRefresh} />
       :
-    //  item.title === "Temperature"
-    //   ? 
       <ThingerService title={item.title} source={item.source} isRefresh={isRefresh} />
-      // :
-      // <View style={{ flexDirection: 'row' }}>
-      //   <Image
-      //     style={{ height: 70, width: 70, marginRight: 50 }}
-      //     source={item.source}
-      //     resizeMode="contain" />
-      //   <View>
-      //     <Text style={styles.title}>{item.title}</Text>
-      //     <Text style={[styles.title, { fontFamily: 'Prompt-Medium', fontSize: 17, color: item.color }]}>{item.subtitle}</Text>
-      //   </View>
-      // </View>
     }
   </TouchableOpacity>
 );
@@ -74,7 +61,9 @@ const AirQualityPage = ({ navigation }) => {
         data={DATA}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{paddingVertical: 10}}
       />
     </SafeAreaView>
   );
@@ -83,7 +72,6 @@ const AirQualityPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
     flexDirection: 'column',

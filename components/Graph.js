@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
 import { VictoryChart, VictoryLine, VictoryLegend, VictoryAxis, VictoryTooltip, VictoryTheme, VictoryScatter, VictoryLabel } from 'victory-native';
 import { useRoute } from '@react-navigation/native';
 import firebase from 'firebase/compat/app';
@@ -7,15 +7,17 @@ import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
 import moment from 'moment';
 import PrimaryButton from './PrimaryButton';
+const imageWidth = Dimensions.get('window').width;
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.database();
 
-const Chart = ({ navigation }) => {
+const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowViewButton = true, show }) => {
   const route = useRoute();
-  const [view, setView] = useState('day')
+  const title = !!route.params ? route.params.title : page;
+  const [view, setView] = useState(!!show ? show : 'week')
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [data, setData] = useState([]);
   const [selectedPoint, setSelectedPoint] = useState(null);
@@ -24,9 +26,13 @@ const Chart = ({ navigation }) => {
     setSelectedPoint(datum.label);
   };
   useEffect(() => {
+    if (title && !page) {
+      navigation.setOptions({ title });
+    }
+  }, [title]);
+  useEffect(() => {
     const fetchData = () => {
-      const title = route.params.name.replace(/\s/g, '');
-      console.log('title:', title);
+      const titleWithNoSpace = title?.replace(/\s/g, '');
 
       const fetchThingerData = async () => {
         try {
@@ -43,16 +49,16 @@ const Chart = ({ navigation }) => {
             console.log('date:', date);
 
             let yValue;
-            if (title === 'Heartrate') {
+            if (titleWithNoSpace === 'Heartrate') {
               yValue = parseInt(value.val.bpmAvg);
               console.log('value.bpmAvg:', value.val.bpmAvg);
-            } else if (title === 'SpO2') {
+            } else if (titleWithNoSpace === 'SpO2') {
               yValue = parseInt(value.val.spO2);
               console.log('value.SpO2:', value.val.SpO2);
-            } else if (title === 'Humidity') {
+            } else if (titleWithNoSpace === 'Humidity') {
               yValue = parseInt(value.val.humidity);
               console.log('value.humidity:', value.val.humidity);
-            } else if (title === 'Temperature') {
+            } else if (titleWithNoSpace === 'Temperature') {
               yValue = parseInt(value.val.temperature);
               console.log('value.temperature:', value.val.temperature);
             }
@@ -68,22 +74,22 @@ const Chart = ({ navigation }) => {
           console.error('Error fetching Thinger data:', error);
         }
       };
-      if (title === 'Heartrate' || title === 'SpO2' || title === 'Humidity' || title === 'Temperature') {
+      if (titleWithNoSpace === 'Heartrate' || titleWithNoSpace === 'SpO2' || titleWithNoSpace === 'Humidity' || titleWithNoSpace === 'Temperature') {
         fetchThingerData();
       }
 
-      if (title === 'PeakFlow' || title === 'Inhaler' || title === 'AsthmaActivity' || title === 'PM2.5') {
+      if (titleWithNoSpace === 'PeakFlow' || titleWithNoSpace === 'Inhaler' || titleWithNoSpace === 'AsthmaActivity' || titleWithNoSpace === 'PM2.5') {
 
         const uid = firebase.auth().currentUser.uid;
         let ref = null;
 
-        if (title === 'PeakFlow') {
+        if (titleWithNoSpace === 'PeakFlow') {
           ref = db.ref(`/PeakFlowData/${uid}`);
-        } else if (title === 'Inhaler') {
+        } else if (titleWithNoSpace === 'Inhaler') {
           ref = db.ref(`/Inhaler/${uid}`);
-        } else if (title === 'AsthmaActivity') {
+        } else if (titleWithNoSpace === 'AsthmaActivity') {
           ref = db.ref(`/AsthmaActivityData/${uid}`);
-        } else if (title === 'PM2.5') {
+        } else if (titleWithNoSpace === 'PM2.5') {
           ref = db.ref(`/aqi/${uid}`);
         }
         console.log("ref", ref);
@@ -97,14 +103,14 @@ const Chart = ({ navigation }) => {
               // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
 
               let yValue;
-              if (title === 'PeakFlow') {
+              if (titleWithNoSpace === 'PeakFlow') {
                 yValue = parseInt(value.peakflow);
-              } else if (title === 'Inhaler') {
+              } else if (titleWithNoSpace === 'Inhaler') {
                 yValue = parseInt(value.usage);
-              } else if (title === 'AsthmaActivity') {
+              } else if (titleWithNoSpace === 'AsthmaActivity') {
                 yValue = parseInt(value.activity);
               }
-              else if (title === 'PM2.5') {
+              else if (titleWithNoSpace === 'PM2.5') {
                 console.log("value.pm25", value.pm25);
                 yValue = parseInt(value.pm25);
               }
@@ -206,11 +212,41 @@ const Chart = ({ navigation }) => {
     return { x: data.x, y: max };
   });
 
+  // // To show in the home page
+  // // check if there is any data available for the current week
+  // if (!!page) {
+  //   let currentWeekData = [];
+  //   if (view === 'week') {
+  //     let weekStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay());
+  //     let weekEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay() + 6);
+  //     currentWeekData = data.filter((d) => d.x >= weekStart && d.x <= weekEnd);
+  //   }
+
+  //   // if there is no data available for the current week, find the most recent week that has data
+  //   if (currentWeekData.length === 0) {
+  //     let recentWeekData = [];
+  //     let weekStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay() - 7);
+  //     let weeksAgo = 1; // initialize the number of weeks ago to 1
+  //     while (recentWeekData.length === 0 && weekStart >= new Date(2000, 0, 1)) {
+  //       console.log('why:', page)
+  //       let weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6);
+  //       recentWeekData = data.filter((d) => d.x >= weekStart && d.x <= weekEnd);
+  //       weekStart.setDate(weekStart.getDate() - 7);
+  //       weeksAgo++; // increment the number of weeks ago
+  //     }
+  //     filteredData = recentWeekData;
+  //     console.log('fern', filteredData, page)
+  //     console.log(`page ${page} and ${weeksAgo} week(s) ago`); // print the number of weeks ago
+  //   } else {
+  //     filteredData = currentWeekData;
+  //   }
+  // }
+
   const message =
-    route.params.name === "Peak Flow" ? "Measure your peak flow regularly to track your lung function and help manage your asthma symptoms! 😊" :
-      route.params.name === "Inhaler" ? "Make sure you have your inhaler with you at all times and use it as prescribed by your doctor to manage your asthma symptoms! 😊" :
-        // route.params.name === "medication" ? "Remember to take your asthma medication as prescribed by your doctor to keep your asthma symptoms under control! 😊" :
-        route.params.name === "Asthma Activity" ? "Check your asthma activity regularly to track your asthma symptoms and identify potential triggers. This will help you take proactive steps to manage your asthma! 😊" :
+    title === "Peak Flow" ? "Measure your peak flow regularly to track your lung function and help manage your asthma symptoms! 😊" :
+      title === "Inhaler" ? "Make sure you have your inhaler with you at all times and use it as prescribed by your doctor to manage your asthma symptoms! 😊" :
+        // title === "medication" ? "Remember to take your asthma medication as prescribed by your doctor to keep your asthma symptoms under control! 😊" :
+        title === "Asthma Activity" ? "Check your asthma activity regularly to track your asthma symptoms and identify potential triggers. This will help you take proactive steps to manage your asthma! 😊" :
           null
   // "Remember to measure your peak flow, take your asthma medication, use your inhaler as prescribed, and check your asthma activity regularly to stay on top of your asthma! 😊";
 
@@ -254,7 +290,7 @@ const Chart = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {filteredData.length <= 0 ? (
+      {filteredData.length <= 0 && isShowViewButton ? (
         <>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
@@ -270,20 +306,23 @@ const Chart = ({ navigation }) => {
             {!!message && (
               <>
                 <Text style={styles.textContent}>{message}</Text>
-                <PrimaryButton title={`input ${route.params.name}`} onPress={() => navigation.navigate(route.params.name)} />
+                <PrimaryButton title={`input ${title}`} onPress={() => navigation.navigate(title)} />
               </>
             )}
           </View>
         </>
       ) :
         <>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
-          </View>
-          <View style={styles.chartContainer}>
+          {isShowViewButton && (
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{formatDate(selectedDate, view)}</Text>
+            </View>
+          )}
+          <View style={[styles.chartContainer, chartStyle]}>
             <VictoryChart
               // theme={{ axis: { style: { tickLabels: { fontSize: 10 } } } }}
-              height={400}
+              height={!!chartHeight ? chartHeight : 400}
+              width={!!chartWidth ? chartWidth : imageWidth}
               padding={{ top: 50, bottom: 100, left: 60, right: 20 }}
               domainPadding={{ x: 10 }}
               theme={VictoryTheme.material}
@@ -314,7 +353,7 @@ const Chart = ({ navigation }) => {
               )}
               {view === 'week' && (
                 <VictoryAxis
-                  label="Time"
+                  label={isShowViewButton ? "Time" : null}
                   tickCount={7}
                   tickFormat={(x) => {
                     if (!x) {
@@ -358,26 +397,27 @@ const Chart = ({ navigation }) => {
               )}
               <VictoryAxis
                 label={
-                  route.params.name === 'Peak Flow' ?
-                    "Peak Flow (L/min)" :
-                    route.params.name === 'PM2.5' ?
-                      'PM2.5 (µg./m)' :
-                      route.params.name === 'Heart rate' ?
-                        'Heart rate (bpm)' :
-                        route.params.name === 'SpO2' ?
-                          'SpO2 (%)' :
-                          route.params.name === 'Humidity' ?
-                            'Humidity (%)' :
-                            route.params.name === 'Temperature' ?
-                              'Temperature (°C)' :
-                              "Number of Times"
+                  isShowViewButton ? (
+                    title === 'Peak Flow' ?
+                      "Peak Flow (L/min)" :
+                      title === 'PM2.5' ?
+                        'PM2.5 (µg./m)' :
+                        title === 'Heart rate' ?
+                          'Heart rate (bpm)' :
+                          title === 'SpO2' ?
+                            'SpO2 (%)' :
+                            title === 'Humidity' ?
+                              'Humidity (%)' :
+                              title === 'Temperature' ?
+                                'Temperature (°C)' :
+                                "Number of Times") : null
                 }
                 dependentAxis
                 tickCount={4}
                 tickFormat={(tick) => Number(tick).toFixed(2)}
                 style={{ tickLabels: { padding: 5 }, axisLabel: { padding: 40 } }}
               />
-              {console.log(route.params.name)}
+              {console.log(title)}
               <VictoryLine
                 data={groupedDataArray}
                 x="x"
@@ -398,15 +438,15 @@ const Chart = ({ navigation }) => {
                 size={7}
                 data={maxData}
                 labels={({ datum }) =>
-                  `${route.params.name === 'Peak Flow' ?
+                  `${title === 'Peak Flow' ?
                     `${datum.y.toFixed(2)} L/min` :
-                    route.params.name === 'PM2.5' ?
+                    title === 'PM2.5' ?
                       `${datum.y.toFixed(2)} µg./m` :
-                      route.params.name === 'Heart rate' ?
+                      title === 'Heart rate' ?
                         `${datum.y.toFixed(2)} bpm` :
-                        route.params.name === 'SpO2' || route.params.name === 'Humidity' ?
+                        title === 'SpO2' || title === 'Humidity' ?
                           `${datum.y.toFixed(2)} %` :
-                          route.params.name === 'Temperature' ?
+                          title === 'Temperature' ?
                             `${datum.y.toFixed(2)} °C` :
                             datum.y.toFixed(2) == 1 ?
                               `${datum.y.toFixed(2)} time` :
@@ -429,15 +469,15 @@ const Chart = ({ navigation }) => {
                 size={7}
                 data={groupedDataArray}
                 labels={({ datum }) =>
-                  `${route.params.name === 'Peak Flow' ?
+                  `${title === 'Peak Flow' ?
                     `${datum.y.toFixed(2)} L/min` :
-                    route.params.name === 'PM2.5' ?
+                    title === 'PM2.5' ?
                       `${datum.y.toFixed(2)} µg./m` :
-                      route.params.name === 'Heart rate' ?
+                      title === 'Heart rate' ?
                         `${datum.y.toFixed(2)} bpm` :
-                        route.params.name === 'SpO2' || route.params.name === 'Humidity' ?
+                        title === 'SpO2' || title === 'Humidity' ?
                           `${datum.y.toFixed(2)} %` :
-                          route.params.name === 'Temperature' ?
+                          title === 'Temperature' ?
                             `${datum.y.toFixed(2)} °C` :
                             datum.y.toFixed(2) == 1 ?
                               `${datum.y.toFixed(2)} time` :
@@ -468,26 +508,27 @@ const Chart = ({ navigation }) => {
 
         </>
       }
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handlePrevDate}>
-          <Text style={styles.buttonText}>{'<'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setView('day')} style={[styles.button, view === 'day' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, view === 'day' && styles.selectedButtonText]}>Day</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setView('week')} style={[styles.button, view === 'week' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, view === 'week' && styles.selectedButtonText]}>Week</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setView('month')} style={[styles.button, view === 'month' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, view === 'month' && styles.selectedButtonText]}>Month</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setView('year')} style={[styles.button, view === 'year' && styles.selectedButton]}>
-          <Text style={[styles.buttonText, view === 'year' && styles.selectedButtonText]}>Year</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleNextDate}>
-          <Text style={styles.buttonText}>{'>'}</Text>
-        </TouchableOpacity>
-      </View>
+      {isShowViewButton && (
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={handlePrevDate}>
+            <Text style={styles.buttonText}>{'<'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setView('day')} style={[styles.button, view === 'day' && styles.selectedButton]}>
+            <Text style={[styles.buttonText, view === 'day' && styles.selectedButtonText]}>Day</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setView('week')} style={[styles.button, view === 'week' && styles.selectedButton]}>
+            <Text style={[styles.buttonText, view === 'week' && styles.selectedButtonText]}>Week</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setView('month')} style={[styles.button, view === 'month' && styles.selectedButton]}>
+            <Text style={[styles.buttonText, view === 'month' && styles.selectedButtonText]}>Month</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setView('year')} style={[styles.button, view === 'year' && styles.selectedButton]}>
+            <Text style={[styles.buttonText, view === 'year' && styles.selectedButtonText]}>Year</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleNextDate}>
+            <Text style={styles.buttonText}>{'>'}</Text>
+          </TouchableOpacity>
+        </View>)}
     </View>
   );
 };

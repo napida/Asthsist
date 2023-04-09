@@ -62,7 +62,7 @@ export const HomeStackScreen = ({navigation}) => {
       <HomeStack.Screen name="Result ACT" component={ResultACT} />
       <HomeStack.Screen name="Home" component={HomePage} />
       <HomeStack.Screen name="Notification" component={Notification} />
-      <HomeStack.Screen name="Chart" component={Chart} options={({ route }) => ({ title: route.params.name })}/>
+      <HomeStack.Screen name="Chart" component={Chart} />
       <HomeStack.Screen
         name="RegisterSuccessful" // add the RegisterSuccessful screen
         component={RegisterSuccessfulPage}
@@ -93,7 +93,12 @@ export const CalendarStackScreen = () => {
   return (
     <CalendarStack.Navigator screenOptions={headerStyle}>
       <CalendarStack.Screen name="Calendar" component={Calendar} />
-      <CalendarStack.Screen name="Tracker" component={TrackerPage} />
+      <CalendarStack.Screen name="Tracker" component={TrackerPage} />      
+      <ListStatusStack.Screen name="Peak Flow" component={PeakFlowPage} />
+      <ListStatusStack.Screen name="Asthma Activity" component={AsthmaActivityPage} />
+      <ListStatusStack.Screen name="Inhaler" component={InhalerPage} />
+      <ListStatusStack.Screen name="Medicine" component={MedicinePage} />
+
     </CalendarStack.Navigator>
   );
 }

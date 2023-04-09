@@ -11,49 +11,49 @@ const items = [
         id: '1',
         title: 'Inhaler',
         source: require('../assets/inhaler-graph.png'),
-        date: '5d ago'
+        date: '1w ago'
     },
     {
         id: '2',
         title: 'Peak Flow',
         source: require('../assets/inhaler-graph.png'),
-        date: '2d ago'
+        date: '1w ago'
     },
     {
         id: '3',
         title: 'Asthma Activity',
         source: require('../assets/inhaler-graph.png'),
-        date: '3d ago'
+        date: '1w ago'
     },
     {
         id: '4',
         title: 'Heart rate',
         source: require('../assets/inhaler-graph.png'),
-        date: '5d ago'
+        date: '1w ago'
     },
     {
         id: '5',
         title: 'SpO2',
         source: require('../assets/inhaler-graph.png'),
-        date: '2d ago'
+        date: '1w ago'
     },
     {
         id: '6',
         title: 'Humidity',
         source: require('../assets/inhaler-graph.png'),
-        date: '3d ago'
+        date: '1w ago'
     },
     {
         id: '7',
         title: 'Temperature',
         source: require('../assets/inhaler-graph.png'),
-        date: '3d ago'
+        date: '1w ago'
     },
     {
         id: '8',
         title: 'PM2.5',
         source: require('../assets/inhaler-graph.png'),
-        date: '3d ago'
+        date: '3w ago'
     },
 ];
 const menu = [

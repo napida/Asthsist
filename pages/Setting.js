@@ -69,7 +69,7 @@ export default Setting = ({ navigation }) => {
               </View>
             </TouchableOpacity>
             <Divider width={2} />
-            <TouchableOpacity style={{ marginVertical: 10 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Notification')}  style={{ marginVertical: 10 }}>
               <View style={{ paddingHorizontal: 25, flexDirection: 'row' }}>
                 <FeatherIcons
                   name="bell"

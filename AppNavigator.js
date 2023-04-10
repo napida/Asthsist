@@ -108,6 +108,7 @@ export const SettingStackScreen = () => {
     <SettingStack.Navigator screenOptions={headerStyle}>
       <SettingStack.Screen name="Setting" component={Setting} />
       <SettingStack.Screen name="Profile" component={Profile} />
+      <SettingStack.Screen name="Notification" component={Notification} />
     </SettingStack.Navigator>
   );
 }

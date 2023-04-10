@@ -119,8 +119,8 @@ const MedicinePage = ({navigation }) => {
                         placeholder="Enter item text"
                       />
                       <View style={styles.modalButtons}>
-                        <Button title="Cancel" onPress={toggleModalVisibility} />
-                        <Button title="Add" onPress={addItem} />
+                        <PrimaryButton buttonStyle={{borderRadius: 5, width: 100, paddingHorizontal: 15, backgroundColor: '#fff'}} title="Cancel" onPress={toggleModalVisibility} />
+                        <PrimaryButton buttonStyle={{borderRadius: 5, width: 100, paddingHorizontal: 15}} title="Add" onPress={addItem} />
                       </View>
                     </View>
                   </View>
@@ -129,7 +129,7 @@ const MedicinePage = ({navigation }) => {
                   open={open}
                   value={value}
                   items={dropdownItems}
-                  placeholder="Select your inhaler"
+                  placeholder="Select your medicine"
                   setOpen={setOpen}
                   setValue={setValue}
                   setItems={setItems}

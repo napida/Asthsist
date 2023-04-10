@@ -16,7 +16,7 @@ const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 
-const InhalerPage = () => {
+const InhalerPage = ({navigation}) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
 
@@ -185,7 +185,7 @@ const InhalerPage = () => {
                           [
                             {
                               text: 'OK',
-                              onPress: () => console.log('OK pressed')
+                              onPress: () => navigation.navigate('Calendar')
                             }
                           ]
                         )

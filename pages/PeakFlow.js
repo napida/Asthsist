@@ -90,7 +90,7 @@ const PeakFlowPage = () => {
                             [
                               {
                                 text: 'OK',
-                                onPress: () => console.log('OK pressed')
+                                onPress: () => navigation.navigate('Calendar')
                               }
                             ]
                           )

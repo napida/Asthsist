@@ -16,7 +16,7 @@ const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 
-const MedicinePage = ({ }) => {
+const MedicinePage = ({navigation }) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
 

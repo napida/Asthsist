@@ -15,7 +15,7 @@ const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 
-const PeakFlowPage = () => {
+const PeakFlowPage = ({ navigation }) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
 

@@ -55,8 +55,12 @@ const Register = () => {
         displayName: fullName,
       });
       await saveUserToDatabase(currentUser);
-      // navigation.navigate('Login');
-      // Signup successful, do something here like redirect the user to a new page
+      Alert.alert('Registration Successful', 'You have successfully registered!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('RegisterSuccessful'),
+        },
+      ]);      // Signup successful, do something here like redirect the user to a new page
     } catch (error) {
       // Signup failed, display an error message to the user
       console.log(error);
@@ -146,7 +150,6 @@ const Register = () => {
         </View>
         <TouchableOpacity style={styles.button} onPress={() => {
           handleSignUp();
-          navigation.navigate('RegisterSuccessful');
         }}>
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>

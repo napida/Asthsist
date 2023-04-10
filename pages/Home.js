@@ -1,10 +1,18 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import SwiperCard from '../components/SwiperCard'
 import Progress from '../components/Progress.js'
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRoute } from '@react-navigation/native';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import firebaseConfig from '../database/firebaseDB';
 
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
 const imageWidth = Dimensions.get('window').width;
 const items = [
     {
@@ -88,11 +96,45 @@ const menu = [
         page: 'Asthma Control Test'
     },
 ];
+const getScoreColor = (score) => {
+    if (score >= 1 && score <= 15) {
+        return '#FF0000';
+    } else if (score > 15 && score <= 20) {
+        return '#FFA500';
+    } else if (score > 20 && score <= 25) {
+        return '#00CD00';
+    } else {
+        return '#00CD00';
+    }
+};
 
 function HomePage({ navigation }) {
     const route = useRoute();
-    const totalScore = route.params?.totalScore || 0;
-    const scoreColor = route.params?.scoreColor || '#00CD00';
+    const [latestScore, setLatestScore] = useState(0);
+    const [scoreColor, setScoreColor] = useState('#00CD00');
+    const fetchLatestScore = () => {
+        const userUID = firebase.auth().currentUser.uid;
+        const scoresRef = db.ref(`/AsthmaControlTestScores/${userUID}`);
+
+        scoresRef
+            .orderByChild('dateTimeForRef')
+            .limitToLast(1)
+            .once('value', (snapshot) => {
+                const scoresData = snapshot.val();
+                if (scoresData) {
+                    const latestScoreData = Object.values(scoresData)[0];
+                    setLatestScore(latestScoreData.score);
+                    setScoreColor(getScoreColor(latestScoreData.score));
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching latest score: ', error);
+            });
+    };
+    useEffect(() => {
+        fetchLatestScore();
+    }, []);
+
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <View style={{ flex: 3 }}>
@@ -120,19 +162,19 @@ function HomePage({ navigation }) {
                 {/* </View> */}
             </ScrollView>
             <TouchableOpacity style={styles.percentContainer}>
-                <View style={{flex:1}}>
-                    <Progress style={styles.text} value={totalScore} color={scoreColor} />
+                <View style={{ flex: 1 }}>
+                    <Progress style={styles.text} value={latestScore} color={scoreColor} />
                 </View>
-                <View style={{flex:2.5}}>
+                <View style={{ flex: 2.5 }}>
                     <Text style={[styles.text, { paddingBottom: 10 }]}>
                         How well you control asthma
                     </Text>
                     <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 15, color: '#547CB4', textAlign: 'center' }]}>
-                        {totalScore >= 1 && totalScore <= 15 ?
+                        {latestScore >= 1 && latestScore <= 15 ?
                             `You may be facing a difficult challenge, but don't give up!`
-                            : totalScore > 15 && totalScore <= 20 ?
+                            : latestScore > 15 && latestScore <= 20 ?
                                 `You're on the right path towards better asthma control`
-                                : totalScore > 20 && totalScore <= 25 ?
+                                : latestScore > 20 && latestScore <= 25 ?
                                     `You're doing an amazing job of managing your asthma :)`
                                     : `Get on the path to better asthma control - take the test now!`
 

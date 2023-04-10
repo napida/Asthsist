@@ -11,6 +11,10 @@ import RadioForm from 'react-native-simple-radio-button';
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
+function parseDate(dateString) {
+    const [month, day, year] = dateString.split('/');
+    return new Date(year, month - 1, day);
+}
 
 const db = firebase.database();
 
@@ -46,8 +50,15 @@ const Profile = () => {
         { label: 'Male', value: 'Male' },
         { label: 'Female', value: 'Female' },
     ];
+    
+    useEffect(() => {
+        if (userInfo.DOB) {
+            setDate(parseDate(userInfo.DOB));
+        }
+    }, [userInfo.DOB]);
+    
+    const [date, setDate] = useState(userInfo.DOB ? parseDate(userInfo.DOB) : new Date());
 
-    const [date, setDate] = useState(new Date())
     const [openDate, setOpenDate] = useState(false)
 
     const enableEditing = () => {
@@ -62,20 +73,19 @@ const Profile = () => {
 
     const uploadData = () => {
         const updatedData = { name, DOB: date.toLocaleDateString(), phone, gender, height, weight };
-        //console.log("updatedData", updatedData);
-    
+
         const updateProfile = () => {
-          user.updateProfile({
-            displayName: name,
-          })
-          .then(() => {
-            //console.log('User display name updated');
-          })
-          .catch((error) => {
-            console.error('Error updating user display name:', error);
-          });
+            user.updateProfile({
+                displayName: name,
+            })
+                .then(() => {
+                    //console.log('User display name updated');
+                })
+                .catch((error) => {
+                    console.error('Error updating user display name:', error);
+                });
         };
-    
+
         db.ref('users/' + user.uid).set(updatedData)
             .then(() => {
                 setUserInfo(updatedData);
@@ -87,20 +97,20 @@ const Profile = () => {
                 Alert.alert('Error', 'An error occurred while updating your data. Please try again.');
             });
     };
-    
+
 
     const saveChanges = () => {
         Alert.alert(
             "Are you sure?",
             null,
             [
-              { text: "OK", onPress: uploadData },
-              {
-                text: 'Cancel',
-                style: 'cancel',
-              }
+                { text: "OK", onPress: uploadData },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                }
             ]
-          )
+        )
     };
 
     const editUserInfo = () => {
@@ -153,7 +163,7 @@ const Profile = () => {
                                 <View>
                                     <RadioForm
                                         style={{ flexDirection: 'row' }}
-                                        radioStyle={{ paddingRight : 20 }}
+                                        radioStyle={{ paddingRight: 20 }}
                                         labelStyle={{ fontFamily: 'Prompt-Regular', fontSize: 15 }}
                                         buttonColor={'#49C0B8'}
                                         selectedButtonColor={'#49C0B8'}
@@ -196,26 +206,11 @@ const Profile = () => {
                         />
                         <InputField
                             leftFiled='Date of Birth'
-                            fieldIconRightFunction={() => setOpenDate(true)}
-                            detail={userInfo.DOB ? date.toLocaleDateString() : 'Not set'}
+                            detail={!!userInfo.DOB ? userInfo.DOB : 'Not set'}
                         />
                         <InputField
                             leftFiled='Phone'
-                            fieldIconRightFunction={() => setOpenDate(true)}
                             detail={!!userInfo.phone ? userInfo.phone : 'Not set'}
-                        />
-                        <DatePicker
-                            modal
-                            mode="date"
-                            open={openDate}
-                            date={date}
-                            onConfirm={(date) => {
-                                setOpenDate(false)
-                                setDate(date)
-                            }}
-                            onCancel={() => {
-                                setOpenDate(false)
-                            }}
                         />
                         <InputField
                             leftFiled='Gender'

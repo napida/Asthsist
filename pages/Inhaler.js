@@ -16,7 +16,7 @@ const db = firebase.database();
 
 const imageWidth = Dimensions.get('window').width;
 
-const InhalerPage = ({navigation}) => {
+const InhalerPage = ({ navigation }) => {
   const [date, setDate] = useState(new Date())
   const [openDate, setOpenDate] = useState(false)
 
@@ -121,8 +121,8 @@ const InhalerPage = ({navigation}) => {
                         placeholder="Enter item text"
                       />
                       <View style={styles.modalButtons}>
-                        <PrimaryButton buttonStyle={{borderRadius: 5, width: 100, paddingHorizontal: 15, backgroundColor: '#fff'}} title="Cancel" onPress={toggleModalVisibility} />
-                        <PrimaryButton buttonStyle={{borderRadius: 5, width: 100, paddingHorizontal: 15}} title="Add" onPress={addItem} />
+                        <PrimaryButton buttonStyle={{ borderRadius: 5, width: 100, paddingHorizontal: 15, backgroundColor: '#fff' }} title="Cancel" onPress={toggleModalVisibility} />
+                        <PrimaryButton buttonStyle={{ borderRadius: 5, width: 100, paddingHorizontal: 15 }} title="Add" onPress={addItem} />
                       </View>
                     </View>
                   </View>
@@ -185,7 +185,10 @@ const InhalerPage = ({navigation}) => {
                           [
                             {
                               text: 'OK',
-                              onPress: () => navigation.navigate('Calendar')
+                              onPress: () => navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Calendar Tab' }],
+                              })
                             }
                           ]
                         )

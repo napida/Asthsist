@@ -119,15 +119,7 @@ const Notification = () => {
       },
     });
 
-    // Schedule a one-time notification 10 seconds after the app starts
-    PushNotification.localNotificationSchedule({
-      channelId: 'your-channel-id',
-      title: 'Test Notification',
-      message: 'This is a test notification scheduled for 10 seconds after the app starts.',
-      playSound: true,
-      soundName: 'default',
-      date: new Date(Date.now() + 10 * 1000), // in 10 seconds
-    });
+    
     const fetchData = async () => {
       const aqiData = await fetchAQIData();
       const iotData = await fetchIOTData();

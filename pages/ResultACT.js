@@ -18,8 +18,9 @@ function ResultACT({ route, navigation }) {
                     buttonLabel='Back to home'
                     onPress={() => navigation.reset({
                         index: 0,
-                        routes: [{ name: 'Asthsist', params: { totalScore: score, scoreColor: '#FF0000' } }],
+                        routes: [{ name: 'Asthsist'}],
                     })}
+
                     backgroundColor='#D9FDDC'
                 />
                 : score > 15 && score <= 20 ?
@@ -33,7 +34,7 @@ function ResultACT({ route, navigation }) {
                         buttonLabel='Back to home'
                         onPress={() => navigation.reset({
                             index: 0,
-                            routes: [{ name: 'Asthsist', params: { totalScore: score, scoreColor: '#FFC100' } }],
+                            routes: [{ name: 'Asthsist'}],
                         })}
                         backgroundColor='#F8F0D6'
                     />
@@ -48,7 +49,7 @@ function ResultACT({ route, navigation }) {
                             buttonLabel='Back to home'
                             onPress={() => navigation.reset({
                                 index: 0,
-                                routes: [{ name: 'Asthsist', params: { totalScore: score, scoreColor: '#00CD00' } }],
+                                routes: [{ name: 'Asthsist'}],
                             })}
                             backgroundColor='#FCC3C3'
                         />

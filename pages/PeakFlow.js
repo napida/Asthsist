@@ -90,7 +90,10 @@ const PeakFlowPage = ({ navigation }) => {
                             [
                               {
                                 text: 'OK',
-                                onPress: () => navigation.navigate('Calendar')
+                                onPress: () => navigation.reset({
+                                  index: 0,
+                                  routes: [{ name: 'Calendar Tab' }],
+                                })
                               }
                             ]
                           )

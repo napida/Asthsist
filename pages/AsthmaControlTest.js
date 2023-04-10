@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, View, Button, Alert } from "react-native";
 import RadioForm from 'react-native-simple-radio-button';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import firebaseConfig from '../database/firebaseDB';
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
 
 const question = [{
   id: "1",
@@ -66,6 +74,27 @@ const AsthmaControlTest = ({ navigation }) => {
   // number of elements and sets each element to -1
   const [formKey, setFormKey] = useState(0);
 
+  const saveScoreToFirebase = (score) => {
+    const userUID = firebase.auth().currentUser.uid;
+    const date = new Date();
+    const scoreData = {
+      score,
+      date: date.toString(),
+      dateTimeForRef: date.toISOString(),
+      userUID,
+    };
+  
+    db.ref(`/AsthmaControlTestScores/${userUID}`)
+      .push(scoreData)
+      .then(() => {
+        console.log('Score saved successfully');
+        navigation.navigate('Result ACT', { score: totalScore });
+      })
+      .catch((error) => {
+        console.error('Error saving score: ', error);
+      });
+  };
+  
   const totalScore = chosenOption && chosenOption.length > 0
     ? chosenOption.reduce((sum, value) => {
       if (value > 0) {
@@ -117,6 +146,7 @@ const AsthmaControlTest = ({ navigation }) => {
                 if (chosenOption.includes(-1) || totalScore < 0 && totalScore > 25) {
                   Alert.alert("Please answer all the questions");
                 } else {
+                  saveScoreToFirebase(totalScore);
                   navigation.navigate('Result ACT', { score: totalScore })
                 }
               }}

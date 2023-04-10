@@ -5,6 +5,7 @@ import 'firebase/compat/database';
 import { Divider } from 'react-native-elements';
 import FeatherIcons from 'react-native-vector-icons/Feather';
 import Login from './Login';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default Setting = ({ navigation }) => {
   const user = firebase.auth().currentUser;
@@ -69,20 +70,12 @@ export default Setting = ({ navigation }) => {
               </View>
             </TouchableOpacity>
             <Divider width={2} />
-            <TouchableOpacity onPress={() => navigation.navigate('Notification')}  style={{ marginVertical: 10 }}>
-              <View style={{ paddingHorizontal: 25, flexDirection: 'row' }}>
-                <FeatherIcons
-                  name="bell"
-                  size={20}
-                  color="#666"
-                  style={{ marginRight: 10 }}
-                />
-                <Text style={styles.text}>Notification</Text>
-              </View>
-            </TouchableOpacity>
             <Divider width={2} />
             <View style={{ marginTop: '80%', alignItems: 'center' }}>
-              <Button title="Sign Out" onPress={handleSignOut} />
+              <PrimaryButton 
+              buttonStyle={{ borderRadius: 5, elevation: 0}}
+              title="Sign Out" 
+              onPress={handleSignOut} />
             </View>
           </View>
         ) : (

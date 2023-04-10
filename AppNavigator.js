@@ -63,6 +63,8 @@ export const HomeStackScreen = ({navigation}) => {
       <HomeStack.Screen name="Home" component={HomePage} />
       <HomeStack.Screen name="Notification" component={Notification} />
       <HomeStack.Screen name="Chart" component={Chart} />
+      <HomeStack.Screen name="Air Quality" component={AirQualityPage} />
+      <HomeStack.Screen name="Health" component={HealthPage} />
       <HomeStack.Screen
         name="RegisterSuccessful" // add the RegisterSuccessful screen
         component={RegisterSuccessfulPage}

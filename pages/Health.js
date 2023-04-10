@@ -13,9 +13,9 @@ const db = firebase.database();
 
 const ItemWrapper = ({ children }) => {
   return (
-    <TouchableOpacity style={styles.item}>
+    <View style={styles.item}>
       {children}
-    </TouchableOpacity>
+    </View>
   );
 };
 

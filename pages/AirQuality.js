@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, RefreshControl } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, View, RefreshControl } from "react-native";
 import {AqiService} from "../service/AqiService";
 import {ThingerService} from "../service/ThingerService";
 
@@ -28,13 +28,13 @@ const DATA = [
 ];
 
 const Item = ({ item, isRefresh }) => (
-  <TouchableOpacity style={styles.item}>
+  <View style={styles.item}>
     {item.title === "AQI"
       ? <AqiService source={item.source} isRefresh={isRefresh} />
       :
       <ThingerService title={item.title} source={item.source} isRefresh={isRefresh} />
     }
-  </TouchableOpacity>
+  </View>
 );
 
 const AirQualityPage = ({ navigation }) => {

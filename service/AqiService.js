@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Button, Image, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Button, Image, Text, View } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -196,7 +196,7 @@ export const AqiService = ({ source, isRefreshing }) => {
   const pollutants = getIaqi(data);
   return (
     <View style={{ flex: 1, padding: 0 }}>
-      <TouchableOpacity style={styles.item}>
+      <View style={styles.item}>
         <View style={{ flexDirection: 'row' }}>
           <Image
             style={{ height: 70, width: 70, marginRight: 50 }}
@@ -244,7 +244,7 @@ export const AqiService = ({ source, isRefreshing }) => {
               </View>
             </View>
           ))}
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };

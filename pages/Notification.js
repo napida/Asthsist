@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, StatusBar, FlatList, View, Text, Image, SafeAreaView, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, StatusBar, FlatList, View, Text, Image, SafeAreaView, Dimensions, TouchableOpacity, Platform, ActivityIndicator } from 'react-native';
 import { Divider } from 'react-native-elements';
 import PushNotification from 'react-native-push-notification';
 
@@ -78,8 +78,8 @@ const fetchIOTData = async () => {
 
 const imageWidth = Dimensions.get('window').width;
 
-const Item = ({ title, message, img }) => (
-  <TouchableOpacity style={styles.notificationContainer}>
+const Item = ({ navigation, title, message, img, goto }) => (
+  <TouchableOpacity style={styles.notificationContainer} onPress={() => navigation.navigate(goto)}>
     <View style={styles.notificationIconContainer}>
       <Image
         source={img}
@@ -95,8 +95,9 @@ const Item = ({ title, message, img }) => (
   </TouchableOpacity>
 );
 
-const Notification = () => {
+const Notification = ({ navigation }) => {
   const [notifications, setNotifications] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     // if (Platform.OS === 'android') {
@@ -119,7 +120,6 @@ const Notification = () => {
       },
     });
 
-    
     const fetchData = async () => {
       const aqiData = await fetchAQIData();
       const iotData = await fetchIOTData();
@@ -138,7 +138,9 @@ const Notification = () => {
             title: `High ${key.toUpperCase()} level`,
             message: `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`,
             img: require('../assets/air-quality.png'),
+            goto: 'Air Quality'
           });
+          sendNotification(`High ${key.toUpperCase()} level`, `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`);
         }
       }
 
@@ -157,7 +159,8 @@ const Notification = () => {
               id: 'iot_heartrate',
               title: 'High Heart rate',
               message: `Your heart rate is ${latestIOT.val.bpmAvg}, which is in the red zone.`,
-              img: require('../assets/medicine.png'),
+              img: require('../assets/heart-rate.png'),
+              goto: 'Health'
             });
           }
           if (getfontColour('spO2', latestIOT.val.spO2) === colourRed) {
@@ -166,6 +169,7 @@ const Notification = () => {
               title: 'Low SpO2',
               message: `Your SpO2 level is ${latestIOT.val.spO2}, which is in the red zone.`,
               img: require('../assets/oximeter.png'),
+              goto: 'Health'
             });
           }
         }
@@ -175,6 +179,7 @@ const Notification = () => {
             title: 'High Temperature',
             message: `Your temperature is ${latestIOT.val.temperature.toFixed(2)}°C, which is in the red zone.`,
             img: require('../assets/temperature.png'),
+            goto: 'Air Quality'
           });
         }
         if (getfontColour('humidity', latestIOT.val.humidity) === colourRed) {
@@ -183,26 +188,13 @@ const Notification = () => {
             title: 'High Humidity',
             message: `The humidity level is ${latestIOT.val.humidity.toFixed(2)}%, which is in the red zone.`,
             img: require('../assets/humidity.png'),
+            goto: 'Air Quality'
           });
         }
       }
       // Update notifications
       setNotifications([...notifications, ...newNotifications]);
-      // Check AQI data
-      for (const key in aqiData) {
-        const value = aqiData[key].v;
-        if (getfontColour(key, value) === colourRed) {
-          newNotifications.push({
-            id: `aqi_${key}`,
-            title: `High ${key.toUpperCase()} level`,
-            message: `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`,
-            img: require('../assets/air-quality.png'),
-          });
-          sendNotification(`High ${key.toUpperCase()} level`, `The ${key.toUpperCase()} level is ${value}, which is in the red zone.`);
-        }
-      }
-
-
+      setLoading(false)
     };
 
 
@@ -214,14 +206,29 @@ const Notification = () => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={notifications}
-        renderItem={({ item }) => <Item title={item.title} message={item.message} img={item.img} />}
+        renderItem={({ item }) => (
+          <Item
+            navigation={navigation}
+            title={item.title}
+            message={item.message}
+            img={item.img}
+            goto={item.goto}
+          />
+        )}
         keyExtractor={item => item.id}
-        ItemSeparatorComponent={<Divider width={5} color='#f2f2f2' />}
+        ItemSeparatorComponent={<Divider width={5} color="#f2f2f2" />}
         style={{ paddingTop: 5 }}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text>No notifications to display.</Text>}
+        ListEmptyComponent={
+          isLoading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Text>No notifications to display.</Text>
+          )
+        }
       />
-    </SafeAreaView>
+
+    </SafeAreaView >
   );
 };
 

@@ -425,6 +425,10 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
                 // interpolation="natural"
                 style={{ data: { stroke: '#0097A7', strokeWidth: 3 } }}
                 labelComponent={<VictoryTooltip />}
+                animate={{
+                  duration: 2000,
+                  onLoad: { duration: 1000 }
+                }}
               />
               <VictoryLine
                 data={maxData}
@@ -432,6 +436,10 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
                 y="y"
                 style={{ data: { stroke: '#FF5722', strokeWidth: 3 } }}
                 labelComponent={<VictoryTooltip />}
+                animate={{
+                  duration: 2000,
+                  onLoad: { duration: 1000 }
+                }}
               />
               <VictoryScatter
                 style={{ data: { fill: "orange", opacity: 0.5 } }}
@@ -463,6 +471,10 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
                   />
                 }
                 onPress={handlePointClick}
+                animate={{
+                  duration: 2000,
+                  onLoad: { duration: 1000 }
+                }}
               />
               <VictoryScatter
                 style={{ data: { fill: "#72BDB7", opacity: 0.5 } }}
@@ -494,6 +506,10 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
                   />
                 }
                 onPress={handlePointClick}
+                animate={{
+                  duration: 2000,
+                  onLoad: { duration: 1000 }
+                }}
               />
 
               {selectedPoint && (

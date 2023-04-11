@@ -60,7 +60,16 @@ const Item = ({ item, percent, fontColor, value }) => {
       ? determinePeakFlowZone(percent)
       : { zone: "", color: item.color };
 
-  const textColor = fontColor || peakFlowData.color;
+  const noData = item.title === "Peak flow" && percent === null;
+
+  const subtitle =
+    noData
+      ? "No peak flow data"
+      : item.title === "Peak flow" && percent !== null
+      ? `${peakFlowData.zone} (${percent}%)`
+      : value || item.subtitle;
+
+  const textColor = noData ? "#808080" : fontColor || peakFlowData.color;
 
   return (
     <View style={{ flexDirection: "row" }}>
@@ -81,14 +90,13 @@ const Item = ({ item, percent, fontColor, value }) => {
             },
           ]}
         >
-          {item.title === "Peak flow" && percent !== null
-            ? `${peakFlowData.zone} (${percent}%)`
-            : value || item.subtitle}
+          {subtitle}
         </Text>
       </View>
     </View>
   );
 };
+
 
 
 
@@ -117,7 +125,8 @@ const HealthPage = ({ navigation }) => {
       console.log("peakFlowSnapshot", peakFlowSnapshot);
   
       if (!peakFlowSnapshot.exists()) {
-        console.error("No peak flow data found");
+        //console.error("No peak flow data found");
+        setPercent(null); // Add this line to set percent to null when no data is found
         return;
       }
   

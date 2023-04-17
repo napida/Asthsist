@@ -228,13 +228,11 @@ const fetchAQIData = async () => {
 };
 
 const fetchIOTData = async () => {
-  console.log('[CheckPoint4] ');
   const response = await fetch(
-    'https://api.thinger.io/v1/users/Rnunaunfairy2544/buckets/kar/data?authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJEZXZpY2VDYWxsYmFja19hc3Roc2lzdG1vYmlsZSIsInN2ciI6ImFwLXNvdXRoZWFzdC5hd3MudGhpbmdlci5pbyIsInVzciI6IlJudW5hdW5mYWlyeTI1NDQifQ.U6_SCVtAhAB6Wz0i5Y3zlZHMSmANs2MsWIIyubMNxJo'
+    'https://api.thinger.io/v1/users/Rnunaunfairy2544/buckets/kar/data?authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJEZXZpY2VDYWxsYmFja19hc3Roc2lzdG1vYmlsZSIsInN2ciI6ImFwLXNvdXRoZWFzdC5hd3MudGhpbmdlci5pbyIsInVzciI6IlJudW5hdW5mYWlyeTI1NDQifQ.U6_SCVtAhAB6Wz0i5Y3zlZHMSmANs2MsWIIyubMNxJo&items=1'
   );
   const data = await response.json();
-  console.log('data ', data);
-  return data;
+  return data[0]; // Return only the latest data point
 };
 
 const fetchData = async () => {
@@ -258,7 +256,7 @@ const fetchData = async () => {
       }
     }
     // Check IOT data
-    const latestIOT = iotData[iotData.length - 1];
+    const latestIOT = iotData;
     const iotDate = new Date(latestIOT.ts); // Assuming the timestamp is in seconds
     console.log('iotDate', iotDate);
     const currentDate = new Date();

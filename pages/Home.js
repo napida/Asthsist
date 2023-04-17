@@ -12,35 +12,6 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-function timeSince(date) {
-    var seconds = Math.floor((new Date() - date) / 1000);
-    var interval = seconds / 31536000;
-
-    if (interval > 1) {
-        return Math.floor(interval) + " years ago";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-        return Math.floor(interval) + " months ago";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-        return Math.floor(interval) + " days ago";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-        return Math.floor(interval) + " hours ago";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-        return Math.floor(interval) + " minutes ago";
-    }
-    if (Math.floor(seconds) == 0) {
-        return "now"
-    }
-    return Math.floor(seconds) + " seconds ago";
-}
-
 const db = firebase.database();
 const imageWidth = Dimensions.get('window').width;
 const items = [
@@ -214,7 +185,7 @@ function HomePage({ navigation }) {
                     </Text>
                     {latestTestDate && (
                         <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 12, color: '#547CB4', textAlign: 'center', paddingTop: 5 }]}>
-                            Last test: {timeSince(new Date(latestTestDate))}
+                            Last assessment: {new Date(latestTestDate).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' })}
                         </Text>
                     )}
                 </View>

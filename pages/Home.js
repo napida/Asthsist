@@ -12,6 +12,35 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
+function timeSince(date) {
+    var seconds = Math.floor((new Date() - date) / 1000);
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+        return Math.floor(interval) + " years ago";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+        return Math.floor(interval) + " months ago";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+        return Math.floor(interval) + " days ago";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+        return Math.floor(interval) + " hours ago";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+        return Math.floor(interval) + " minutes ago";
+    }
+    if (Math.floor(seconds) == 0) {
+        return "now"
+    }
+    return Math.floor(seconds) + " seconds ago";
+}
+
 const db = firebase.database();
 const imageWidth = Dimensions.get('window').width;
 const items = [
@@ -112,6 +141,8 @@ function HomePage({ navigation }) {
     const route = useRoute();
     const [latestScore, setLatestScore] = useState(0);
     const [scoreColor, setScoreColor] = useState('#00CD00');
+    const [latestTestDate, setLatestTestDate] = useState(null);
+
     const fetchLatestScore = () => {
         const userUID = firebase.auth().currentUser.uid;
         const scoresRef = db.ref(`/AsthmaControlTestScores/${userUID}`);
@@ -125,6 +156,7 @@ function HomePage({ navigation }) {
                     const latestScoreData = Object.values(scoresData)[0];
                     setLatestScore(latestScoreData.score);
                     setScoreColor(getScoreColor(latestScoreData.score));
+                    setLatestTestDate(latestScoreData.date); // Store the latest test date
                 }
             })
             .catch((error) => {
@@ -180,6 +212,11 @@ function HomePage({ navigation }) {
 
                         }
                     </Text>
+                    {latestTestDate && (
+                        <Text style={[styles.text, { fontFamily: 'Prompt-Regular', fontSize: 12, color: '#547CB4', textAlign: 'center', paddingTop: 5 }]}>
+                            Last test: {timeSince(new Date(latestTestDate))}
+                        </Text>
+                    )}
                 </View>
 
             </TouchableOpacity>

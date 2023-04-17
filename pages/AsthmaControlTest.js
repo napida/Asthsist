@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, View, Button, Alert } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, Text, View, Alert } from "react-native";
 import RadioForm from 'react-native-simple-radio-button';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
+import PrimaryButton from "../components/PrimaryButton";
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -83,7 +84,7 @@ const AsthmaControlTest = ({ navigation }) => {
       dateTimeForRef: date.toISOString(),
       userUID,
     };
-  
+
     db.ref(`/AsthmaControlTestScores/${userUID}`)
       .push(scoreData)
       .then(() => {
@@ -94,7 +95,7 @@ const AsthmaControlTest = ({ navigation }) => {
         console.error('Error saving score: ', error);
       });
   };
-  
+
   const totalScore = chosenOption && chosenOption.length > 0
     ? chosenOption.reduce((sum, value) => {
       if (value > 0) {
@@ -138,9 +139,12 @@ const AsthmaControlTest = ({ navigation }) => {
         data={question}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        ListHeaderComponent={(
+          <Text style={styles.text}>Take the Asthma Control Test every month to assess how well your asthma has been controlled during the past 4 weeks. </Text>
+        )}
         ListFooterComponent={
-          <View style={{ alignItems: 'center', paddingBottom: 20 }}>
-            <Button
+          <View style={{ alignItems: 'center', paddingBottom: 20, }}>
+            <PrimaryButton
               title="Submit"
               onPress={() => {
                 if (chosenOption.includes(-1) || totalScore < 0 && totalScore > 25) {
@@ -150,6 +154,7 @@ const AsthmaControlTest = ({ navigation }) => {
                   navigation.navigate('Result ACT', { score: totalScore })
                 }
               }}
+              buttonStyle={{ paddingHorizontal: 30, borderRadius: 10 }}
             />
           </View>}
       />
@@ -178,6 +183,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Prompt-Medium',
     color: '#012250',
     fontSize: 18,
+  },
+  text: {
+    fontFamily: 'Prompt-Regular',
+    color: '#012250',
+    fontSize: 17,
+    marginTop: 20,
+    marginHorizontal: 20,
+    textAlign: 'justify',
+    marginBottom: -10
   },
 });
 

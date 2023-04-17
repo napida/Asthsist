@@ -1,11 +1,12 @@
 import Slider from '@react-native-community/slider';
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import ItemSelector from '../components/ItemSelector';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/database';
 import firebaseConfig from '../database/firebaseDB';
+import PrimaryButton from '../components/PrimaryButton';
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -181,6 +182,14 @@ const AsthmaActionPlan = ({ navigation }) => {
 
   return (
     <ScrollView style={[styles.container]}>
+      <View style={[styles.item, {flexDirection: 'row'}]}>
+      <Text style={styles.text}>Monitor your symptoms daily and know which zone you are in based on your Asthma Action Plan's color-coded system to take appropriate actions and avoid asthma attacks.</Text>
+      <Image
+        style={{ height: 100, width: 100, position:'absolute', right: 0, bottom: -35 }}
+        source={require('../assets/cartoon-thumb-up.png')}
+        resizeMode="contain"
+      />
+      </View>
       <View style={styles.item}>
         <Text style={[styles.title, { fontFamily: 'Prompt-Bold', margin: 15 }]}>
           On a scale of 1 to 10, with 1 being the best and 10 being the worst, how would you rate your current asthma symptoms in the past 24 hours?</Text>
@@ -239,10 +248,11 @@ const AsthmaActionPlan = ({ navigation }) => {
       </View>
       <Text style={{ marginHorizontal: 20, textAlign: 'justify' }}>
         Note: this questionnaire may vary depending on the patient's individual situation and the healthcare provider's assessment. It is always recommended to consult with a healthcare professional for an accurate assessment and treatment plan.</Text>
-      <View style={{ width: 100, alignSelf: 'center', margin: 20 }}>
-        <Button
+      <View style={{ width: 100, alignSelf: 'center', marginBottom: 20 }}>
+        <PrimaryButton
           title="submit"
           onPress={calculateZone}
+          buttonStyle={{ borderRadius: 10 }}
         />
       </View>
     </ScrollView>
@@ -280,6 +290,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     borderRadius: 5,
     padding: 5,
+  },
+  text: {
+    fontFamily: 'Prompt-Regular',
+    color: '#012250',
+    fontSize: 17,
+    textAlign: 'justify',
   },
 });
 export default AsthmaActionPlan;

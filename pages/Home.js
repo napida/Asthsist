@@ -61,7 +61,7 @@ const items = [
         id: '8',
         title: 'PM2.5',
         source: require('../assets/inhaler-graph.png'),
-        date: '3w ago'
+        date: '1w ago'
     },
 ];
 const menu = [
@@ -156,7 +156,7 @@ function HomePage({ navigation }) {
                         <Text numberOfLines={2}
                             style={[
                                 styles.text,
-                                { fontSize: 12, fontFamily: 'Prompt-egular', paddingTop: 4, textAlign: 'center' }
+                                { fontSize: 12, fontFamily: 'Prompt-regular', paddingTop: 4, textAlign: 'center' }
                             ]}>
                             {item.title}
                         </Text>

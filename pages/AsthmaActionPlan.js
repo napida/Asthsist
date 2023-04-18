@@ -105,65 +105,58 @@ const AsthmaActionPlan = ({ navigation }) => {
       const currentUser = firebase.auth().currentUser;
       const userUID = currentUser.uid;
       console.log("userUID", userUID);
-
+  
       try {
         const medicationSnapshot = await db.ref(`Medicine/${userUID}`).once('value');
-        console.log("medicationSnapshot", medicationSnapshot);
-
-        // Filter medication data for the last week
-        const medicationDataArray = Object.values(medicationSnapshot.val());
-
-        const WeeksAgo = new Date();
-        WeeksAgo.setDate(WeeksAgo.getDate() - 7);
-        const filteredMadicationData = medicationDataArray.filter((item) => {
-          const date = new Date(item.time);
-          return date >= WeeksAgo && item.usage;
-        });
-        console.log("filteredMadicationData", filteredMadicationData);
-
-        // Calculate the total usage
-        const totalUsage = filteredMadicationData.reduce((sum, item) => sum + item.usage, 0);
-        console.log("totalUsage", totalUsage);
-
-        let preselectedMedication;
-        if (totalUsage > 5) {
-          preselectedMedication = "Frequent";
-        } else if (totalUsage < 3) {
-          preselectedMedication = "Rare";
-        } else {
-          preselectedMedication = "Occasional";
+        if (medicationSnapshot.val() !== null) {
+          // Filter medication data for the last week
+          const medicationDataArray = Object.values(medicationSnapshot.val());
+  
+          const WeeksAgo = new Date();
+          WeeksAgo.setDate(WeeksAgo.getDate() - 7);
+          const filteredMadicationData = medicationDataArray.filter((item) => {
+            const date = new Date(item.time);
+            return date >= WeeksAgo && item.usage;
+          });
+          console.log("filteredMadicationData", filteredMadicationData);
+  
+          // Calculate the total usage
+          const totalUsage = filteredMadicationData.reduce((sum, item) => sum + item.usage, 0);
+          console.log("totalUsage", totalUsage);
+  
+          let preselectedMedication;
+          if (totalUsage > 5) {
+            preselectedMedication = "Frequent";
+          } else if (totalUsage < 3) {
+            preselectedMedication = "Rare";
+          } else {
+            preselectedMedication = "Occasional";
+          }
+          setMedicationScore(preselectedMedication);
         }
-        setMedicationScore(preselectedMedication);
-
+  
         const peakFlowSnapshot = await db.ref(`PeakFlowData/${userUID}`).orderByChild('timeforref').once('value');
-        const peakFlowDataArray = Object.values(peakFlowSnapshot.val());
-        const latestValue = parseInt(peakFlowDataArray[peakFlowDataArray.length - 1].peakflow);
-
-        // Filter peak flow data for the last 3-4 weeks
-        const threeWeeksAgo = new Date();
-        threeWeeksAgo.setDate(threeWeeksAgo.getDate() - 21);
-        const filteredPeakFlowData = peakFlowDataArray.filter((item) => {
-          const date = item.timeforref ? new Date(item.timeforref) : new Date(item.time);
-          return date >= threeWeeksAgo && item.peakflow;
-        });
-        // Find the personal best peak flow value
-        const personalBest = filteredPeakFlowData.reduce((max, item) => Math.max(max, parseInt(item.peakflow)), 0);
-        console.log("personalBest", personalBest);
-
-        // Calculate the percentage of the latest peak flow value to the personal best
-        let newPercent = Math.round((latestValue / personalBest) * 100);
-
-        console.log("newPercent", newPercent);
-
-        const preselectedPeakFlow = newPercent < 100 ? "Decreased" : "Normal";
-        setPeakFlowScore(preselectedPeakFlow);
+        if (peakFlowSnapshot.val() !== null) {
+          const peakFlowDataArray = Object.values(peakFlowSnapshot.val());
+          const latestValue = peakFlowDataArray[peakFlowDataArray.length - 1].value;
+          console.log("latestValue", latestValue);
+  
+          // Determine Peak Flow classification
+          let peakFlowResult;
+          if (latestValue >= 400) {
+            peakFlowResult = "Normal";
+          } else {
+            peakFlowResult = "Decreased";
+          }
+          setPeakFlowScore(peakFlowResult);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.log(error);
       }
     };
-
     fetchData();
   }, []);
+  
 
 
 

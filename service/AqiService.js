@@ -92,7 +92,6 @@ export const AqiService = ({ source, isRefreshing }) => {
       storeAqiInDatabase(firebase.auth().currentUser.uid);
     } catch (error) {
       console.error(error);
-      navigation.navigate('No Internet');
     } finally {
       setLoading(false);
     }

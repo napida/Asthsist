@@ -81,14 +81,14 @@ export const AqiService = ({ source, isRefreshing }) => {
         aqiRef.push({
           value: json.data.aqi,
           time: timestamp,
-          co: pollutantValues.co,
-          no2: pollutantValues.no2,
-          o3: pollutantValues.o3,
-          pm10: pollutantValues.pm10,
-          pm25: pollutantValues.pm25,
-          so2: pollutantValues.so2
+          co: pollutantValues.co || null, // Provide a default value (null) if the value is undefined
+          no2: pollutantValues.no2 || null,
+          o3: pollutantValues.o3 || null,
+          pm10: pollutantValues.pm10 || null,
+          pm25: pollutantValues.pm25 || null,
+          so2: pollutantValues.so2 || null
         });
-      };
+      };      
       storeAqiInDatabase(firebase.auth().currentUser.uid);
     } catch (error) {
       console.error(error);

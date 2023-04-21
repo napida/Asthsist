@@ -32,6 +32,21 @@ const activity = { key: 'activity', color: '#EFA45E', selectedDotColor: '#EFA45E
 const medicine = { key: 'medicine', color: '#EB5B79', selectedDotColor: '#EB5B79' };
 
 const CalendarPage = () => {
+  const alertItem = (title, name, time, note, value, prefix) => {
+    const noted = !!note? `Note: ${note}`: ''
+    Alert.alert(
+      `${title} Review`,
+      `
+      Time: ${time}
+      ${name}: ${value} ${prefix}
+      ${noted}`,
+      [
+        {
+          text: "OK",
+        }
+      ]
+    );
+  }
   const [items, setItems] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -184,7 +199,7 @@ const CalendarPage = () => {
     let cards = [];
     if (item.peakflow) {
       cards.push(
-        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: peakFlow.color }]}>
+        <TouchableOpacity key={item.key} onPress={() => alertItem('Peak flow', 'Peak flow', item.time, item.note, item.peakflow, 'L/min')} style={[styles.item, { borderLeftColor: peakFlow.color }]}>
           <Card>
             <Card.Content>
               <View
@@ -203,7 +218,7 @@ const CalendarPage = () => {
     }
     if (item.inhaler) {
       cards.push(
-        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: inhaler.color }]}>
+        <TouchableOpacity key={item.key} onPress={() => alertItem('Inhaler', item.name, item.time, item.note, item.inhaler, item.inhaler===1 ? `time`: `times`)} style={[styles.item, { borderLeftColor: inhaler.color }]}>
           <Card>
             <Card.Content>
               <View
@@ -222,7 +237,7 @@ const CalendarPage = () => {
     }
     if (item.medicine) {
       cards.push(
-        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: medicine.color }]}>
+        <TouchableOpacity key={item.key} onPress={() => alertItem('Medicine', item.name, item.time, item.note, item.medicine, item.medicine===1 ? `pill`: `pills`)} style={[styles.item, { borderLeftColor: medicine.color }]}>
           <Card>
             <Card.Content>
               <View
@@ -232,7 +247,7 @@ const CalendarPage = () => {
                   alignItems: 'center',
                 }}>
                 <Text>{item.time} |  Medicine</Text>
-                <Text>{item.medicine}  {item.name}</Text>
+                <Text>{item.name} :  {item.medicine} {item.medicine===1 ? `pill`: `pills`}</Text>
               </View>
             </Card.Content>
           </Card>
@@ -241,7 +256,7 @@ const CalendarPage = () => {
     }
     if (item.activity) {
       cards.push(
-        <TouchableOpacity key={item.key} onPress={() => Alert.alert(item.note)} style={[styles.item, { borderLeftColor: activity.color }]}>
+        <TouchableOpacity key={item.key} onPress={() => alertItem('Asthma Activity', 'Attack', item.time, item.note, item.activity, item.activity===1 ? `time`: `times`)} style={[styles.item, { borderLeftColor: activity.color }]}>
           <Card>
             <Card.Content>
               <View

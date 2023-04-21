@@ -77,7 +77,16 @@ const CalendarPage = () => {
     });
     return obj;
   }, {});
-
+  const isItemDuplicate = (itemArray, currentItem) => {
+    return itemArray.some(item => {
+      return item.date === currentItem.date &&
+             item.time === currentItem.time &&
+             (item.peakflow === currentItem.peakflow || item.activity === currentItem.activity || 
+              item.inhaler === currentItem.inhaler || item.medicine === currentItem.medicine);
+    });
+  };
+  
+  
   const loadItems = async (day) => {
     const start = new Date(day.timestamp).setHours(0, 0, 0, 0);
     const uid = firebase.auth().currentUser.uid;
@@ -111,13 +120,16 @@ const CalendarPage = () => {
               if (!items[strTime]) {
                 items[strTime] = [];
               }
-              items[strTime].push({
+              const newItem = {
                 key: Date.now() + '_' + Math.random().toString(36).substring(2, 15),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 peakflow: event.peakflow,
                 note: event.note
-              });
+              };
+              if (!isItemDuplicate(items[strTime], newItem)) {
+                items[strTime].push(newItem);
+              }
             });
           }
         });
@@ -131,13 +143,16 @@ const CalendarPage = () => {
               if (!items[strTime]) {
                 items[strTime] = [];
               }
-              items[strTime].push({
+              const newItem = {
                 key: Date.now() + '_' + Math.random().toString(36).substring(2, 16),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 activity: event.activity,
                 note: event.note
-              });
+              };
+              if (!isItemDuplicate(items[strTime], newItem)) {
+                items[strTime].push(newItem);
+              }
             });
           }
         });
@@ -151,14 +166,18 @@ const CalendarPage = () => {
               if (!items[strTime]) {
                 items[strTime] = [];
               }
-              items[strTime].push({
+              const newItem = {
                 key: Date.now() + '_' + Math.random().toString(36).substring(2, 17),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 inhaler: event.usage,
                 name: event.name,
                 note: event.note
-              });
+              };
+      
+              if (!isItemDuplicate(items[strTime], newItem)) {
+                items[strTime].push(newItem);
+              }
             });
           }
         });
@@ -172,14 +191,18 @@ const CalendarPage = () => {
               if (!items[strTime]) {
                 items[strTime] = [];
               }
-              items[strTime].push({
+              const newItem = {
                 key: Date.now() + '_' + Math.random().toString(36).substring(2, 18),
                 date: date.toLocaleDateString(),
                 time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 medicine: event.usage,
                 name: event.name,
                 note: event.note
-              });
+              };
+      
+              if (!isItemDuplicate(items[strTime], newItem)) {
+                items[strTime].push(newItem);
+              }
             });
           }
         });

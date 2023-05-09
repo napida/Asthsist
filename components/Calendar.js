@@ -77,15 +77,17 @@ const CalendarPage = () => {
     });
     return obj;
   }, {});
+
   const isItemDuplicate = (itemArray, currentItem) => {
     return itemArray.some(item => {
       return item.date === currentItem.date &&
              item.time === currentItem.time &&
-             (item.peakflow === currentItem.peakflow || item.activity === currentItem.activity || 
-              item.inhaler === currentItem.inhaler || item.medicine === currentItem.medicine);
+             (item.peakflow !== undefined && currentItem.peakflow !== undefined ||
+              item.activity !== undefined && currentItem.activity !== undefined ||
+              item.inhaler !== undefined && currentItem.inhaler !== undefined ||
+              item.medicine !== undefined && currentItem.medicine !== undefined);
     });
   };
-  
   
   const loadItems = async (day) => {
     const start = new Date(day.timestamp).setHours(0, 0, 0, 0);
@@ -127,6 +129,9 @@ const CalendarPage = () => {
                 peakflow: event.peakflow,
                 note: event.note
               };
+              console.log("peakFlowData");
+              console.log("items[strTime]",items[strTime]);
+              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -150,6 +155,9 @@ const CalendarPage = () => {
                 activity: event.activity,
                 note: event.note
               };
+              console.log("asthmaActivityData");
+              console.log("items[strTime]",items[strTime]);
+              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -174,7 +182,9 @@ const CalendarPage = () => {
                 name: event.name,
                 note: event.note
               };
-      
+              console.log("inhalerData");
+              console.log("items[strTime]",items[strTime]);
+              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -199,7 +209,10 @@ const CalendarPage = () => {
                 name: event.name,
                 note: event.note
               };
-      
+              console.log("medicineData");
+              console.log("items[strTime]",items[strTime]);
+              console.log("newItem",newItem);
+              console.log("isItemDuplicate(items[strTime], newItem)",isItemDuplicate(items[strTime], newItem));
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }

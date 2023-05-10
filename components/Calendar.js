@@ -129,9 +129,6 @@ const CalendarPage = () => {
                 peakflow: event.peakflow,
                 note: event.note
               };
-              console.log("peakFlowData");
-              console.log("items[strTime]",items[strTime]);
-              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -155,9 +152,6 @@ const CalendarPage = () => {
                 activity: event.activity,
                 note: event.note
               };
-              console.log("asthmaActivityData");
-              console.log("items[strTime]",items[strTime]);
-              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -182,9 +176,6 @@ const CalendarPage = () => {
                 name: event.name,
                 note: event.note
               };
-              console.log("inhalerData");
-              console.log("items[strTime]",items[strTime]);
-              console.log("newItem",newItem);
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }
@@ -209,10 +200,6 @@ const CalendarPage = () => {
                 name: event.name,
                 note: event.note
               };
-              console.log("medicineData");
-              console.log("items[strTime]",items[strTime]);
-              console.log("newItem",newItem);
-              console.log("isItemDuplicate(items[strTime], newItem)",isItemDuplicate(items[strTime], newItem));
               if (!isItemDuplicate(items[strTime], newItem)) {
                 items[strTime].push(newItem);
               }

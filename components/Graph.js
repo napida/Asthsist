@@ -100,7 +100,6 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
             const dataArray = Object.entries(data).map(([key, value]) => {
               const date = new Date(value.time);
 
-              // console.log('date', date, 'valid', !isNaN(date), 'timeforref', value.timeforref);
 
               let yValue;
               if (titleWithNoSpace === 'PeakFlow') {
@@ -212,36 +211,7 @@ const Chart = ({ navigation, page, chartHeight, chartWidth, chartStyle, isShowVi
     return { x: data.x, y: max };
   });
 
-  // // To show in the home page
-  // // check if there is any data available for the current week
-  // if (!!page) {
-  //   let currentWeekData = [];
-  //   if (view === 'week') {
-  //     let weekStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay());
-  //     let weekEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay() + 6);
-  //     currentWeekData = data.filter((d) => d.x >= weekStart && d.x <= weekEnd);
-  //   }
-
-  //   // if there is no data available for the current week, find the most recent week that has data
-  //   if (currentWeekData.length === 0) {
-  //     let recentWeekData = [];
-  //     let weekStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() - selectedDate.getDay() - 7);
-  //     let weeksAgo = 1; // initialize the number of weeks ago to 1
-  //     while (recentWeekData.length === 0 && weekStart >= new Date(2000, 0, 1)) {
-  //       console.log('why:', page)
-  //       let weekEnd = new Date(weekStart.getFullYear(), weekStart.getMonth(), weekStart.getDate() + 6);
-  //       recentWeekData = data.filter((d) => d.x >= weekStart && d.x <= weekEnd);
-  //       weekStart.setDate(weekStart.getDate() - 7);
-  //       weeksAgo++; // increment the number of weeks ago
-  //     }
-  //     filteredData = recentWeekData;
-  //     console.log('fern', filteredData, page)
-  //     console.log(`page ${page} and ${weeksAgo} week(s) ago`); // print the number of weeks ago
-  //   } else {
-  //     filteredData = currentWeekData;
-  //   }
-  // }
-
+ 
   const message =
     title === "Peak Flow" ? "Measure your peak flow regularly to track your lung function and help manage your asthma symptoms! 😊" :
       title === "Inhaler" ? "Make sure you have your inhaler with you at all times and use it as prescribed by your doctor to manage your asthma symptoms! 😊" :
